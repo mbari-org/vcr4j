@@ -4,7 +4,7 @@
     <groupId>org.mbari</groupId>
     <artifactId>vcr4j</artifactId>
     <packaging>jar</packaging>
-    <version>1.7.5</version>
+    <version>1.7.6-SNAPSHOT</version>
     <name>VCR4J</name>
     <url>http://code.google.com/p/vcr4j/</url>
     <description>Java API for communicating with video tape recorders that support the Sony 9-pin protocol</description>
