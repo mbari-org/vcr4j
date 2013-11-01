@@ -1,0 +1,18 @@
+$Id: $
+
+Build prerequisites:
+	Maven 2 - http://maven.apache.org/
+	
+Dependencies not surrently available in Maven repositories:
+	RXTX - http://users.frii.com/jarvi/rxtx/
+	mbari-extensions 
+	
+	These dependencies can be found in src/main/lib. run 'mvn compile' and 
+	follow the directions that appear in your console on how to install the 
+	libraries into your local maven repository.
+	
+To Build:
+	mvn clean install
+	
+	The resulting jar can be found in the target directory
+	

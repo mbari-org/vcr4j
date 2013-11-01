@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# Use as: testvcr portname
+ 
+# APP_HOME is the the directory containing all the jar you need to include
+APP_HOME=`dirname "$0"`
+
+APP_CLASSPATH=$APP_HOME
+for jar in $(ls $APP_HOME/*.jar)
+do
+    APP_CLASSPATH=$APP_CLASSPATH:$jar
+done
+
+${JAVACMD:=java} -Djava.library.path=$APP_HOME -cp $APP_CLASSPATH org.mbari.vcr.rs422.TestRunner "$1"

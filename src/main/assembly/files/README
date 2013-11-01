@@ -1,0 +1,22 @@
+VCR4J is a set of API's for controlling VCR's via various protocols. Currently,
+VCR4J implements VCR control via RS422 (serial ports).
+
+To use the VCR4J API, the following dependencies (jars) are required:
+ - vcr4j 
+ - mbarix4j
+ - slf4j-api (and an slf4j implementation, see http://www.slf4j.org for more 
+   details. slf4j-log4j12 and log4j are required to use log4j for logging and
+   are included in this download)
+
+If you plan on using any of the included swing components you will also 
+need to include the following dependencies:
+ - foxtrot
+
+You will also need to install the RXTX libraries that allow the Java Virtual
+Machine (JVM) to use your computers serial ports. More details about 
+installing RXTX can be found at http://users.frii.com/jarvi/rxtx/. The following
+RXTX dependencies are included in the VCR4J download:
+ - rxtx
+ - librxtxSerial.so (linux native library)
+ - librxtsSerial.jnilib (Mac OS X native library)
+ - rxtxSerial.dll (Windows native library)

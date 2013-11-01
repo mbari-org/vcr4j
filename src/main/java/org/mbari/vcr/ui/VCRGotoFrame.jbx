@@ -1,0 +1,10 @@
+[PropertyInfo]
+cancelButton,JButton,false,false, , ,false,<default>
+jPanel1,JPanel,false,false, , ,false,<default>
+okButton,JButton,false,false, , ,false,<default>
+vcr,org.mbari.vcr.IVCR,false,false,vcr,vcr,true,<default>
+[IconNames]
+
+
+
+

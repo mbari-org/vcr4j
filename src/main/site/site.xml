@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<site>
+  <bannerLeft>
+    <name>VCR4J</name>
+    <src>http://maven.apache.org/images/apache-maven-project.png</src>
+    <href>http://maven.apache.org/</href>
+  </bannerLeft>
+  <bannerRight>
+    <src>http://maven.apache.org/images/maven-small.gif</src>
+  </bannerRight>
+  <body>
+    <links>
+      <item name="VARS" href="http://vars.sourceforge.net/"/>
+      <item name="Maven" href="http://maven.apache.org/"/>
+      <item name="Apache" href="http://www.apache.org/"/>
+    </links>
+
+
+    <menu name="VCR4J">
+      <item name="Home" href="http://code.google.com/p/vcr4j/"/>
+      <!-- <item name="Vision Statement" href="/vision-statement.html"/>
+      <item name="Best Practices" href="/best-practices.html"/>
+      <item name="FAQs" href="/faqs.html"/> -->
+    </menu>
+
+
+    ${reports}
+
+
+  </body>
+</site>
