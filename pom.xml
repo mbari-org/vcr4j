@@ -4,7 +4,7 @@
     <groupId>org.mbari</groupId>
     <artifactId>vcr4j</artifactId>
     <packaging>jar</packaging>
-    <version>1.7.2</version>
+    <version>1.7.5</version>
     <name>VCR4J</name>
     <url>http://code.google.com/p/vcr4j/</url>
     <description>Java API for communicating with video tape recorders that support the Sony 9-pin protocol</description>
@@ -48,28 +48,33 @@
         <dependency>
             <groupId>org.mbari</groupId>
             <artifactId>mbarix4j</artifactId>
-            <version>1.9.1</version>
+            <version>1.9.2</version>
         </dependency>
         <dependency>
             <groupId>gnu.io.rxtx</groupId>
-            <artifactId>rxtx-java</artifactId>
-            <version>2.2-stabilize-SNAPSHOT</version>
+            <artifactId>rxtx-api</artifactId>
+            <version>2.2-20131101</version>
+        </dependency>
+        <dependency>
+            <groupId>gnu.io.rxtx</groupId>
+            <artifactId>rxtxSerial-java</artifactId>
+            <version>2.2-20131101</version>
         </dependency>
         <dependency>
             <groupId>com.sparetimelabs</groupId>
             <artifactId>purejavacomm</artifactId>
-            <version>0.0.14</version>
+            <version>0.0.17</version>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.0.9</version>
+            <version>1.0.13</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.2</version>
+            <version>1.7.5</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
