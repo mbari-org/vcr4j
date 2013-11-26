@@ -1,3 +1,5 @@
+package org.mbari.vcr.purejavacomm;
+
 /*
  * @(#)CommUtil.java   2009.02.24 at 09:45:33 PST
  *
@@ -26,15 +28,17 @@
  * modification, or enhancement. This information should not be published or
  * distributed to third parties without specific written permission from MBARI
  */
-package org.mbari.comm;
 
-import gnu.io.CommPort;
-import gnu.io.CommPortIdentifier;
-import gnu.io.PortInUseException;
-import java.util.Enumeration;
-import java.util.HashSet;
+import purejavacomm.CommPort;
+import purejavacomm.CommPortIdentifier;
+import purejavacomm.PortInUseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Enumeration;
+import java.util.HashSet;
+
+
 
 /**
  * <p>Utilities for use with the javax.comm package.</p>
@@ -65,24 +69,24 @@ public class CommUtil {
             CommPortIdentifier com = (CommPortIdentifier) thePorts.nextElement();
 
             switch (com.getPortType()) {
-            case CommPortIdentifier.PORT_SERIAL:
-                try {
-                    CommPort thePort = com.open("CommUtil", 50);
+                case CommPortIdentifier.PORT_SERIAL:
+                    try {
+                        CommPort thePort = com.open("CommUtil", 50);
 
-                    thePort.close();
-                    log.debug("Serial Port, " + com.getName() + ", is available");
-                    h.add(com);
-                }
-                catch (PortInUseException e) {
-                    if (log.isInfoEnabled()) {
-                        log.debug("Serial port, " + com.getName() + ", is in use.");
+                        thePort.close();
+                        log.debug("Serial Port, " + com.getName() + ", is available");
+                        h.add(com);
                     }
-                }
-                catch (Exception e) {
-                    if (log.isErrorEnabled()) {
-                        log.error("Failed to open serial port " + com.getName(), e);
+                    catch (PortInUseException e) {
+                        if (log.isInfoEnabled()) {
+                            log.debug("Serial port, " + com.getName() + ", is in use.");
+                        }
                     }
-                }
+                    catch (Exception e) {
+                        if (log.isErrorEnabled()) {
+                            log.error("Failed to open serial port " + com.getName(), e);
+                        }
+                    }
             }
         }
 
@@ -100,8 +104,8 @@ public class CommUtil {
             CommPortIdentifier com = (CommPortIdentifier) thePorts.nextElement();
 
             switch (com.getPortType()) {
-            case CommPortIdentifier.PORT_PARALLEL:
-                h.add(com);
+                case CommPortIdentifier.PORT_PARALLEL:
+                    h.add(com);
             }
         }
 
@@ -119,8 +123,8 @@ public class CommUtil {
             CommPortIdentifier com = (CommPortIdentifier) thePorts.nextElement();
 
             switch (com.getPortType()) {
-            case CommPortIdentifier.PORT_SERIAL:
-                h.add(com);
+                case CommPortIdentifier.PORT_SERIAL:
+                    h.add(com);
             }
         }
 

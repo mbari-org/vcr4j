@@ -23,7 +23,7 @@ import java.io.OutputStream;
 import java.util.Set;
 import org.junit.Assert;
 import org.junit.Test;
-import org.mbari.comm.CommUtil;
+import org.mbari.vcr.rs422.CommUtil;
 import org.mbari.util.NumberUtilities;
 import org.mbari.vcr.rs422.Command;
 import org.mbari.vcr.rs422.VCR;

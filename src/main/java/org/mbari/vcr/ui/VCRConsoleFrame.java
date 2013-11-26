@@ -17,7 +17,7 @@ package org.mbari.vcr.ui;
 
 import gnu.io.CommPortIdentifier;
 import org.mbari.comm.BadPortException;
-import org.mbari.comm.CommUtil;
+import org.mbari.vcr.rs422.CommUtil;
 import org.mbari.util.IObserver;
 import org.mbari.vcr.IVCR;
 import org.mbari.vcr.purejavacomm.VCR;

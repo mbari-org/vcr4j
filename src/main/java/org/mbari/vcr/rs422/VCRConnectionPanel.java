@@ -27,7 +27,7 @@ import java.util.Iterator;
 import java.util.Set;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import org.mbari.comm.CommUtil;
+
 import org.mbari.vcr.IVCR;
 import org.mbari.vcr.VCRAdapter;
 import org.mbari.vcr.timer.AnnotationMonitoringVCR;

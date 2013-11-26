@@ -52,18 +52,13 @@
         </dependency>
         <dependency>
             <groupId>gnu.io.rxtx</groupId>
-            <artifactId>rxtx-api</artifactId>
-            <version>2.2-20131101</version>
-        </dependency>
-        <dependency>
-            <groupId>gnu.io.rxtx</groupId>
-            <artifactId>rxtxSerial-java</artifactId>
-            <version>2.2-20131101</version>
+            <artifactId>rxtx-java</artifactId>
+            <version>2.2.0</version>
         </dependency>
         <dependency>
             <groupId>com.sparetimelabs</groupId>
             <artifactId>purejavacomm</artifactId>
-            <version>0.0.17</version>
+            <version>0.0.21</version>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
@@ -80,6 +75,11 @@
     </dependencies>
     <repositories>
         <repository>
+            <id>sparetimelabs</id>
+            <name>Sparetimelabs Repository for Maven</name>
+            <url>http://www.sparetimelabs.com/maven2/</url>
+        </repository>
+        <repository>
             <id>mbari-maven-repository</id>
             <name>MBARI Maven Repository</name>
             <url>http://mbari-maven-repository.googlecode.com/svn/repository/</url>
@@ -90,6 +90,8 @@
             <url>http://download.java.net/maven/2/</url>
             <layout>default</layout>
         </repository>
+
+
     </repositories>
     <build>
         <plugins>

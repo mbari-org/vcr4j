@@ -26,7 +26,7 @@ import java.util.Set;
 import java.util.TooManyListenersException;
 import junit.framework.Assert;
 import org.junit.Test;
-import org.mbari.comm.CommUtil;
+import org.mbari.vcr.rs422.CommUtil;
 import org.mbari.util.NumberUtilities;
 import org.mbari.vcr.rs422.Command;
 import org.mbari.vcr.rs422.VCR;

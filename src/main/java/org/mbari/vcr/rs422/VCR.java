@@ -26,7 +26,6 @@ import java.io.OutputStream;
 import java.util.HashSet;
 import java.util.Iterator;
 import org.mbari.comm.BadPortException;
-import org.mbari.comm.CommUtil;
 import org.mbari.movie.Timecode;
 import org.mbari.util.NumberUtilities;
 import org.mbari.vcr.IVCR;
