@@ -54,16 +54,9 @@ public class VCRConnectionPanel extends org.mbari.vcr4j.ui.VCRConnectionPanel {
     private static final long serialVersionUID = -5003433826793435901L;
     private static final Logger log = LoggerFactory.getLogger(VCRConnectionPanel.class);
 
-    /**
-     *     @uml.property  name="lbl1"
-     *     @uml.associationEnd  multiplicity="(1 1)"
-     */
+
     private JLabel lbl1 = null;
 
-    /**
-     *     @uml.property  name="vcrListCB"
-     *     @uml.associationEnd  multiplicity="(0 -1)" elementType="java.lang.String"
-     */
     private JComboBox vcrListCB = null;
 
     /**
@@ -76,8 +69,6 @@ public class VCRConnectionPanel extends org.mbari.vcr4j.ui.VCRConnectionPanel {
     }
 
     /**
-     * Method description
-     *
      *
      * @return
      */
@@ -117,10 +108,7 @@ public class VCRConnectionPanel extends org.mbari.vcr4j.ui.VCRConnectionPanel {
         return vcr;
     }
 
-    /**
-     *     This method initializes vcrListCB
-     *     @return  javax.swing.JComboBox
-     */
+
     private JComboBox getVcrListCB() {
         if (vcrListCB == null) {
             vcrListCB = new JComboBox();
@@ -148,10 +136,6 @@ public class VCRConnectionPanel extends org.mbari.vcr4j.ui.VCRConnectionPanel {
         return VCR_PANEL_NAME;
     }
 
-    /**
-     * This method initializes this
-     *
-     */
     private void initialize() {
         GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
 

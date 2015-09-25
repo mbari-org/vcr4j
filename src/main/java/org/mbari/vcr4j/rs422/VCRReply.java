@@ -59,13 +59,12 @@ public class VCRReply extends VCRReplyAdapter {
     /** Corrected LTC time data */
     public static final byte[] OTHER_STATUS_REPLY = { 0x71, 0x20 };
 
-    /** <!-- Field description --> */
     public static final byte[] STATUS_REPLY = { 0x73, 0x20 };
     private static final Logger log = LoggerFactory.getLogger(VCRReply.class);
 
     /**
-         * The checksum of the command submitted to the VCR
-         */
+     * The checksum of the command submitted to the VCR
+     */
     private byte[] commandChecksum = new byte[1];
     private final VCRState vcrStatus = new VCRState();
     private final VCRTimecode vcrTimecode = new VCRTimecode();
@@ -75,8 +74,8 @@ public class VCRReply extends VCRReplyAdapter {
     private byte[] cmd;
 
     /**
-         * The command submited to the VCR
-         */
+     * The command submited to the VCR
+     */
     private byte[] command;
     private byte[] data;
 
@@ -97,41 +96,36 @@ public class VCRReply extends VCRReplyAdapter {
     }
 
     /**
-         * @return  The checksum value stored in the VCRReply
-         * @uml.property  name="checksum"
-         */
+     * @return  The checksum value stored in the VCRReply
+     */
     public byte[] getChecksum() {
         return checksum;
     }
 
     /**
-         * @return  The command block of the reply
-         * @uml.property  name="cmd"
-         */
+     * @return  The command block of the reply
+     */
     public byte[] getCmd() {
         return cmd;
     }
 
     /**
-         * @return  The Command that was sent to the VCR
-         * @uml.property  name="command"
-         */
+     * @return  The Command that was sent to the VCR
+     */
     public byte[] getCommand() {
         return this.command;
     }
 
     /**
-         * @return  The checksum of the command that was sent to the VCR.
-         * @uml.property  name="commandChecksum"
-         */
+     * @return  The checksum of the command that was sent to the VCR.
+     */
     public byte[] getCommandChecksum() {
         return this.commandChecksum;
     }
 
     /**
-         * @return  Get the data block of the VCR reply.
-         * @uml.property  name="data"
-         */
+     * @return  Get the data block of the VCR reply.
+     */
     public byte[] getData() {
         return data;
     }
@@ -219,8 +213,8 @@ public class VCRReply extends VCRReplyAdapter {
             if (checksum[0] != checksum2) {
                 if (log.isDebugEnabled()) {
                     log.debug("Invalid checksum. [Expected = " +
-                              NumberUtilities.toHexString(new byte[] { checksum2 }) + "] [recieved = " +
-                              NumberUtilities.toHexString(checksum) + "]");
+                            NumberUtilities.toHexString(new byte[] { checksum2 }) + "] [recieved = " +
+                            NumberUtilities.toHexString(checksum) + "]");
                 }
 
                 vcrError.setError(VCRError.CHECKSUM_ERROR);
@@ -298,7 +292,7 @@ public class VCRReply extends VCRReplyAdapter {
             final String checksumS = (checksum == null) ? nullS : NumberUtilities.toHexString(checksum);
 
             throw new VCRException("Invalid checksum. [command sent = " + commandS + "] [command recieved = " + cmdS +
-                                   "] [data = " + dataS + "] [checksum = " + checksumS + "]");
+                    "] [data = " + dataS + "] [checksum = " + checksumS + "]");
         }
 
         if (isAck()) {

@@ -1,4 +1,4 @@
-package org.mbari.vcr4j.util;
+package org.mbari.vcr4j.time;
 
 /**
  * Time modeled after Apple's CoreMedia CMTime.

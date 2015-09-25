@@ -28,8 +28,10 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.Document;
-import org.mbari.movie.Timecode;
 import org.mbari.vcr4j.VCRUtil;
+import org.mbari.vcr4j.time.Converters;
+import org.mbari.vcr4j.time.HMSF;
+import org.mbari.vcr4j.time.Timecode;
 
 /**
  * <p>
@@ -42,38 +44,12 @@ import org.mbari.vcr4j.VCRUtil;
  */
 public class TimeSelectPanel extends JPanel {
 
-    /**
-     *
-     */
+
     private static final long serialVersionUID = -8507196646203262606L;
-
-    /**
-     *     @uml.property  name="frameWidget"
-     *     @uml.associationEnd
-     */
     private TimeSlider frameWidget;
-
-    /**
-     *     @uml.property  name="hourWidget"
-     *     @uml.associationEnd
-     */
     private TimeSlider hourWidget;
-
-    /**
-     *     @uml.property  name="minuteWidget"
-     *     @uml.associationEnd
-     */
     private TimeSlider minuteWidget;
-
-    /**
-     *     @uml.property  name="numberFormat"
-     */
     private NumberFormat numberFormat;
-
-    /**
-     *     @uml.property  name="secondWidget"
-     *     @uml.associationEnd
-     */
     private TimeSlider secondWidget;
 
     /** Constructor. */
@@ -91,11 +67,7 @@ public class TimeSelectPanel extends JPanel {
      * listener to transfer focus to the OK button.
      */
 
-    /**
-     *     <p><!-- Method description --></p>
-     *     @return
-     *     @uml.property  name="frameWidget"
-     */
+
     public TimeSlider getFrameWidget() {
         if (frameWidget == null) {
             frameWidget = new TimeSlider(30);
@@ -109,11 +81,7 @@ public class TimeSelectPanel extends JPanel {
         return getHourWidget().getTime();
     }
 
-    /**
-     *     <p><!-- Method description --></p>
-     *     @return
-     *     @uml.property  name="hourWidget"
-     */
+
     public TimeSlider getHourWidget() {
         if (hourWidget == null) {
             hourWidget = new TimeSlider(24);
@@ -132,11 +100,7 @@ public class TimeSelectPanel extends JPanel {
         return getMinuteWidget().getTime();
     }
 
-    /**
-     *     <p><!-- Method description --></p>
-     *     @return
-     *     @uml.property  name="minuteWidget"
-     */
+
     public TimeSlider getMinuteWidget() {
         if (minuteWidget == null) {
             minuteWidget = new TimeSlider(59);
@@ -150,11 +114,7 @@ public class TimeSelectPanel extends JPanel {
         return minuteWidget;
     }
 
-    /**
-     *     <p><!-- Method description --></p>
-     *     @return
-     *     @uml.property  name="numberFormat"
-     */
+
     private NumberFormat getNumberFormat() {
         if (numberFormat == null) {
             numberFormat = new DecimalFormat();
@@ -170,11 +130,6 @@ public class TimeSelectPanel extends JPanel {
         return getSecondWidget().getTime();
     }
 
-    /**
-     *     <p><!-- Method description --></p>
-     *     @return
-     *     @uml.property  name="secondWidget"
-     */
     public TimeSlider getSecondWidget() {
         if (secondWidget == null) {
             secondWidget = new TimeSlider(59);
@@ -221,10 +176,8 @@ public class TimeSelectPanel extends JPanel {
     }
 
     public Timecode getTimecode() {
-        final Timecode timecode = new Timecode();
-
-        timecode.setTime(getHour(), getMinute(), getSecond(), getFrame());
-
+        HMSF hmsf = new HMSF(getHour(), getMinute(), getSecond(), getFrame());
+        Timecode timecode = Converters.toTimecode(hmsf);
         return timecode;
     }
 

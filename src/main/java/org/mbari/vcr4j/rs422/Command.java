@@ -54,7 +54,7 @@ public enum Command {
     LOCAL_DISABLE("Local disable", new byte[] { 0x00, 0x0c }), LOCAL_ENABLE("Local enable", new byte[] { 0x00, 0x1d }),
 
     /**
-     * Pause - this was passed to me from Danelle Cline for the JVC VCR. Ntt
+     * Pause - this was passed to me from Danelle Cline for the JVC VCR. Not
      * sure if it works with Sony's. Not yet sure how to resume.
      */
     PAUSE("Pause", new byte[] { 0x21, 0x13, 0x00 }),

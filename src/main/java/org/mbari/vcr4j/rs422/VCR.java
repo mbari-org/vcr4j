@@ -32,8 +32,8 @@ import org.mbari.vcr4j.IVCRReply;
 import org.mbari.vcr4j.VCRAdapter;
 import org.mbari.vcr4j.VCRException;
 import org.mbari.vcr4j.VCRUtil;
-import org.mbari.vcr4j.util.HMSF;
-import org.mbari.vcr4j.util.Timecode;
+import org.mbari.vcr4j.time.HMSF;
+import org.mbari.vcr4j.time.Timecode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -127,7 +127,7 @@ public class VCR extends VCRAdapter {
             outputStream.close();
             inputStream.close();
             serialPort.close();
-            getVcrTimecode().timecodeProperty().setValue(new Timecode(0, 100));
+            getVcrTimecode().timecodeProperty().setValue(Timecode.zero());
             ((VCRState) getVcrReply().getVcrState()).setStatus(0);
         }
         catch (Exception e) {

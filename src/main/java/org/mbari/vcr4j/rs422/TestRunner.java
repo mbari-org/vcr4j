@@ -2,9 +2,9 @@ package org.mbari.vcr4j.rs422;
 
 import org.mbari.vcr4j.IVCR;
 import org.mbari.comm.BadPortException;
+import org.mbari.vcr4j.time.Timecode;
 
 import java.io.IOException;
-import org.mbari.movie.Timecode;
 
 /**
  * <pre>
@@ -89,7 +89,7 @@ public class TestRunner {
             System.out.println("-- Beginning VCR tests");
             vcr.requestStatus();
             vcr.requestTimeCode();
-            Timecode startTimecode = new Timecode(vcr.getVcrTimecode().getTimecode());
+            Timecode startTimecode = vcr.getVcrTimecode().getTimecode();
             System.out.println("-- Current timecode is " + vcr.getVcrTimecode().getTimecode());
             System.out.println("-- Sending 'PLAY' command ");
             vcr.play();

@@ -24,10 +24,10 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import org.mbari.movie.Timecode;
 import org.mbari.util.IObserver;
 import org.mbari.vcr4j.IVCR;
 import org.mbari.vcr4j.VCRAdapter;
+import org.mbari.vcr4j.time.Timecode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

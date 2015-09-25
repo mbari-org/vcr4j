@@ -22,15 +22,13 @@ package org.mbari.vcr4j.rs422;
 
 import java.util.Arrays;
 import org.mbari.vcr4j.VCRTimecodeAdapter;
-import org.mbari.vcr4j.util.Converters;
-import org.mbari.vcr4j.util.HMSF;
-import org.mbari.vcr4j.util.Timecode;
+import org.mbari.vcr4j.time.Converters;
+import org.mbari.vcr4j.time.HMSF;
 
 /**
  * <p>Class for monitoring the timecode of a sony VCR.</p>
  *
- * @author  : $Author: hohonuuli $
- * @version : $Id: VCRTimecode.java,v 1.3 2006/01/06 21:04:50 hohonuuli Exp $
+ * @author  Brian Schlining
  */
 public class VCRTimecode extends VCRTimecodeAdapter {
 

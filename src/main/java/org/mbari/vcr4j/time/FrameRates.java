@@ -1,4 +1,4 @@
-package org.mbari.vcr4j.util;
+package org.mbari.vcr4j.time;
 
 /**
  * Common framerates as frames/second

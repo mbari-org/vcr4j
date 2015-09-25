@@ -28,11 +28,12 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.mbari.movie.Timecode;
 import org.mbari.util.NumberUtilities;
 import org.mbari.vcr4j.IVCRReply;
 import org.mbari.vcr4j.IVCRUserbits;
 import org.mbari.vcr4j.VCRAdapter;
+import org.mbari.vcr4j.time.FrameRates;
+import org.mbari.vcr4j.time.Timecode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,7 +86,7 @@ public class VCR extends VCRAdapter {
             socket.close();
         }
 
-        getVcrTimecode().getTimecode().setTime(0, 0, 0, 0);
+        getVcrTimecode().timecodeProperty().set(Timecode.zero());
         ((VCRState) getVcrState()).setPlaying(false);
         ((VCRState) getVcrState()).setConnected(false);
         super.disconnect();
@@ -189,7 +190,8 @@ public class VCR extends VCRAdapter {
                 Matcher matcher = timecodePattern.matcher(result);
 
                 if (matcher.find()) {
-                    timecode.setTimecode(matcher.group(0));
+                    Timecode newTimecode = new Timecode(matcher.group(0), FrameRates.NTSC);
+                    getVcrTimecode().timecodeProperty().set(newTimecode);
                 }
             }
             catch (Exception e) {

@@ -28,9 +28,10 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.mbari.movie.Timecode;
 import org.mbari.vcr4j.IVCRReply;
 import org.mbari.vcr4j.VCRAdapter;
+import org.mbari.vcr4j.time.FrameRates;
+import org.mbari.vcr4j.time.Timecode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,40 +46,13 @@ public class VCR extends VCRAdapter {
     private static final Pattern pattern = Pattern.compile("[0-2][0-9]:[0-5][0-9]:[0-5][0-9]:[0-2][0-9]");
     private static final Logger log = LoggerFactory.getLogger(VCR.class);
 
-    /**
-         * @uml.property  name="receiveMessage" multiplicity="(0 -1)" dimension="1"
-         */
+
     private byte[] receiveMessage = new byte[1024];
-
-    /**
-         * @uml.property  name="vcrReply"
-         * @uml.associationEnd  multiplicity="(1 1)"
-         */
     private final VCRReply vcrReply = new VCRReply();
-
-    /**
-         * @uml.property  name="incomingPacket"
-         */
     private final DatagramPacket incomingPacket;
-
-    /**
-         * @uml.property  name="inetAddress"
-         */
     private final InetAddress inetAddress;
-
-    /**
-         * @uml.property  name="port"
-         */
     private final int port;
-
-    /**
-         * @uml.property  name="requestTimecodePacket"
-         */
     private final DatagramPacket requestTimecodePacket;
-
-    /**
-         * @uml.property  name="socket"
-         */
     private DatagramSocket socket;
 
     /**
@@ -105,7 +79,7 @@ public class VCR extends VCRAdapter {
             socket.close();
         }
 
-        getVcrTimecode().getTimecode().setTime(0, 0, 0, 0);
+        getVcrTimecode().timecodeProperty().set(Timecode.zero());
         ((VCRState) getVcrState()).setPlaying(false);
         ((VCRState) getVcrState()).setConnected(false);
         super.disconnect();
@@ -156,9 +130,8 @@ public class VCR extends VCRAdapter {
     }
 
     /**
-         * @return  the socket
-         * @uml.property  name="socket"
-         */
+     * @return  the socket
+     */
     private DatagramSocket getSocket() throws SocketException {
         if ((socket == null) || socket.isClosed() || !socket.isConnected()) {
             socket = new DatagramSocket(0);
@@ -262,8 +235,8 @@ public class VCR extends VCRAdapter {
 
         /*
          * The format of the response is yes(00:00:00:00) or no(00:00:00:00). In
-         * order to be a bit mroe generic, we use a regular expression to search
-         * for the first occurence of a substring in a timecode format (i.e.
+         * order to be a bit more generic, we use a regular expression to search
+         * for the first occurrence of a substring in a timecode format (i.e.
          * like '01:23:45:12')
          */
         Timecode timecode = getVcrTimecode().getTimecode();
@@ -273,7 +246,8 @@ public class VCR extends VCRAdapter {
                 Matcher matcher = pattern.matcher(result);
 
                 if (matcher.find()) {
-                    timecode.setTimecode(matcher.group(0));
+                    Timecode newTimecode = new Timecode(matcher.group(0), FrameRates.NTSC);
+                    getVcrTimecode().timecodeProperty().set(newTimecode);
                 }
             }
             catch (Exception e) {

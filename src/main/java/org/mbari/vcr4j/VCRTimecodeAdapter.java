@@ -37,8 +37,8 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import org.mbari.util.IObserver;
 import org.mbari.util.ObservableSupport;
-import org.mbari.vcr4j.util.HMSF;
-import org.mbari.vcr4j.util.Timecode;
+import org.mbari.vcr4j.time.HMSF;
+import org.mbari.vcr4j.time.Timecode;
 
 /**
  *

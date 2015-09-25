@@ -1,4 +1,4 @@
-package org.mbari.vcr4j.util;
+package org.mbari.vcr4j.time;
 
 import org.junit.Test;
 import static org.junit.Assert.*;

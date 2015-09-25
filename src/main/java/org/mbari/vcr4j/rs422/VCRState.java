@@ -141,8 +141,6 @@ public class VCRState extends VCRStateAdapter {
 
     /**
      * Stores the status bits
-     * @uml.property  name="status"
-     * @uml.property  name="status"
      */
     private volatile long status;
 

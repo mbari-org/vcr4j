@@ -17,6 +17,8 @@ import org.mbari.vcr4j.IVCR;
 import org.mbari.vcr4j.IVCRTimecode;
 import org.mbari.vcr4j.IVCRUserbits;
 import org.mbari.vcr4j.VCRAdapter;
+import org.mbari.vcr4j.time.FrameRates;
+import org.mbari.vcr4j.time.Timecode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,7 +78,7 @@ public class VCRTest {
     @Test
     public void testAtCSIRO() {
         log.info("Setting timecode");
-        vcr.getVcrTimecode().getTimecode().setTimecode("00:00:00:00");
+        vcr.getVcrTimecode().timecodeProperty().set(Timecode.zero());
         log.info("Setting userbits");
         vcr.getVcrUserbits().setUserbits(new byte[4]);
         log.info("Running UDP tests");

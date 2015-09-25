@@ -14,8 +14,8 @@ package org.mbari.vcr4j.udp01;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import junit.framework.TestCase;
-import org.mbari.movie.Timecode;
 import org.mbari.vcr4j.IVCR;
+import org.mbari.vcr4j.time.Timecode;
 
 /**
  * Class description

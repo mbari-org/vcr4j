@@ -23,7 +23,6 @@ package org.mbari.vcr4j.timer;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
-import org.mbari.movie.Timecode;
 import org.mbari.vcr4j.IVCR;
 import org.mbari.vcr4j.IVCRError;
 import org.mbari.vcr4j.IVCRReply;
@@ -31,6 +30,7 @@ import org.mbari.vcr4j.IVCRState;
 import org.mbari.vcr4j.IVCRTimecode;
 import org.mbari.vcr4j.IVCRUserbits;
 import org.mbari.vcr4j.VCRAdapter;
+import org.mbari.vcr4j.time.Timecode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

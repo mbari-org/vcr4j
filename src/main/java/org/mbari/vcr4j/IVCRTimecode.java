@@ -22,7 +22,7 @@ package org.mbari.vcr4j;
 
 import javafx.beans.property.ObjectProperty;
 import org.mbari.util.IObservable;
-import org.mbari.vcr4j.util.Timecode;
+import org.mbari.vcr4j.time.Timecode;
 
 /**
  * @author  brian

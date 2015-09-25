@@ -1,4 +1,4 @@
-package org.mbari.vcr4j.util;
+package org.mbari.vcr4j.time;
 
 import java.util.Optional;
 
@@ -110,6 +110,11 @@ public class Timecode {
     @Override
     public String toString() {
         return stringRepresentation;
+    }
+
+
+    public static Timecode zero() {
+        return new Timecode(0, FrameRates.NTSC);
     }
 
 

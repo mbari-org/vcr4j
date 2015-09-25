@@ -16,7 +16,6 @@
 package org.mbari.vcr4j.purejavacomm;
 
 import org.mbari.comm.BadPortException;
-import org.mbari.movie.Timecode;
 import org.mbari.util.NumberUtilities;
 import org.mbari.vcr4j.IVCRReply;
 import org.mbari.vcr4j.VCRAdapter;
@@ -25,6 +24,9 @@ import org.mbari.vcr4j.VCRUtil;
 import org.mbari.vcr4j.rs422.Command;
 import org.mbari.vcr4j.rs422.VCRReply;
 import org.mbari.vcr4j.rs422.VCRState;
+import org.mbari.vcr4j.time.FrameRates;
+import org.mbari.vcr4j.time.HMSF;
+import org.mbari.vcr4j.time.Timecode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import purejavacomm.CommPortIdentifier;
@@ -36,6 +38,7 @@ import purejavacomm.UnsupportedCommOperationException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Optional;
 
 
 /**
@@ -111,7 +114,7 @@ public class VCR extends VCRAdapter {
             outputStream.close();
             inputStream.close();
             serialPort.close();
-            getVcrTimecode().getTimecode().setTime(0, 0, 0, 0);
+            getVcrTimecode().timecodeProperty().set(Timecode.zero());
             ((VCRState) getVcrReply().getVcrState()).setStatus(0);
         }
         catch (Exception e) {
@@ -523,9 +526,16 @@ public class VCR extends VCRAdapter {
      */
     @Override
     public void seekTimecode(Timecode timecode) {
-        byte[] time = new byte[] { VCRUtil.intToTime(timecode.getFrame()), VCRUtil.intToTime(timecode.getSecond()),
-                VCRUtil.intToTime(timecode.getMinute()), VCRUtil.intToTime(timecode.getHour()) };
-        seekTimecode(time);
+        Optional<HMSF> hmsfOpt = timecode.getHMSF();
+
+        if (hmsfOpt.isPresent()) {
+            HMSF hmsf = hmsfOpt.get();
+            byte[] time = new byte[]{VCRUtil.intToTime(hmsf.getFrame()),
+                    VCRUtil.intToTime(hmsf.getSecond()),
+                    VCRUtil.intToTime(hmsf.getMinute()),
+                    VCRUtil.intToTime(hmsf.getHour())};
+            seekTimecode(time);
+        }
     }
 
     /**

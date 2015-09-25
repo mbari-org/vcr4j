@@ -26,15 +26,12 @@ import org.mbari.vcr4j.VCRUserbitsAdapter;
 /**
  * <p>Class for monitoring the userbits of a sony VCR.</p>
  *
- * @author  : $Author: hohonuuli $
- * @version : $Revision: 1.3 $
+ * @author  : Brian Schlining
  */
 public class VCRUserbits extends VCRUserbitsAdapter {
 
-    /** <!-- Field description --> */
     public static final byte[] LTC_USERBITS = { 0x74, 0x05 };
 
-    /** <!-- Field description --> */
     public static final byte[] VTC_USERBITS = { 0x74, 0x07 };
 
     /** Default constructor. */
@@ -43,9 +40,6 @@ public class VCRUserbits extends VCRUserbitsAdapter {
     }
 
     /**
-     * <p><!-- Method description --></p>
-     *
-     *
      * @param cmd
      *
      * @return

@@ -21,7 +21,7 @@
 package org.mbari.vcr4j;
 
 
-import org.mbari.vcr4j.util.Timecode;
+import org.mbari.vcr4j.time.Timecode;
 
 /**
  * <p>Base interface of VCRs</p>
