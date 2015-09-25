@@ -22,6 +22,9 @@ package org.mbari.vcr4j.rs422;
 
 import java.util.Arrays;
 import org.mbari.vcr4j.VCRTimecodeAdapter;
+import org.mbari.vcr4j.util.Converters;
+import org.mbari.vcr4j.util.HMSF;
+import org.mbari.vcr4j.util.Timecode;
 
 /**
  * <p>Class for monitoring the timecode of a sony VCR.</p>
@@ -96,10 +99,9 @@ public class VCRTimecode extends VCRTimecodeAdapter {
     protected synchronized void setTimecodeBytes(byte[] timecodeBytes) {
         this.timecodeBytes = timecodeBytes;
 
-        
-
-        getTimecode().setTime(byteToTime(timecodeBytes[3]), byteToTime(timecodeBytes[2]), byteToTime(timecodeBytes[1]),
-                              byteToTime(timecodeBytes[0]));
+        HMSF hmsf = new HMSF(byteToTime(timecodeBytes[3]), byteToTime(timecodeBytes[2]), byteToTime(timecodeBytes[1]),
+                byteToTime(timecodeBytes[0]));
+        timecodeProperty().set(Converters.toTimecode(hmsf));
 
         /*
          * This call is no longer needed since the Timecode object contained
