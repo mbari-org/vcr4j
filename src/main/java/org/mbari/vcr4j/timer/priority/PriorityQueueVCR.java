@@ -153,7 +153,7 @@ public class PriorityQueueVCR implements IVCR {
     void addHigh(Function fn) {
         boolean ok = highPriorityQueue.offer(fn);
         if (!ok) {
-            log.warn("Failed to executed a high priorite function because the queue was full");
+            log.warn("Failed to executed a high priority function because the queue was full");
         }
     }
 

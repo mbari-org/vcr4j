@@ -190,7 +190,7 @@ public class VCR extends VCRAdapter {
                 Matcher matcher = timecodePattern.matcher(result);
 
                 if (matcher.find()) {
-                    Timecode newTimecode = new Timecode(matcher.group(0), FrameRates.NTSC);
+                    Timecode newTimecode = new Timecode(matcher.group(0));
                     getVcrTimecode().timecodeProperty().set(newTimecode);
                 }
             }

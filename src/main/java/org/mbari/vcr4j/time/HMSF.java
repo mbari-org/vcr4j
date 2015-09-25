@@ -70,7 +70,7 @@ public class HMSF {
      * @param timecode A string like "01:02:03:04"
      * @return Optional containing an HMSF if the string is a valid timecode string.
      */
-    static Optional<HMSF> from(String timecode) {
+    public static Optional<HMSF> from(String timecode) {
         HMSF hmsf = null;
         if (REGEX.matcher(timecode).matches()) {
             try {
@@ -87,7 +87,7 @@ public class HMSF {
         return Optional.ofNullable(hmsf);
     }
 
-    static HMSF from(final double frames, final double frameRate) {
+    public static HMSF from(final double frames, final double frameRate) {
         double f = frames;
         int hour = (int) Math.floor((f / 60.0 / 60.0 / frameRate));
         f = f - (double) hour * 60.0 * 60.0 * frameRate;
@@ -97,6 +97,12 @@ public class HMSF {
         int frame = (int) Math.floor(f - (double) second * frameRate);
         return new HMSF(hour, minute, second, frame);
     }
+
+    public static HMSF zero() {
+        return new HMSF(0, 0, 0, 0);
+    }
+
+
 
     @Override
     public String toString() {
