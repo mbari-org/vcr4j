@@ -59,8 +59,23 @@ public class VCRTimecode extends VCRTimecodeAdapter {
      * Convert a byte representing a timecode value to a number
      * @param b A byte of timecode
      * @return The decimal timecode value corresponding to the input byte.
+     * @deprecated Don't use. In some cases it will return the wrong frame value. See setTimecodeBytes
      */
     public static int byteToTime(byte b) {
+        int i10 = (int) ((b & 0x70) >>> 4) * 10;
+        int i1 = (int) (b & 0x0F);
+
+        return i10 + i1;
+    }
+
+    public static int byteToHourOrFrame(byte b) {
+        int i10 = (int) ((b & 0x30) >>> 4) * 10;
+        int i1 = (int) (b & 0x0F);
+
+        return i10 + i1;
+    }
+
+    public static int byteToMinuteOrSecond(byte b) {
         int i10 = (int) ((b & 0x70) >>> 4) * 10;
         int i1 = (int) (b & 0x0F);
 
@@ -97,8 +112,13 @@ public class VCRTimecode extends VCRTimecodeAdapter {
     protected synchronized void setTimecodeBytes(byte[] timecodeBytes) {
         this.timecodeBytes = timecodeBytes;
 
-        HMSF hmsf = new HMSF(byteToTime(timecodeBytes[3]), byteToTime(timecodeBytes[2]), byteToTime(timecodeBytes[1]),
-                byteToTime(timecodeBytes[0]));
+//        HMSF hmsf = new HMSF(byteToTime(timecodeBytes[3]), byteToTime(timecodeBytes[2]), byteToTime(timecodeBytes[1]),
+//                byteToTime(timecodeBytes[0]));
+
+        HMSF hmsf = new HMSF(byteToHourOrFrame(timecodeBytes[3]),
+                byteToMinuteOrSecond(timecodeBytes[2]),
+                byteToMinuteOrSecond(timecodeBytes[1]),
+                byteToHourOrFrame(timecodeBytes[0]));
         timecodeProperty().set(Converters.toTimecode(hmsf));
 
         /*
