@@ -8,9 +8,10 @@
     <url>http://code.google.com/p/vcr4j/</url>
     <description>Java API for communicating with video tape recorders that support the Sony 9-pin protocol</description>
     <scm>
-        <connection>scm:svn:http://vcr4j.googlecode.com/svn/trunk/</connection>
-        <developerConnection>scm:svn:https://vcr4j.googlecode.com/svn/trunk/</developerConnection>
-        <url>http://vcr4j.googlecode.com/svn/trunk/</url>
+        <connection>scm:git:https://github.com/hohonuuli/vcr4j.git</connection>
+        <developerConnection>scm:git:git@github.com:hohonuuli/vcr4j.git</developerConnection>
+        <url>https://github.com/hohonuuli/vcr4j</url>
+        <tag>HEAD</tag>
     </scm>
     <developers>
         <developer>
@@ -99,7 +100,16 @@
                     <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
-            <!-- Use Java 5.0 -->
+            <plugin>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.4.1</version>
+                <configuration>
+                    <useReleaseProfile>false</useReleaseProfile>
+                    <releaseProfiles>release</releaseProfiles>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                </configuration>
+            </plugin>
+            <!-- Use Java 8.0 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -222,7 +232,7 @@
                 <artifactId>maven-pmd-plugin</artifactId>
                 <configuration>
                     <linkXref>true</linkXref>
-                    <targetJdk>1.7</targetJdk>
+                    <targetJdk>1.8</targetJdk>
                     <rulesets>
                         <ruleset>/rulesets/basic.xml</ruleset>
                         <ruleset>/rulesets/imports.xml</ruleset>
@@ -235,14 +245,10 @@
     </reporting>
     <distributionManagement>
         <repository>
-            <id>bintray-repo-maven-example</id>
-            <url>https://api.bintray.com/maven/hohonuuli/maven-repo/vcr4j/;publish=1</url>
+            <id>bintray</id>
+            <url>https://api.bintray.com/maven/hohonuuli/maven/vcr4j/;publish=1</url>
         </repository>
-<!--         <repository>
-            <uniqueVersion>true</uniqueVersion>
-            <id>mbari-maven-repository</id>
-            <url>dav:https://mbari-maven-repository.googlecode.com/svn/repository</url>
-        </repository> -->
+        <!--         <repository><uniqueVersion>true</uniqueVersion><id>mbari-maven-repository</id><url>dav:https://mbari-maven-repository.googlecode.com/svn/repository</url></repository>-->
         <snapshotRepository>
             <uniqueVersion>true</uniqueVersion>
             <id>mbari-maven-snapshot-repository</id>
