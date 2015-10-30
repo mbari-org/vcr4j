@@ -28,7 +28,7 @@ public class CommandQueueVCR implements IVCR {
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     private final IVCR vcr;
-    private Timer timer;
+    private volatile Timer timer;
 
     public CommandQueueVCR(IVCR vcr) {
         this.vcr = vcr;
@@ -46,14 +46,18 @@ public class CommandQueueVCR implements IVCR {
      *
      */
     public void disconnect() {
-        timer.cancel();
+        if (timer != null) {
+            timer.cancel();
+        }
         timer = null;
         vcr.disconnect();
     }
 
     public void kill() {
         // Allow timer to clean up
-        timer.cancel();
+        if (timer != null) {
+            timer.cancel();
+        }
         timer = null;
         vcr.kill();
     }
@@ -68,7 +72,7 @@ public class CommandQueueVCR implements IVCR {
                 vcr.eject();
             }
         };
-        timer.schedule(timerTask, 0);
+        getTimer().schedule(timerTask, 0);
     }
 
     /**
@@ -82,7 +86,7 @@ public class CommandQueueVCR implements IVCR {
                 vcr.fastForward();
             }
         };
-        timer.schedule(timerTask, 0);
+        getTimer().schedule(timerTask, 0);
     }
 
     /**
@@ -165,7 +169,7 @@ public class CommandQueueVCR implements IVCR {
                 vcr.pause();
             }
         };
-        timer.schedule(timerTask, 0);
+        getTimer().schedule(timerTask, 0);
     }
 
     /**
@@ -179,7 +183,7 @@ public class CommandQueueVCR implements IVCR {
                 vcr.play();
             }
         };
-        timer.schedule(timerTask, 0);
+        getTimer().schedule(timerTask, 0);
     }
 
     /**
@@ -195,7 +199,7 @@ public class CommandQueueVCR implements IVCR {
                 vcr.presetTimecode(timecode);
             }
         };
-        timer.schedule(timerTask, 0);
+        getTimer().schedule(timerTask, 0);
     }
 
     /**
@@ -211,7 +215,7 @@ public class CommandQueueVCR implements IVCR {
                 vcr.presetUserbits(userbits);
             }
         };
-        timer.schedule(timerTask, 0);
+        getTimer().schedule(timerTask, 0);
     }
 
     /**
@@ -225,7 +229,7 @@ public class CommandQueueVCR implements IVCR {
                 vcr.record();
             }
         };
-        timer.schedule(timerTask, 0);
+        getTimer().schedule(timerTask, 0);
     }
 
     /**
@@ -239,7 +243,7 @@ public class CommandQueueVCR implements IVCR {
                 vcr.releaseTape();
             }
         };
-        timer.schedule(timerTask, 0);
+        getTimer().schedule(timerTask, 0);
     }
 
     /**
@@ -261,7 +265,7 @@ public class CommandQueueVCR implements IVCR {
                 vcr.requestDeviceType();
             }
         };
-        timer.schedule(timerTask, 0);
+        getTimer().schedule(timerTask, 0);
     }
 
     /**
@@ -275,7 +279,7 @@ public class CommandQueueVCR implements IVCR {
                 vcr.requestLTimeCode();
             }
         };
-        timer.schedule(timerTask, 0);
+        getTimer().schedule(timerTask, 0);
     }
 
     /**
@@ -289,7 +293,7 @@ public class CommandQueueVCR implements IVCR {
                 vcr.requestLUserbits();
             }
         };
-        timer.schedule(timerTask, 0);
+        getTimer().schedule(timerTask, 0);
     }
 
     /**
@@ -303,7 +307,7 @@ public class CommandQueueVCR implements IVCR {
                 vcr.requestLocalDisable();
             }
         };
-        timer.schedule(timerTask, 0);
+        getTimer().schedule(timerTask, 0);
     }
 
     /**
@@ -317,7 +321,7 @@ public class CommandQueueVCR implements IVCR {
                 vcr.requestLocalEnable();
             }
         };
-        timer.schedule(timerTask, 0);
+        getTimer().schedule(timerTask, 0);
     }
 
     /**
@@ -331,7 +335,7 @@ public class CommandQueueVCR implements IVCR {
                 vcr.requestStatus();
             }
         };
-        timer.schedule(timerTask, 0);
+        getTimer().schedule(timerTask, 0);
     }
 
     /**
@@ -345,7 +349,7 @@ public class CommandQueueVCR implements IVCR {
                 vcr.requestTimeCode();
             }
         };
-        timer.schedule(timerTask, 0);
+        getTimer().schedule(timerTask, 0);
     }
 
     public void requestUserbits() {
@@ -355,7 +359,7 @@ public class CommandQueueVCR implements IVCR {
                 vcr.requestUserbits();
             }
         };
-        timer.schedule(timerTask, 0);
+        getTimer().schedule(timerTask, 0);
     }
 
     /**
@@ -369,7 +373,7 @@ public class CommandQueueVCR implements IVCR {
                 vcr.requestVTimeCode();
             }
         };
-        timer.schedule(timerTask, 0);
+        getTimer().schedule(timerTask, 0);
     }
 
     /**
@@ -383,7 +387,7 @@ public class CommandQueueVCR implements IVCR {
                 vcr.requestVUserbits();
             }
         };
-        timer.schedule(timerTask, 0);
+        getTimer().schedule(timerTask, 0);
     }
 
     /**
@@ -397,7 +401,7 @@ public class CommandQueueVCR implements IVCR {
                 vcr.rewind();
             }
         };
-        timer.schedule(timerTask, 0);
+        getTimer().schedule(timerTask, 0);
     }
 
     /**
@@ -413,7 +417,7 @@ public class CommandQueueVCR implements IVCR {
                 vcr.seekTimecode(timecode);
             }
         };
-        timer.schedule(timerTask, 0);
+        getTimer().schedule(timerTask, 0);
     }
 
     /**
@@ -429,7 +433,7 @@ public class CommandQueueVCR implements IVCR {
                 vcr.seekTimecode(timecode);
             }
         };
-        timer.schedule(timerTask, 0);
+        getTimer().schedule(timerTask, 0);
     }
 
     public void seekTimecode(final Timecode timecode) {
@@ -439,7 +443,7 @@ public class CommandQueueVCR implements IVCR {
                 vcr.seekTimecode(timecode);
             }
         };
-        timer.schedule(timerTask, 0);
+        getTimer().schedule(timerTask, 0);
     }
 
 
@@ -456,7 +460,7 @@ public class CommandQueueVCR implements IVCR {
                 vcr.shuttleForward(speed);
             }
         };
-        timer.schedule(timerTask, 0);
+        getTimer().schedule(timerTask, 0);
     }
 
     /**
@@ -472,7 +476,7 @@ public class CommandQueueVCR implements IVCR {
                 vcr.shuttleReverse(speed);
             }
         };
-        timer.schedule(timerTask, 0);
+        getTimer().schedule(timerTask, 0);
     }
 
     /**
@@ -486,7 +490,7 @@ public class CommandQueueVCR implements IVCR {
                 vcr.stop();
             }
         };
-        timer.schedule(timerTask, 0);
+        getTimer().schedule(timerTask, 0);
     }
 
 
