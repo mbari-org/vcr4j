@@ -452,12 +452,8 @@ public class VCR extends VCRAdapter {
      */
     @Override
     public void requestUserbits() {
-        if (getVcrState().isPlaying()) {
-            requestVUserbits();
-        }
-        else {
-            requestLUserbits();
-        }
+        requestLUserbits();
+        requestLUserbits();
     }
 
     /**
