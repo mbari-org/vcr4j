@@ -29,6 +29,7 @@ import org.mbari.comm.BadPortException;
 import org.mbari.util.NumberUtilities;
 import org.mbari.vcr4j.IVCR;
 import org.mbari.vcr4j.IVCRReply;
+import org.mbari.vcr4j.IVCRState;
 import org.mbari.vcr4j.VCRAdapter;
 import org.mbari.vcr4j.VCRException;
 import org.mbari.vcr4j.VCRUtil;
@@ -527,19 +528,21 @@ public class VCR extends VCRAdapter {
     }
 
     /**
-     * Tries to request the best userbits. This method has not been tested.
+     * Tries to request the best userbits.
      *
      */
     @Override
     public void requestUserbits() {
-        //vcrReply.getVcrUserbits().setUserbits(new byte[] { 0, 0, 0, 0 });
-        if (getVcrState().isPlaying()) {
-            requestVUserbits();
-        }
-        else {
-            //requestVUserbits();
-            requestLUserbits();
-        }
+        /*
+          Send both types of userbits. From testing with Sony decks. VUB and LUB returns
+          depend on too many factors, such as shuttling speed. Here we just send both commands
+          to the deck. Hold responses are ignored. If either one returns a non-hold response then the
+          VCRUserbits object will be updated. Send longitudinal first as it's the one that responds
+          when shuttling at high speeds.
+         */
+        requestLUserbits();
+        requestVUserbits();
+
     }
 
     /**

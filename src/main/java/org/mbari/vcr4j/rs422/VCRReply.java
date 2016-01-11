@@ -265,6 +265,7 @@ public class VCRReply extends VCRReplyAdapter {
         return VCRUserbits.isUserbitsReply(cmd);
     }
 
+
     /**
      * Update the ste objects associated with this VCRReply
      * @param command The command that was sent to the VCR
@@ -301,25 +302,9 @@ public class VCRReply extends VCRReplyAdapter {
         else if (isTimecodeReply()) {
 
             // Handle updating the status and/or timecode as appropriate
-            // System.out.println("VCRReply.update() <= setting time code");
             vcrTimecode.setTimecodeBytes(data);
         }
         else if (isUserbitsReply()) {
-            String bs = "";
-
-            for (int i = 0; i < cmd.length; i++) {
-                bs = bs + cmd[i] + " ";
-            }
-
-            for (int i = 0; i < data.length; i++) {
-                bs = bs + data[i] + " ";
-            }
-
-            for (int i = 0; i < checksum.length; i++) {
-                bs = bs + checksum[i] + " ";
-            }
-
-            // System.out.println("VCRReply.update(" + bs + ")");
             vcrUserbits.setUserbits(data);
         }
         else if (isStatusReply()) {
