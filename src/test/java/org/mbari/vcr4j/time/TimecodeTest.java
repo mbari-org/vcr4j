@@ -1,6 +1,9 @@
 package org.mbari.vcr4j.time;
 
 import org.junit.Test;
+
+import java.sql.Time;
+
 import static org.junit.Assert.*;
 /**
  * @author Brian Schlining
@@ -64,7 +67,7 @@ public class TimecodeTest {
         assertEquals(10D, tc0.getSeconds(), EPSILON);
 
         Timecode tc1 = new Timecode(100, 10);
-        assertEquals(10D, tc0.getSeconds(), EPSILON);
+        assertEquals(10D, tc1.getSeconds(), EPSILON);
     }
 
 

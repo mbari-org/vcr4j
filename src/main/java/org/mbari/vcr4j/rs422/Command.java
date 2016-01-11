@@ -31,7 +31,8 @@ public enum Command {
     EJECT_TAPE("Eject tape", new byte[] { 0x20, 0x0f }), FAST_FWD("Fast forward", new byte[] { 0x20, 0x10 }),
     GET_CUEUP_STATUS("Request cueup status", new byte[] { 0x61, 0x20, 0x21 }),
     GET_LTIMECODE("Request longitudinal timecode", new byte[] { 0x61, 0x0c, 0x01 }),
-    GET_LUBTIMECODE("Request longitudinal userbits", new byte[] { 0x61, 0x0c, 0x0F }),
+    //GET_LUBTIMECODE("Request longitudinal userbits", new byte[] { 0x61, 0x0c, 0x0F }),
+    GET_LUBTIMECODE("Request longitudinal userbits", new byte[] { 0x61, 0x0c, 0x10 }),
     GET_STATUS("Request status", new byte[] { 0x61, 0x20, 0x03 }),
 
     /**
@@ -50,7 +51,8 @@ public enum Command {
     GET_VTIMECODE("Request vertical timecode", new byte[] { 0x61, 0x0c, 0x02 }),
 
     /** Get vertical Userbits timecode command */
-    GET_VUBTIMECODE("Request vertical userbits", new byte[] { 0x61, 0x0c, 0x10 }),
+    //GET_VUBTIMECODE("Request vertical userbits", new byte[] { 0x61, 0x0c, 0x10 }),
+    GET_VUBTIMECODE("Request vertical userbits", new byte[] { 0x61, 0x0c, 0x20 }),
     LOCAL_DISABLE("Local disable", new byte[] { 0x00, 0x0c }), LOCAL_ENABLE("Local enable", new byte[] { 0x00, 0x1d }),
 
     /**
