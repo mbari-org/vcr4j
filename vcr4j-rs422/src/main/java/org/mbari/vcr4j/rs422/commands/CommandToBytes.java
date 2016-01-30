@@ -5,7 +5,7 @@ import org.mbari.vcr4j.commands.SeekElapsedTimeCmd;
 import org.mbari.vcr4j.commands.SeekTimecodeCmd;
 import org.mbari.vcr4j.commands.SeekTimestampCmd;
 import org.mbari.vcr4j.commands.ShuttleCmd;
-import org.mbari.vcr4j.commands.VideoCommand;
+import org.mbari.vcr4j.VideoCommand;
 import org.mbari.vcr4j.commands.VideoCommands;
 import org.mbari.vcr4j.time.HMSF;
 import org.mbari.vcr4j.time.Timecode;
@@ -14,6 +14,9 @@ import org.slf4j.LoggerFactory;
 
 
 /**
+ * This utility class converts VideoCommand objects to the appropriate byte commands
+ * used by RS422.
+ *
  * @author Brian Schlining
  * @since 2016-01-28T14:25:00
  */
@@ -51,7 +54,7 @@ public class CommandToBytes {
             bytes = toBytes((SeekTimestampCmd) cmd);
         }
         else if (cmd instanceof ShuttleCmd) {
-            bytes = toBytes((SeekTimecodeCmd) cmd);
+            bytes = toBytes((ShuttleCmd) cmd);
         }
         else {
             bytes = RS422ByteCommands.UNDEFINED.getBytes();
@@ -170,6 +173,7 @@ public class CommandToBytes {
      * @return The byte array formatted as a string
      */
     public static final String byteArrayToString(byte[] b) {
+
         StringBuffer sb = new StringBuffer();
 
         if (b != null) {

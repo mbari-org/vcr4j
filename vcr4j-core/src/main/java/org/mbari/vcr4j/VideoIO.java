@@ -1,6 +1,5 @@
 package org.mbari.vcr4j;
 
-import org.mbari.vcr4j.commands.VideoCommand;
 import rx.Observable;
 import rx.subjects.Subject;
 

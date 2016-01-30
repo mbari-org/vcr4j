@@ -1,5 +1,8 @@
 package org.mbari.vcr4j.rs422;
 
+import org.mbari.util.NumberUtilities;
+import org.mbari.vcr4j.util.Preconditions;
+
 import java.util.Arrays;
 
 public class RS422Userbits {
@@ -15,6 +18,7 @@ public class RS422Userbits {
     private final byte[] userbits;
     
     public RS422Userbits(byte[] userbits) {
+        Preconditions.checkArgument(userbits != null, "userbits arg can not be null");
         this.userbits = userbits;
     }
     
@@ -38,7 +42,28 @@ public class RS422Userbits {
     public static boolean isUserbitsHoldReply(byte[] cmd) {
         return ((Arrays.equals(cmd, LTC_USERBITS_HOLD)) || (Arrays.equals(cmd, VTC_USERBITS_HOLD)));
     }
-    
-    
-    
+
+    public byte[] getUserbits() {
+        return userbits;
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(userbits);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        RS422Userbits that = (RS422Userbits) o;
+
+        return Arrays.equals(userbits, that.userbits);
+
+    }
 }

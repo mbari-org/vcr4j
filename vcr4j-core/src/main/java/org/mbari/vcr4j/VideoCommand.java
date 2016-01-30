@@ -1,4 +1,4 @@
-package org.mbari.vcr4j.commands;
+package org.mbari.vcr4j;
 
 public interface VideoCommand<A> {
   

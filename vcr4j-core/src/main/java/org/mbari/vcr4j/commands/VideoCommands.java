@@ -1,5 +1,7 @@
 package org.mbari.vcr4j.commands;
 
+import org.mbari.vcr4j.VideoCommand;
+
 public enum VideoCommands implements VideoCommand<Void> {
     FAST_FORWARD("fast forward"),
     PAUSE("pause"),

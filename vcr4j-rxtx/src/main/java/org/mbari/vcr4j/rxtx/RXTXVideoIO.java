@@ -8,12 +8,16 @@ import gnu.io.UnsupportedCommOperationException;
 import org.mbari.util.NumberUtilities;
 import org.mbari.vcr4j.VideoIO;
 import org.mbari.vcr4j.VideoIndex;
-import org.mbari.vcr4j.commands.VideoCommand;
+import org.mbari.vcr4j.VideoCommand;
 import org.mbari.vcr4j.commands.VideoCommands;
 import org.mbari.vcr4j.rs422.RS422Error;
 import org.mbari.vcr4j.rs422.RS422ResponseParser;
 import org.mbari.vcr4j.rs422.RS422State;
+import org.mbari.vcr4j.rs422.RS422Timecode;
+import org.mbari.vcr4j.rs422.RS422Userbits;
+import org.mbari.vcr4j.rs422.RS422VideoIO;
 import org.mbari.vcr4j.rs422.commands.CommandToBytes;
+import org.mbari.vcr4j.rs422.commands.RS422ByteCommands;
 import org.mbari.vcr4j.rs422.commands.RS422VideoCommands;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,13 +30,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.Optional;
 
 /**
  * @author Brian Schlining
  * @since 2016-01-28T14:24:00
  */
-public class RXTXVideoIO implements VideoIO<RS422State, RS422Error> {
+public class RXTXVideoIO implements RS422VideoIO {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -66,7 +71,6 @@ public class RXTXVideoIO implements VideoIO<RS422State, RS422Error> {
             throw new RuntimeException("Failed to open " + portName, e);
         }
 
-
         commandSubject.subscribe(vc -> {
             if (vc.equals(RS422VideoCommands.REQUEST_USERBITS)) {
                 // LUB and VUB access if very state dependant. We get around that by
@@ -80,14 +84,13 @@ public class RXTXVideoIO implements VideoIO<RS422State, RS422Error> {
             }
             else {
                 byte[] cmd = CommandToBytes.apply(vc);
-                sendCommand(cmd, vc);
+                if (!Arrays.equals(cmd, RS422ByteCommands.UNDEFINED.getBytes())) {
+                    sendCommand(cmd, vc);
+                }
             }
 
         });
 
-        // Request status and time code right away
-        send(VideoCommands.REQUEST_TIMECODE);
-        send(VideoCommands.REQUEST_STATUS);
     }
 
     public static SerialPort openSerialPort(String serialPortName)
@@ -119,7 +122,7 @@ public class RXTXVideoIO implements VideoIO<RS422State, RS422Error> {
         command[command.length - 1] = checksum;
 
         try {
-
+            logCommand(command, videoCommand);
             outputStream.write(command);
             Thread.sleep(IO_DELAY);    // RXTX does not block serial IO correctly.
             readResponse(command, videoCommand);
@@ -180,29 +183,14 @@ public class RXTXVideoIO implements VideoIO<RS422State, RS422Error> {
                     " data[] = " + NumberUtilities.toHexString(data));
         }
 
-        if (log.isDebugEnabled()) {
-
-            /*
-             * Munge it all into a single byte array
-             */
-            int dataLength = (data == null) ? 0 : data.length;
-            final byte[] c = new byte[cmd.length + dataLength + 1];
-
-            System.arraycopy(cmd, 0, c, 0, cmd.length);
-
-            if (data != null) {
-                System.arraycopy(data, 0, c, cmd.length, data.length);
-            }
-
-            c[c.length - 1] = checksum[0];
-
-            log.debug("VCR >> [" + NumberUtilities.toHexString(c) + "]");
-        }
+        logResponse(cmd, data, checksum);
 
         responseParser.update(mostRecentCommand, cmd, data, checksum, Optional.of(videoCommand));
 
 
     }
+
+
 
 
     @Override
@@ -212,7 +200,27 @@ public class RXTXVideoIO implements VideoIO<RS422State, RS422Error> {
 
     @Override
     public void close() {
-
+        log.info("Closing serial port:" + serialPort.getName());
+        try {
+            outputStream.close();
+            inputStream.close();
+            serialPort.close();
+            responseParser.getStatusObservable()
+                    .onNext(RS422State.STOPPED);
+            responseParser.getTimecodeObservable()
+                    .onNext(RS422Timecode.ZERO);
+            responseParser.getStatusObservable().onCompleted();
+            responseParser.getTimecodeObservable().onCompleted();
+            responseParser.getErrorObservable().onCompleted();
+            responseParser.getUserbitsObservable().onCompleted();
+            commandSubject.onCompleted();
+            serialPort = null;
+        }
+        catch (Exception e) {
+            if (log.isErrorEnabled() && (serialPort != null)) {
+                log.error("Problem occured when closing serial port communications on " + serialPort.getName());
+            }
+        }
     }
 
     @Override
@@ -222,7 +230,7 @@ public class RXTXVideoIO implements VideoIO<RS422State, RS422Error> {
 
     @Override
     public String getConnectionID() {
-        return null;
+        return (serialPort == null) ? "Not Connected" : serialPort.getName();
     }
 
     @Override
@@ -233,6 +241,16 @@ public class RXTXVideoIO implements VideoIO<RS422State, RS422Error> {
     @Override
     public Observable<RS422State> getStateObservable() {
         return responseParser.getStatusObservable();
+    }
+
+    @Override
+    public Observable<RS422Timecode> getTimecodeObservable() {
+        return responseParser.getTimecodeObservable();
+    }
+
+    @Override
+    public Observable<RS422Userbits> getUserbitsObservable() {
+        return responseParser.getUserbitsObservable();
     }
 
     /**
@@ -252,6 +270,33 @@ public class RXTXVideoIO implements VideoIO<RS422State, RS422Error> {
                         return new VideoIndex(Optional.empty(), Optional.empty(), Optional.of(timecode.getTimecode()));
                     }
                 }).distinctUntilChanged();
+    }
+
+    private void logCommand(byte[] bytes, VideoCommand videoCommand) {
+        if (log.isDebugEnabled()) {
+            log.debug("[0x" + NumberUtilities.toHexString(bytes) + "] >>> VCR (" + videoCommand.getName() + ")");
+        }
+    }
+
+    private void logResponse(byte[] cmd, byte[] data, byte[] checksum) {
+        if (log.isDebugEnabled()) {
+
+            /*
+             * Munge it all into a single byte array
+             */
+            int dataLength = (data == null) ? 0 : data.length;
+            final byte[] c = new byte[cmd.length + dataLength + 1];
+
+            System.arraycopy(cmd, 0, c, 0, cmd.length);
+
+            if (data != null) {
+                System.arraycopy(data, 0, c, cmd.length, data.length);
+            }
+
+            c[c.length - 1] = checksum[0];
+
+            log.debug("[0x" + NumberUtilities.toHexString(c) + "] <<< VCR");
+        }
     }
 
 

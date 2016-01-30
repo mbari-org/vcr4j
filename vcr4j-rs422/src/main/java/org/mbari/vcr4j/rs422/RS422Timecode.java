@@ -2,11 +2,15 @@ package org.mbari.vcr4j.rs422;
 
 import java.util.Arrays;
 
+import org.mbari.vcr4j.rs422.commands.CommandToBytes;
 import org.mbari.vcr4j.time.Converters;
 import org.mbari.vcr4j.time.HMSF;
 import org.mbari.vcr4j.time.Timecode;
+import org.mbari.vcr4j.util.Preconditions;
 
 public class RS422Timecode {
+
+    public static final RS422Timecode ZERO = new RS422Timecode(CommandToBytes.timecodeToBytes(new Timecode("00:00:00:00")));
     public static final byte[] ALT_LTC_TIMECODE = { 0x74, 0x14 };
     public static final byte[] LTC_TIMECODE     = { 0x74, 0x04 };
     public static final byte[] TIMER1_TIMECODE  = { 0x74, 0x00 };
@@ -16,6 +20,7 @@ public class RS422Timecode {
     private final Timecode timecode;
 
     public RS422Timecode(byte[] timecodeBytes) {
+        Preconditions.checkArgument(timecodeBytes != null, "timecodeBytes arg can not be null");
         this.timecodeBytes = timecodeBytes;
 
         HMSF hmsf = new HMSF(byteToHourOrFrame(timecodeBytes[3]),
@@ -82,5 +87,25 @@ public class RS422Timecode {
                 || (Arrays.equals(cmd, ALT_LTC_TIMECODE))
                 || (Arrays.equals(cmd, TIMER1_TIMECODE))
                 || (Arrays.equals(cmd, TIMER2_TIMECODE)));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        RS422Timecode that = (RS422Timecode) o;
+
+        return Arrays.equals(timecodeBytes, that.timecodeBytes);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(timecodeBytes);
     }
 }

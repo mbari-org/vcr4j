@@ -1,10 +1,8 @@
 package org.mbari.vcr4j;
 
-import org.mbari.vcr4j.commands.VideoCommand;
-
 import java.util.Optional;
 
-public interface VideoError<A> {
+public interface VideoError {
 
     /**
      * @return true if an error condition occurred in response to a command

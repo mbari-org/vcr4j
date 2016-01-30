@@ -3,7 +3,7 @@ package org.mbari.vcr4j.rs422;
 import java.util.Optional;
 
 import org.mbari.vcr4j.VideoError;
-import org.mbari.vcr4j.commands.VideoCommand;
+import org.mbari.vcr4j.VideoCommand;
 
 public class RS422Error implements VideoError {
 

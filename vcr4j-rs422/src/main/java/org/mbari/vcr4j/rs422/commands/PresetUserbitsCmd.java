@@ -1,6 +1,6 @@
 package org.mbari.vcr4j.rs422.commands;
 
-import org.mbari.vcr4j.commands.SimpleVideoCommand;import org.mbari.vcr4j.commands.VideoCommand;
+import org.mbari.vcr4j.commands.SimpleVideoCommand;
 
 /**
  * @author Brian Schlining
@@ -8,7 +8,7 @@ import org.mbari.vcr4j.commands.SimpleVideoCommand;import org.mbari.vcr4j.comman
  */
 public class PresetUserbitsCmd extends SimpleVideoCommand<byte[]> {
 
-    public PresetUserbitsCmd(String name, byte[] value) {
-        super(name, value);
+    public PresetUserbitsCmd(byte[] value) {
+        super("preset userbits", value);
     }
 }

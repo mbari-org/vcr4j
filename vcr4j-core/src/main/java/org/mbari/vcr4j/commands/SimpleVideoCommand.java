@@ -1,5 +1,7 @@
 package org.mbari.vcr4j.commands;
 
+import org.mbari.vcr4j.VideoCommand;
+
 public class SimpleVideoCommand<A> implements VideoCommand<A> {
   
   private final String name;

@@ -15,7 +15,7 @@ package org.mbari.vcr4j.rs422;
 import java.util.Arrays;
 import java.util.Optional;
 import org.mbari.util.NumberUtilities;
-import org.mbari.vcr4j.commands.VideoCommand;
+import org.mbari.vcr4j.VideoCommand;
 import rx.subjects.PublishSubject;
 import rx.subjects.SerializedSubject;
 import rx.subjects.Subject;

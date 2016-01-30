@@ -1,7 +1,11 @@
 package org.mbari.vcr4j.rs422.commands;
 
-import org.mbari.vcr4j.commands.VideoCommand;
+import org.mbari.vcr4j.VideoCommand;
 
+/**
+ * These commands augment the default VideoCommands set with ones that are specific to
+ * RS422.
+ */
 public enum RS422VideoCommands implements VideoCommand<RS422ByteCommands> {
     DISCONNECT("disconnect", RS422ByteCommands.UNDEFINED),
     EJECT("eject", RS422ByteCommands.EJECT_TAPE),
