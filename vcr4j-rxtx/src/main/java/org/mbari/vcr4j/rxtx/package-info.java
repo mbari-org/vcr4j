@@ -7,7 +7,7 @@
  * RXTX.setup();
  *
  * // Replace 'SerialPortName' with yours. e.g COM1 or /dev/ttys.myport
- * VideoIO<RS422State, RS422Error> io = new RXTXVideoIO("SerialPortName")
+ * VideoIO<RS422State, RS422Error> io = RXTXVideoIO.open("SerialPortName")
  * VideoController controller = new VideoController(io);
  *
  * // For UI apps you may want frequent status calls to the VCR

@@ -43,11 +43,12 @@
     <modules>
         <module>vcr4j-core</module>
         <module>vcr4j-udp</module>
+        <module>vcr4j-rs422</module>
         <module>vcr4j-rxtx</module>
         <module>vcr4j-purejavacomm</module>
         <module>vcr4j-kipro</module>
-        <module>vcr4j-rs422</module>
-    </modules>
+        <module>vcr4j-examples</module>
+  </modules>
     <build>
         <plugins>
             <!-- Filter resources using UTF-8 -->

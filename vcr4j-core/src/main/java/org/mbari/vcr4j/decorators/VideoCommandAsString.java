@@ -11,7 +11,7 @@ public class VideoCommandAsString {
     private final String string;
 
     public VideoCommandAsString(VideoCommand cmd) {
-        StringBuilder sb = new StringBuilder("{name:VideoCommand,class:'")
+        StringBuilder sb = new StringBuilder("{name:'VideoCommand',class:'")
                 .append(cmd.getClass().getName())
                 .append("',name:'")
                 .append(cmd.getName())

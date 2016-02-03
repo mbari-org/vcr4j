@@ -123,7 +123,7 @@ public class RXTXUtilities {
                 CommPortIdentifier port = (CommPortIdentifier) i.next();
                 portName = port.getName();
 
-                final RXTXVideoIO io = new RXTXVideoIO(port.getName());
+                final RXTXVideoIO io = RXTXVideoIO.open(port.getName());
                 io.send(VideoCommands.REQUEST_STATUS);
                 io.getStateObservable()
                         .subscribe(state -> vcrPorts.put(port, state.isConnected()), e -> {}, io::close);

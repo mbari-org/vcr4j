@@ -86,4 +86,34 @@ public class RS422Error implements VideoError {
     public Optional<VideoCommand> getVideoCommand() {
         return videoCommand;
     }
+
+
+    /**
+     * RS422Error objects are equal if they have the same error code
+     * @param o
+     * @return
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        RS422Error that = (RS422Error) o;
+
+        return error == that.error;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return error;
+    }
+
+
 }
+
+
