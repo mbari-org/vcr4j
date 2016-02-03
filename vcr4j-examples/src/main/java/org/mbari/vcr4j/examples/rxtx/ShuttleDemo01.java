@@ -38,23 +38,23 @@ public class ShuttleDemo01 {
 
         // --- Watch the observables that are available to all VideoIO objects and print everything
         io.getIndexObservable()
-                .subscribe(index -> stream.print(new VideoIndexAsString(index).toString()));
+                .subscribe(index -> stream.print(new VideoIndexAsString(index).toString()  + "\n"));
         io.getStateObservable()
-                .subscribe(state -> stream.print(new VideoStateAsString(state).toString()));
+                .subscribe(state -> stream.print(new VideoStateAsString(state).toString() + "\n"));
         io.getCommandSubject()
-                .subscribe(videoCommand -> stream.print(new VideoCommandAsString(videoCommand)));
+                .subscribe(videoCommand -> stream.print(new VideoCommandAsString(videoCommand) + "\n"));
         // We don't need to see ALL errors as a new error state is created on every ACK from the device.
         // Only print them if they change. Note, although the errorObserver is available to from all
         // VideoIO objects, the code below is adapted specifically to RS422.
         io.getErrorObservable().distinctUntilChanged()
-                .subscribe(error -> stream.print(new RS422ErrorAsString(error)));
+                .subscribe(error -> stream.print(new RS422ErrorAsString(error)  + "\n"));
 
         // --- Watch the observables specific to RS422 and print everything
         io.getTimecodeObservable()
-                .subscribe(timecode -> stream.print("{timecode:'" + timecode + "'}"));
+                .subscribe(timecode -> stream.print("{timecode:'" + timecode + "'}\n"));
         io.getUserbitsObservable()
                 .subscribe(userbits -> stream.print("{userbits: 0x" +
-                        NumberUtilities.toHexString(userbits.getUserbits()) + "}"));
+                        NumberUtilities.toHexString(userbits.getUserbits()) + "}\n"));
 
     }
 
@@ -71,7 +71,7 @@ public class ShuttleDemo01 {
         // --- Shuttle forward at increasing speeds. Shuttle forward rates are
         // 0 < rate <= 1
         for (int i = 1; i <= n; i++ ) {
-            double rate = 1 - (1 / (double) n);
+            double rate = 1 - (1 / (double) i);
             io.send(new ShuttleCmd(rate));
             requestStatusAndWait(3000L * (long) rate);
         }
@@ -79,7 +79,7 @@ public class ShuttleDemo01 {
         // --- Shuttle reverse at increasing speeds. Shuttle reverse rates are
         // -1 <= rate < 0
         for (int i = 1; i <= n; i++ ) {
-            double rate = -(1 - 1 / (double) n);
+            double rate = -(1 - 1 / (double) i);
             io.send(new ShuttleCmd(rate));
             requestStatusAndWait(3000L * (long) rate);
         }
@@ -136,7 +136,7 @@ public class ShuttleDemo01 {
         Map<String, Object> opts = new Docopt(doc).parse(args);
 
         String portName = (String) opts.get("<commport>");
-        int numIter = (int) opts.get("--number-iterations");
+        int numIter = Integer.parseInt((String) opts.get("--number-iterations"));
 
         // Stream is just where we're writing the output from the demo
         PrintStream stream;

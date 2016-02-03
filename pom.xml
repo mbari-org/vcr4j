@@ -48,7 +48,7 @@
         <module>vcr4j-purejavacomm</module>
         <module>vcr4j-kipro</module>
         <module>vcr4j-examples</module>
-  </modules>
+    </modules>
     <build>
         <plugins>
             <!-- Filter resources using UTF-8 -->
@@ -127,4 +127,14 @@
             <url>https://api.bintray.com/maven/hohonuuli/maven/vcr4j/;publish=1</url>
         </repository>
     </distributionManagement>
+    <repositories>
+        <repository>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <id>bintray-hohonuuli-maven</id>
+            <name>bintray</name>
+            <url>http://dl.bintray.com/hohonuuli/maven</url>
+        </repository>
+    </repositories>
 </project>
