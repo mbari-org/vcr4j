@@ -77,7 +77,7 @@ public class ShuttleDemo01 {
         }
 
         // --- Shuttle reverse at increasing speeds. Shuttle reverse rates are
-        // 1 <= rate < 0
+        // -1 <= rate < 0
         for (int i = 1; i <= n; i++ ) {
             double rate = -(1 - 1 / (double) n);
             io.send(new ShuttleCmd(rate));
