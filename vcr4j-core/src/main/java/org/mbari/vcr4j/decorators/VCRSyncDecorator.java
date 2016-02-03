@@ -20,43 +20,37 @@ import java.util.TimerTask;
  * @author Brian Schlining
  * @since 2016-02-02T14:03:00
  */
-public class VCRSyncDecorator<S extends VideoState, E extends VideoError> {
+public class VCRSyncDecorator<S extends VideoState, E extends VideoError> implements Decorator {
 
     private Timer timer = new Timer(getClass().getSimpleName() + "-" + System.currentTimeMillis(), true);
 
+
+    // Kill the timer when the commandSubject gets close
+    Subscriber<VideoCommand> subscriber = new Subscriber<VideoCommand>() {
+        @Override
+        public void onCompleted() {
+            timer.cancel();
+        }
+
+        @Override
+        public void onError(Throwable throwable) {
+            unsubscribe();
+        }
+
+        @Override
+        public void onNext(VideoCommand videoCommand) {
+
+        }
+    };
+
     public VCRSyncDecorator(VideoIO<S, E> io) {
 
-        // Kill the timer when the commandSubject gets close
-        Subscriber<VideoCommand> subscriber = new Subscriber<VideoCommand>() {
-            @Override
-            public void onCompleted() {
-                timer.cancel();
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
-
-            }
-
-            @Override
-            public void onNext(VideoCommand videoCommand) {
-
-            }
-        };
-
-
         io.getCommandSubject().subscribe(subscriber);
-
-        final Observable<S> stateObservable = io.getStateObservable();
 
         TimerTask statusTask = new TimerTask() {
             @Override
             public void run() {
-                stateObservable.take(1).forEach(s -> {
-                    if (s.isConnected()) {
-                        io.send(VideoCommands.REQUEST_STATUS);
-                    }
-                });
+                io.send(VideoCommands.REQUEST_STATUS);
             }
         };
         timer.schedule(statusTask, 0, 1000);
@@ -64,11 +58,7 @@ public class VCRSyncDecorator<S extends VideoState, E extends VideoError> {
         TimerTask timecodeTask = new TimerTask() {
             @Override
             public void run() {
-                stateObservable.take(1).forEach(s -> {
-                    if (s.isConnected()) {
-                        io.send(VideoCommands.REQUEST_TIMECODE);
-                    }
-                });
+                io.send(VideoCommands.REQUEST_TIMECODE);
             }
         };
         timer.schedule(timecodeTask, 0, 40);
@@ -79,16 +69,15 @@ public class VCRSyncDecorator<S extends VideoState, E extends VideoError> {
         TimerTask timestampTask = new TimerTask() {
             @Override
             public void run() {
-                stateObservable.take(1).forEach(s -> {
-                    if (s.isConnected()) {
-                        io.send(VideoCommands.REQUEST_TIMESTAMP);
-                    }
-                });
+                io.send(VideoCommands.REQUEST_TIMESTAMP);
             }
         };
         timer.schedule(timestampTask, 0, 500);
 
     }
 
-
+    @Override
+    public void unsubscribe() {
+        subscriber.unsubscribe();
+    }
 }

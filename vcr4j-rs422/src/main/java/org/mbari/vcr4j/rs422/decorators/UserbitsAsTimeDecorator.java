@@ -4,10 +4,13 @@ import org.mbari.util.NumberUtilities;
 import org.mbari.vcr4j.VideoCommand;
 import org.mbari.vcr4j.VideoIndex;
 import org.mbari.vcr4j.commands.VideoCommands;
+import org.mbari.vcr4j.decorators.Decorator;
 import org.mbari.vcr4j.rs422.RS422Userbits;
+import org.mbari.vcr4j.rs422.RS422VideoIO;
 import org.mbari.vcr4j.rs422.commands.RS422VideoCommands;
 import org.mbari.vcr4j.rs422.commands.RequestUserbitsAsTimeCmd;
 import rx.Observable;
+import rx.Subscriber;
 import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.subjects.Subject;
@@ -32,27 +35,40 @@ import java.util.function.Consumer;
  * @author Brian Schlining
  * @since 2016-01-29T15:06:00
  */
-public class UserbitsAsTimeDecorator {
+public class UserbitsAsTimeDecorator implements Decorator {
 
     private final Observable<VideoIndex> indexObservable;
 
-    public UserbitsAsTimeDecorator(Subject<VideoCommand, VideoCommand> commandSubject,
-            Observable<VideoIndex> indexObservable,
-            Observable<RS422Userbits> userbitsObservable) {
+    private final Subscriber<VideoCommand> commandSubscriber;
+
+    public UserbitsAsTimeDecorator(RS422VideoIO io) {
+
+        final Subject<VideoCommand, VideoCommand> commandSubject = io.getCommandSubject();
+
+        commandSubscriber = new Subscriber<VideoCommand>() {
+            @Override
+            public void onCompleted() {}
+
+            @Override
+            public void onError(Throwable throwable) {}
+
+            @Override
+            public void onNext(VideoCommand videoCommand) {
+                commandSubject.onNext(VideoCommands.REQUEST_TIMECODE);
+                commandSubject.onNext(RS422VideoCommands.REQUEST_USERBITS);
+            }
+        };
 
 
         // Watch for the special userbits requests and timestamp requests
         // Timestamp request are currently ignored by RS422VideoIO
         commandSubject.filter(vc -> vc == RequestUserbitsAsTimeCmd.COMMAND
                                  || vc == VideoCommands.REQUEST_TIMESTAMP)
-                .subscribe(vc -> {
-                    commandSubject.onNext(VideoCommands.REQUEST_TIMECODE);
-                    commandSubject.onNext(RS422VideoCommands.REQUEST_USERBITS);
-                });
+                .subscribe(commandSubscriber);
 
 
-        this.indexObservable = Observable.combineLatest(indexObservable,
-                userbitsObservable,
+        this.indexObservable = Observable.combineLatest(io.getIndexObservable(),
+                io.getUserbitsObservable(),
                 (videoIndex, userbits) ->
                         new VideoIndex(Optional.of(userbitsAsInstant(userbits.getUserbits())),
                                 videoIndex.getElapsedTime(), videoIndex.getTimecode())
@@ -72,5 +88,10 @@ public class UserbitsAsTimeDecorator {
      */
     public Observable<VideoIndex> getIndexObservable() {
         return indexObservable;
+    }
+
+    @Override
+    public void unsubscribe() {
+        commandSubscriber.unsubscribe();
     }
 }

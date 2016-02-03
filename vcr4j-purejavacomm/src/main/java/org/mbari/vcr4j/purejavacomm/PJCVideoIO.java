@@ -1,24 +1,5 @@
-/*
- * @(#)RXTXVideoIO.java   by Brian Schlining
- *
- * Copyright (c) 2016 Monterey Bay Aquarium Research Institute
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+package org.mbari.vcr4j.purejavacomm;
 
-package org.mbari.vcr4j.rxtx;
-
-import gnu.io.CommPortIdentifier;
-import gnu.io.NoSuchPortException;
-import gnu.io.PortInUseException;
-import gnu.io.SerialPort;
-import gnu.io.UnsupportedCommOperationException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import org.mbari.vcr4j.rs422.RS422Exception;
 import org.mbari.vcr4j.rs422.RS422ResponseParser;
 import org.mbari.vcr4j.rs422.RS422State;
@@ -27,35 +8,36 @@ import org.mbari.vcr4j.rs422.RS422VideoIO;
 import org.mbari.vcr4j.util.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import purejavacomm.CommPortIdentifier;
+import purejavacomm.NoSuchPortException;
+import purejavacomm.PortInUseException;
+import purejavacomm.SerialPort;
+import purejavacomm.UnsupportedCommOperationException;
+
+import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * @author Brian Schlining
- * @since 2016-01-28T14:24:00
+ * @since 2016-02-03T14:02:00
  */
-public class RXTXVideoIO extends RS422VideoIO {
+public class PJCVideoIO extends RS422VideoIO {
 
     /**
-     * For RXTX we have to put the thread to sleep VERY briefly
+     * Wwe have to put the thread to sleep VERY briefly
      * in order for the serial io to work
      */
-    public static final long IO_DELAY = 10;
+    public static final long IO_DELAY = 100;
 
     /**
      * Maximum receive timeout in millisecs
      */
-    public final static long RECEIVE_TIMEOUT = 40;
-
+    public final static long RECEIVE_TIMEOUT = 400;
 
     private final Logger log = LoggerFactory.getLogger(getClass());
     private SerialPort serialPort;    // Serial port connected to VCR
 
-    /**
-     * Constructor. Generally use the `open` method instead
-     * @param serialPort The serial port to use for communicating to a VCR
-     * @param inputStream The serial ports inputStream
-     * @param outputStream The serial ports outputstream
-     */
-    public RXTXVideoIO(SerialPort serialPort, InputStream inputStream, OutputStream outputStream) {
+    public PJCVideoIO(SerialPort serialPort, InputStream inputStream, OutputStream outputStream) {
         super(inputStream, outputStream, IO_DELAY);
         Preconditions.checkArgument(serialPort != null, "SerialPort can not be null");
         this.serialPort = serialPort;
@@ -92,13 +74,13 @@ public class RXTXVideoIO extends RS422VideoIO {
      * @param portName
      * @return
      */
-    public static RXTXVideoIO open(String portName) {
+    public static PJCVideoIO open(String portName) {
         try {
             SerialPort serialPort = openSerialPort(portName);
             InputStream inputStream = serialPort.getInputStream();
             OutputStream outputStream = serialPort.getOutputStream();
 
-            return new RXTXVideoIO(serialPort, inputStream, outputStream);
+            return new PJCVideoIO(serialPort, inputStream, outputStream);
         }
         catch (Exception e) {
             throw new RS422Exception("Failed to open " + portName, e);

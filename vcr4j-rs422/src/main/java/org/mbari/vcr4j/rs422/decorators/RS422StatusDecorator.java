@@ -1,10 +1,16 @@
 package org.mbari.vcr4j.rs422.decorators;
 
+import org.mbari.vcr4j.VideoIO;
 import org.mbari.vcr4j.commands.SeekTimecodeCmd;
 import org.mbari.vcr4j.commands.ShuttleCmd;
 import org.mbari.vcr4j.VideoCommand;
 import org.mbari.vcr4j.commands.VideoCommands;
+import org.mbari.vcr4j.decorators.Decorator;
+import org.mbari.vcr4j.rs422.RS422Error;
+import org.mbari.vcr4j.rs422.RS422State;
+import org.mbari.vcr4j.rs422.RS422VideoIO;
 import org.mbari.vcr4j.rs422.commands.RS422VideoCommands;
+import rx.Subscriber;
 import rx.subjects.Subject;
 
 
@@ -24,30 +30,41 @@ import rx.subjects.Subject;
  * @author Brian Schlining
  * @since 2016-01-29T09:55:00
  */
-public class RS422StatusDecorator {
+public class RS422StatusDecorator implements Decorator {
 
-    private final Subject<VideoCommand, VideoCommand> commandSubject;
+    private final Subscriber<VideoCommand> commandSubscriber;
 
-    public RS422StatusDecorator(Subject<VideoCommand, VideoCommand> commandSubject) {
-        this.commandSubject = commandSubject;
-        commandSubject.subscribe(this::decorate);
-        commandSubject.onNext(VideoCommands.REQUEST_TIMECODE);
-        commandSubject.onNext(VideoCommands.REQUEST_STATUS);
+    public RS422StatusDecorator(RS422VideoIO io) {
+
+        commandSubscriber = new Subscriber<VideoCommand>() {
+            @Override
+            public void onCompleted() { }
+
+            @Override
+            public void onError(Throwable throwable) { }
+
+            @Override
+            public void onNext(VideoCommand cmd) {
+                if (cmd.equals(RS422VideoCommands.EJECT)
+                        || cmd.equals(VideoCommands.FAST_FORWARD)
+                        || cmd.equals(VideoCommands.PLAY)
+                        || cmd.equals(RS422VideoCommands.RECORD)
+                        || cmd.equals(RS422VideoCommands.RELEASE_TAPE)
+                        || cmd.equals(VideoCommands.REWIND)
+                        || cmd instanceof SeekTimecodeCmd
+                        || cmd instanceof ShuttleCmd
+                        || cmd.equals(VideoCommands.STOP)) {
+
+                    io.getCommandSubject().onNext(VideoCommands.REQUEST_STATUS);
+
+                }
+            }
+        };
     }
 
-    private void decorate(VideoCommand cmd) {
-        if (cmd.equals(RS422VideoCommands.EJECT)
-                || cmd.equals(VideoCommands.FAST_FORWARD)
-                || cmd.equals(VideoCommands.PLAY)
-                || cmd.equals(RS422VideoCommands.RECORD)
-                || cmd.equals(RS422VideoCommands.RELEASE_TAPE)
-                || cmd.equals(VideoCommands.REWIND)
-                || cmd instanceof SeekTimecodeCmd
-                || cmd instanceof ShuttleCmd
-                || cmd.equals(VideoCommands.STOP)) {
 
-            commandSubject.onNext(VideoCommands.REQUEST_STATUS);
-
-        }
+    @Override
+    public void unsubscribe() {
+        commandSubscriber.unsubscribe();
     }
 }

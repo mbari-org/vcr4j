@@ -44,6 +44,10 @@ public class VideoController {
     public void requestElapsedTime() {
         io.send(VideoCommands.REQUEST_ELAPSED_TIME);
     }
+
+    public void requestStatus() {
+        io.send(VideoCommands.REQUEST_STATUS);
+    }
     
     public void requestTimestamp() {
         io.send(VideoCommands.REQUEST_TIMESTAMP);

@@ -40,27 +40,27 @@ import rx.subjects.Subject;
  */
 public abstract class RS422VideoIO implements VideoIO<RS422State, RS422Error> {
 
-    /**
-     * For RXTX we have to put the thread to sleep VERY briefly
-     * in order for the serial io to work
-     */
-    public static final long IO_DELAY = 10;
 
-    /**
-     * Maximum receive timeout in millisecs
-     */
-    public final static long RECEIVE_TIMEOUT = 40;
+    private final long ioDelay;
     private final Logger log = LoggerFactory.getLogger(getClass());
     private final RS422ResponseParser responseParser = new RS422ResponseParser();
     private final Subject<VideoCommand, VideoCommand> commandSubject = new SerializedSubject<>(PublishSubject.create());
     private OutputStream outputStream;    // Sends commands to VCR
     private InputStream inputStream;      // Reads responses from VCR
 
-    public RS422VideoIO(InputStream inputStream, OutputStream outputStream) {
+    /**
+     *
+     * @param inputStream The serialPorts inputstream
+     * @param outputStream The serialPorts outputstream
+     * @param ioDelay The amount of millisecs to wait between request and responses. RXTX seems to need about 10
+     *                Purejavacomm about 100.
+     */
+    public RS422VideoIO(InputStream inputStream, OutputStream outputStream, long ioDelay) {
         Preconditions.checkArgument(inputStream != null, "InputStream can not be null");
         Preconditions.checkArgument(outputStream != null, "OutputStream can not be null");
         this.inputStream = inputStream;
         this.outputStream = outputStream;
+        this.ioDelay = ioDelay;
 
         commandSubject.subscribe(vc -> {
                 if (vc.equals(RS422VideoCommands.REQUEST_USERBITS)) {
@@ -129,7 +129,7 @@ public abstract class RS422VideoIO implements VideoIO<RS422State, RS422Error> {
             inputStream.read(cmd);
         }
 
-        Thread.sleep(IO_DELAY);    // RXTX does not block serial IO correctly.
+        Thread.sleep(ioDelay);    // RXTX does not block serial IO correctly.
 
         // Extract the number of data bytes in the command block. Then
         // read the data from the serial port
@@ -147,7 +147,7 @@ public abstract class RS422VideoIO implements VideoIO<RS422State, RS422Error> {
             }
         }
 
-        Thread.sleep(IO_DELAY);    // RXTX does not block serial IO correctly.
+        Thread.sleep(ioDelay);    // RXTX does not block serial IO correctly.
 
         // Read the checksum that the VCR sends
         final byte[] checksum = new byte[1];
@@ -185,7 +185,7 @@ public abstract class RS422VideoIO implements VideoIO<RS422State, RS422Error> {
         try {
             logCommand(command, videoCommand);
             outputStream.write(command);
-            Thread.sleep(IO_DELAY);    // RXTX does not block serial IO correctly.
+            Thread.sleep(ioDelay);    // RXTX does not block serial IO correctly.
             readResponse(command, videoCommand);
         }
         catch (IOException | RS422Exception e) {

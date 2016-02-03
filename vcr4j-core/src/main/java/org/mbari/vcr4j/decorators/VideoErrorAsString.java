@@ -18,10 +18,16 @@ public class VideoErrorAsString {
                 .append(error.hasError());
 
         error.getVideoCommand().ifPresent(cmd -> {
-            sb.append(new VideoCommandAsString(cmd).toString());
+            sb.append(",video_command:")
+                .append(new VideoCommandAsString(cmd).toString());
         });
         sb.append("}");
         string = sb.toString();
 
+    }
+
+    @Override
+    public String toString() {
+        return string;
     }
 }
