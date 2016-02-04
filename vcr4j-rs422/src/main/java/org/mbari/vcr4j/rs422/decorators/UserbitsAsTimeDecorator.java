@@ -5,20 +5,15 @@ import org.mbari.vcr4j.VideoCommand;
 import org.mbari.vcr4j.VideoIndex;
 import org.mbari.vcr4j.commands.VideoCommands;
 import org.mbari.vcr4j.decorators.Decorator;
-import org.mbari.vcr4j.rs422.IRS422VideoIO;
-import org.mbari.vcr4j.rs422.RS422Userbits;
-import org.mbari.vcr4j.rs422.RS422VideoIO;
+import org.mbari.vcr4j.rs422.VCRVideoIO;
 import org.mbari.vcr4j.rs422.commands.RS422VideoCommands;
 import org.mbari.vcr4j.rs422.commands.RequestUserbitsAsTimeCmd;
 import rx.Observable;
 import rx.Subscriber;
-import rx.functions.Action1;
-import rx.functions.Func1;
 import rx.subjects.Subject;
 
 import java.time.Instant;
 import java.util.Optional;
-import java.util.function.Consumer;
 
 /**
  * Decorator that listens for RequestUserbitsAsTimeCmds. Usage:
@@ -42,7 +37,7 @@ public class UserbitsAsTimeDecorator implements Decorator {
 
     private final Subscriber<VideoCommand> commandSubscriber;
 
-    public UserbitsAsTimeDecorator(IRS422VideoIO io) {
+    public UserbitsAsTimeDecorator(VCRVideoIO io) {
 
         final Subject<VideoCommand, VideoCommand> commandSubject = io.getCommandSubject();
 

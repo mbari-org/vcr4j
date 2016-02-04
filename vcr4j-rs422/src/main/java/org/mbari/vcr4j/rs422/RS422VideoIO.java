@@ -20,7 +20,6 @@ import java.util.Arrays;
 import java.util.Optional;
 import org.mbari.util.NumberUtilities;
 import org.mbari.vcr4j.VideoCommand;
-import org.mbari.vcr4j.VideoIO;
 import org.mbari.vcr4j.VideoIndex;
 import org.mbari.vcr4j.commands.VideoCommands;
 import org.mbari.vcr4j.rs422.commands.CommandToBytes;
@@ -38,7 +37,7 @@ import rx.subjects.Subject;
  * @author Brian Schlining
  * @since 2016-01-29T16:42:00
  */
-public abstract class RS422VideoIO implements IRS422VideoIO {
+public abstract class RS422VideoIO implements VCRVideoIO {
 
 
     private final long ioDelay;
