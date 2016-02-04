@@ -38,7 +38,7 @@ import rx.subjects.Subject;
  * @author Brian Schlining
  * @since 2016-01-29T16:42:00
  */
-public abstract class RS422VideoIO implements VideoIO<RS422State, RS422Error> {
+public abstract class RS422VideoIO implements IRS422VideoIO {
 
 
     private final long ioDelay;
