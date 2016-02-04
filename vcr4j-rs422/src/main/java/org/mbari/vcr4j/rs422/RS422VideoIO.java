@@ -43,6 +43,7 @@ public abstract class RS422VideoIO implements VideoIO<RS422State, RS422Error> {
 
     private final long ioDelay;
     private final Logger log = LoggerFactory.getLogger(getClass());
+    private final LoggerHelper loggerHelper = new LoggerHelper(log);
     private final RS422ResponseParser responseParser = new RS422ResponseParser();
     private final Subject<VideoCommand, VideoCommand> commandSubject = new SerializedSubject<>(PublishSubject.create());
     private OutputStream outputStream;    // Sends commands to VCR
@@ -86,32 +87,6 @@ public abstract class RS422VideoIO implements VideoIO<RS422State, RS422Error> {
             });
     }
 
-    private void logCommand(byte[] bytes, VideoCommand videoCommand) {
-        if (log.isDebugEnabled()) {
-            log.debug("[0x" + NumberUtilities.toHexString(bytes) + "] >>> VCR (" + videoCommand.getName() + ")");
-        }
-    }
-
-    private void logResponse(byte[] cmd, byte[] data, byte[] checksum) {
-        if (log.isDebugEnabled()) {
-
-            /*
-             * Munge it all into a single byte array
-             */
-            int dataLength = (data == null) ? 0 : data.length;
-            final byte[] c = new byte[cmd.length + dataLength + 1];
-
-            System.arraycopy(cmd, 0, c, 0, cmd.length);
-
-            if (data != null) {
-                System.arraycopy(data, 0, c, cmd.length, data.length);
-            }
-
-            c[c.length - 1] = checksum[0];
-
-            log.debug("[0x" + NumberUtilities.toHexString(c) + "] <<< VCR");
-        }
-    }
 
     /**
      * Reads the response to a command from the serial port connected to the VCR.
@@ -160,7 +135,7 @@ public abstract class RS422VideoIO implements VideoIO<RS422State, RS422Error> {
                                   + " data[] = " + NumberUtilities.toHexString(data));
         }
 
-        logResponse(cmd, data, checksum);
+        loggerHelper.logResponse(cmd, data, checksum);
 
         responseParser.update(mostRecentCommand, cmd, data, checksum, Optional.of(videoCommand));
 
@@ -183,7 +158,7 @@ public abstract class RS422VideoIO implements VideoIO<RS422State, RS422Error> {
         command[command.length - 1] = checksum;
 
         try {
-            logCommand(command, videoCommand);
+            loggerHelper.logCommand(command, videoCommand);
             outputStream.write(command);
             Thread.sleep(ioDelay);    // RXTX does not block serial IO correctly.
             readResponse(command, videoCommand);

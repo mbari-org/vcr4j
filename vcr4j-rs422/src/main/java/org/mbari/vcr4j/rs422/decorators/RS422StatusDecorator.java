@@ -6,6 +6,7 @@ import org.mbari.vcr4j.commands.ShuttleCmd;
 import org.mbari.vcr4j.VideoCommand;
 import org.mbari.vcr4j.commands.VideoCommands;
 import org.mbari.vcr4j.decorators.Decorator;
+import org.mbari.vcr4j.rs422.IRS422VideoIO;
 import org.mbari.vcr4j.rs422.RS422Error;
 import org.mbari.vcr4j.rs422.RS422State;
 import org.mbari.vcr4j.rs422.RS422VideoIO;
@@ -34,7 +35,7 @@ public class RS422StatusDecorator implements Decorator {
 
     private final Subscriber<VideoCommand> commandSubscriber;
 
-    public RS422StatusDecorator(RS422VideoIO io) {
+    public RS422StatusDecorator(IRS422VideoIO io) {
 
         commandSubscriber = new Subscriber<VideoCommand>() {
             @Override

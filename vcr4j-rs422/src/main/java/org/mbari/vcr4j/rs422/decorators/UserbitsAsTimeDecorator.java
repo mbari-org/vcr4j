@@ -5,6 +5,7 @@ import org.mbari.vcr4j.VideoCommand;
 import org.mbari.vcr4j.VideoIndex;
 import org.mbari.vcr4j.commands.VideoCommands;
 import org.mbari.vcr4j.decorators.Decorator;
+import org.mbari.vcr4j.rs422.IRS422VideoIO;
 import org.mbari.vcr4j.rs422.RS422Userbits;
 import org.mbari.vcr4j.rs422.RS422VideoIO;
 import org.mbari.vcr4j.rs422.commands.RS422VideoCommands;
@@ -41,7 +42,7 @@ public class UserbitsAsTimeDecorator implements Decorator {
 
     private final Subscriber<VideoCommand> commandSubscriber;
 
-    public UserbitsAsTimeDecorator(RS422VideoIO io) {
+    public UserbitsAsTimeDecorator(IRS422VideoIO io) {
 
         final Subject<VideoCommand, VideoCommand> commandSubject = io.getCommandSubject();
 

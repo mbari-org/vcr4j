@@ -2,6 +2,7 @@ package org.mbari.vcr4j.rs422.decorators;
 
 import org.mbari.vcr4j.VideoIO;
 import org.mbari.vcr4j.decorators.LoggingDecorator;
+import org.mbari.vcr4j.rs422.IRS422VideoIO;
 import org.mbari.vcr4j.rs422.RS422Error;
 import org.mbari.vcr4j.rs422.RS422State;
 import org.mbari.vcr4j.rs422.RS422Timecode;
@@ -38,7 +39,7 @@ public class RS422LoggingDecorator extends LoggingDecorator<RS422State, RS422Err
         }
     };
 
-    public RS422LoggingDecorator(RS422VideoIO io) {
+    public RS422LoggingDecorator(IRS422VideoIO io) {
         super(io);
         io.getTimecodeObservable().subscribe(timecodeSubscriber);
 
