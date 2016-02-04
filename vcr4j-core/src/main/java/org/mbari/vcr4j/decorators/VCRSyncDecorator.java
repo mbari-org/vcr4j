@@ -76,6 +76,10 @@ public class VCRSyncDecorator<S extends VideoState, E extends VideoError> implem
 
     }
 
+    protected Timer getTimer() {
+        return timer;
+    }
+
     @Override
     public void unsubscribe() {
         subscriber.unsubscribe();

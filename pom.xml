@@ -46,9 +46,9 @@
         <module>vcr4j-rs422</module>
         <module>vcr4j-rxtx</module>
         <module>vcr4j-purejavacomm</module>
+        <module>vcr4j-jssc</module>
         <module>vcr4j-kipro</module>
         <module>vcr4j-examples</module>
-    <module>vcr4j-jssc</module>
   </modules>
     <build>
         <plugins>

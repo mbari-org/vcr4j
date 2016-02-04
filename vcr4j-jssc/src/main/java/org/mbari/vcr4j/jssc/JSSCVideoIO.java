@@ -4,7 +4,6 @@ import jssc.SerialPort;
 import jssc.SerialPortException;
 import jssc.SerialPortTimeoutException;
 import org.mbari.vcr4j.VideoCommand;
-import org.mbari.vcr4j.VideoIO;
 import org.mbari.vcr4j.VideoIndex;
 import org.mbari.vcr4j.commands.VideoCommands;
 import org.mbari.vcr4j.rs422.VCRVideoIO;
@@ -49,7 +48,7 @@ public class JSSCVideoIO implements VCRVideoIO {
     /**
      * Maximum receive timeout in millisecs
      */
-    public final static int RECEIVE_TIMEOUT = 40;
+    public final static int RECEIVE_TIMEOUT = 500;
 
     private final Logger log = LoggerFactory.getLogger(getClass());
     private final LoggerHelper loggerHelper = new LoggerHelper(log);
@@ -137,12 +136,12 @@ public class JSSCVideoIO implements VCRVideoIO {
         // Extract the number of data bytes in the command block. Then
         // read the data from the serial port
         final int numDataBytes = (int) (cmd[0] & 0x0F);    // Get the number of data blocks
-        byte[] data = (numDataBytes > 0) ? serialPort.readBytes(numDataBytes) : null;
+        byte[] data = (numDataBytes > 0) ? serialPort.readBytes(numDataBytes, RECEIVE_TIMEOUT) : null;
 
         Thread.sleep(ioDelay);    // RXTX does not block serial IO correctly.
 
         // Read the checksum that the VCR sends
-        final byte[] checksum = serialPort.readBytes(1);
+        final byte[] checksum = serialPort.readBytes(1, RECEIVE_TIMEOUT);
 
         loggerHelper.logResponse(cmd, data, checksum);
 
@@ -160,7 +159,7 @@ public class JSSCVideoIO implements VCRVideoIO {
     public static JSSCVideoIO open(String portName) {
         try {
             SerialPort serialPort = new SerialPort(portName);
-
+            serialPort.openPort();
             return new JSSCVideoIO(serialPort, IO_DELAY);
         }
         catch (Exception e) {
