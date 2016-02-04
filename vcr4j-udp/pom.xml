@@ -7,15 +7,13 @@
     <artifactId>vcr4j</artifactId>
     <version>3.0-SNAPSHOT</version>
   </parent>
-  <groupId>org.mbari.vcr4j</groupId>
   <artifactId>vcr4j-udp</artifactId>
   <name>vcr4j-udp</name>
   <dependencies>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
+      <groupId>org.mbari.vcr4j</groupId>
+      <artifactId>vcr4j-core</artifactId>
+      <version>${project.version}</version>
     </dependency>
   </dependencies>
 </project>

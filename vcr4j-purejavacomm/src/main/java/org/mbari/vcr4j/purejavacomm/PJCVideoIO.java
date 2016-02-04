@@ -48,17 +48,16 @@ public class PJCVideoIO extends RS422VideoIO {
         log.info("Closing serial port:" + serialPort.getName());
 
         try {
+            getCommandSubject().onCompleted();
             getOutputStream().close();
             getInputStream().close();
             serialPort.close();
             RS422ResponseParser responseParser = getResponseParser();
             responseParser.getStatusObservable().onNext(RS422State.STOPPED);
-            responseParser.getTimecodeObservable().onNext(RS422Timecode.ZERO);
             responseParser.getStatusObservable().onCompleted();
             responseParser.getTimecodeObservable().onCompleted();
             responseParser.getErrorObservable().onCompleted();
             responseParser.getUserbitsObservable().onCompleted();
-            getCommandSubject().onCompleted();
             serialPort = null;
         }
         catch (Exception e) {

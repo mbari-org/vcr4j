@@ -49,6 +49,7 @@ public class SimpleDemo01 {
         controller.requestStatus();
         controller.requestTimecode();
         io.close();
+
         System.exit(0);
 
     }

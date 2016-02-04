@@ -1,6 +1,23 @@
 *.class
+*.iml
+.DS_Store
+*.orig
 
 # Package Files #
 *.jar
 *.war
 *.ear
+
+# Maven Build Directory #
+target/
+.idea/
+
+# Maven version plugin junk
+*.versionsBackup
+
+# eclipse conf file
+.settings
+.classpath
+.project
+.manager
+.scala_dependencies

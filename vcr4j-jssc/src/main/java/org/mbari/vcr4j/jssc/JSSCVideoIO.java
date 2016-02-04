@@ -173,14 +173,13 @@ public class JSSCVideoIO implements VCRVideoIO {
         log.info("Closing serial port:" + serialPort.getPortName());
 
         try {
+            getCommandSubject().onCompleted();
             serialPort.closePort();
             responseParser.getStatusObservable().onNext(RS422State.STOPPED);
-            responseParser.getTimecodeObservable().onNext(RS422Timecode.ZERO);
             responseParser.getStatusObservable().onCompleted();
             responseParser.getTimecodeObservable().onCompleted();
             responseParser.getErrorObservable().onCompleted();
             responseParser.getUserbitsObservable().onCompleted();
-            getCommandSubject().onCompleted();
             serialPort = null;
         }
         catch (Exception e) {

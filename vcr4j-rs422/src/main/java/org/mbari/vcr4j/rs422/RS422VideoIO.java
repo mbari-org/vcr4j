@@ -47,6 +47,22 @@ public abstract class RS422VideoIO implements VCRVideoIO {
     private final Subject<VideoCommand, VideoCommand> commandSubject = new SerializedSubject<>(PublishSubject.create());
     private OutputStream outputStream;    // Sends commands to VCR
     private InputStream inputStream;      // Reads responses from VCR
+    private final Observable<VideoIndex> indexObservable = Observable
+            .combineLatest(responseParser.getTimecodeObservable(),
+                    responseParser.getStatusObservable(),
+                    (timecode, state) -> {
+                        if (state.isRecording()) {
+                            return new VideoIndex(Optional.of(Instant.now()),
+                                    Optional.empty(),
+                                    Optional.of(timecode.getTimecode()));
+                        }
+                        else {
+                            return new VideoIndex(Optional.empty(),
+                                    Optional.empty(),
+                                    Optional.of(timecode.getTimecode()));
+                        }
+                    })
+            .distinctUntilChanged();
 
     /**
      *
@@ -189,22 +205,7 @@ public abstract class RS422VideoIO implements VCRVideoIO {
      */
     @Override
     public Observable<VideoIndex> getIndexObservable() {
-        return Observable
-                .combineLatest(responseParser.getTimecodeObservable(),
-                               responseParser.getStatusObservable(),
-                               (timecode, state) -> {
-                                   if (state.isRecording()) {
-                                       return new VideoIndex(Optional.of(Instant.now()),
-                                                             Optional.empty(),
-                                                             Optional.of(timecode.getTimecode()));
-                                   }
-                                   else {
-                                       return new VideoIndex(Optional.empty(),
-                                                             Optional.empty(),
-                                                             Optional.of(timecode.getTimecode()));
-                                   }
-                               })
-                .distinctUntilChanged();
+        return indexObservable;
     }
 
     protected InputStream getInputStream() {
@@ -231,4 +232,6 @@ public abstract class RS422VideoIO implements VCRVideoIO {
     public Observable<RS422Userbits> getUserbitsObservable() {
         return responseParser.getUserbitsObservable();
     }
+
+
 }
