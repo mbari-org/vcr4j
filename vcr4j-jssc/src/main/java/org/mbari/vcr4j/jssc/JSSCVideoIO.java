@@ -7,7 +7,7 @@ import org.mbari.vcr4j.VideoCommand;
 import org.mbari.vcr4j.VideoIO;
 import org.mbari.vcr4j.VideoIndex;
 import org.mbari.vcr4j.commands.VideoCommands;
-import org.mbari.vcr4j.rs422.IRS422VideoIO;
+import org.mbari.vcr4j.rs422.VCRVideoIO;
 import org.mbari.vcr4j.rs422.LoggerHelper;
 import org.mbari.vcr4j.rs422.RS422Error;
 import org.mbari.vcr4j.rs422.RS422Exception;
@@ -34,7 +34,7 @@ import java.util.Optional;
  * @author Brian Schlining
  * @since 2016-02-03T15:39:00
  */
-public class JSSCVideoIO implements IRS422VideoIO {
+public class JSSCVideoIO implements VCRVideoIO {
 
     /**
      * For RXTX we have to put the thread to sleep VERY briefly
