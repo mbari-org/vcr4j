@@ -48,11 +48,6 @@ public class RS422ResponseParser {
     }
 
 
-    public void update(byte[] command, byte[] cmd, byte[] data, byte[] checksum) {
-        update(command, cmd, data, checksum, Optional.empty());
-    }
-
-
     /**
      * Update the state objects associated with the VCR's response
      * @param command The command that was sent to the VCR

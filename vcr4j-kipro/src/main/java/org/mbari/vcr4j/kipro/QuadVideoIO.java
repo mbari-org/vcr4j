@@ -12,6 +12,12 @@ import rx.subjects.Subject;
  */
 public class QuadVideoIO implements VideoIO<QuadVideoState, QuadVideoError> {
 
+    private String httpAddress;
+
+    public QuadVideoIO(String httpAddress) {
+        this.httpAddress = httpAddress;
+    }
+
     @Override
     public void close() {
 

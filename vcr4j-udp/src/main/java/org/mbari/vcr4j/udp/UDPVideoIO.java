@@ -51,17 +51,19 @@ public class UDPVideoIO implements VideoIO<UDPState, UDPError> {
         this.port = port;
         inetAddress = InetAddress.getByName(host);
         incomingPacket = new DatagramPacket(receiveMessage, receiveMessage.length);
-        requestTimecodePacket = new DatagramPacket(GET_TIMECODE, GET_TIMECODE.length, inetAddress, port);
-        commandSubject.subscribe(vc -> {
-            if (vc.equals(VideoCommands.REQUEST_TIMECODE)
-                    || vc.equals(VideoCommands.REQUEST_TIMESTAMP)) {
-                sendCommand(requestTimecodePacket);
-            }
-            else if (vc.equals(VideoCommands.REQUEST_STATUS)) {
-                UDPState state = (socket != null && !socket.isClosed()) ? UDPState.RECORDING : UDPState.STOPPED;
-                stateSubject.onNext(state);
-            }
-        });
+        requestTimecodePacket = new DatagramPacket(GET_TIMECODE,
+                GET_TIMECODE.length,
+                inetAddress,
+                port);
+
+        commandSubject.filter(vc -> vc.equals(VideoCommands.REQUEST_TIMECODE) || vc.equals(VideoCommands.REQUEST_TIMECODE))
+                .subscribe(vc -> sendCommand(requestTimecodePacket));
+
+        commandSubject.filter(vc -> vc.equals(VideoCommands.REQUEST_STATUS))
+                .subscribe(vc -> {
+                    UDPState state = (socket != null && !socket.isClosed()) ? UDPState.RECORDING : UDPState.STOPPED;
+                    stateSubject.onNext(state);
+                });
     }
 
 

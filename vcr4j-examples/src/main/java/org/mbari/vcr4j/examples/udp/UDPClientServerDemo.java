@@ -4,8 +4,6 @@ import org.mbari.vcr4j.VideoController;
 import org.mbari.vcr4j.decorators.LoggingDecorator;
 import org.mbari.vcr4j.udp.TimeServer;
 import org.mbari.vcr4j.udp.UDPVideoIO;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author Brian Schlining
@@ -27,6 +25,7 @@ public class UDPClientServerDemo {
 
         controller.requestStatus();
         controller.requestTimecode();
+        controller.requestTimestamp();
         controller.play();
         Thread.sleep(2000);
         controller.requestStatus();
