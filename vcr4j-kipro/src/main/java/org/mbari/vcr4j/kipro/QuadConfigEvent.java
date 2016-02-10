@@ -1,10 +1,68 @@
+/*
+ * @(#)QuadConfigEvent.java   by Brian Schlining
+ *
+ * Copyright (c) 2016 Monterey Bay Aquarium Research Institute
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.mbari.vcr4j.kipro;
 
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import java.util.Optional;
+
 /**
+ * The KiPro web interface uses AJAX to poll for status events. We can use that like so:
+ * <pre>
+ *
+ * `http GET 'http://134.89.11.139/config?action=wait_for_config_events&connectionid=0'`
+ *
+ * This may return various JSON contents. The JSON part we care about has `param_id` of `eParamID_DisplayTimecode` to get the timecode.
+ *
+ * ```
+ * HTTP/1.1 200 OK
+ * Cache-Control: no-cache
+ * Connection: keep-alive
+ * Content-Type: text/json
+ * Date: Tue, 26 Jan 2016 16:04:16 GMT
+ * Server: Seminole/2.64 (Linux; B88)
+ * Transfer-encoding: chunked
+ *
+ * [
+ * {
+ * "int_value": "0",
+ * "last_config_update": "0",
+ * "param_id": "eParamID_DisplayTimecode",
+ * "param_type": "12",
+ * "str_value": "00:02:51:27"
+ * },
+ * {
+ * "int_value": "0",
+ * "last_config_update": "0",
+ * "param_id": "eParamID_InputTimecode",
+ * "param_type": "12",
+ * "str_value": "00:00:00:00"
+ * }
+ * ]
+ * ```
+ * </pre>
+ *
  * @author Brian Schlining
  * @since 2016-02-04T16:54:00
  */
-public class QuadConfigEvent {
+class QuadConfigEvent {
+
+    private static final Gson gson = new GsonBuilder()
+            .setPrettyPrinting()
+            .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+            .create();
 
     private int intValue;
     private int lastConfigUpdate;
@@ -38,5 +96,13 @@ public class QuadConfigEvent {
 
     public String getStrValue() {
         return strValue;
+    }
+
+    public static QuadConfigEvent[] from(String json) {
+        return  gson.fromJson(json, QuadConfigEvent[].class);
+    }
+
+    public String toJSON() {
+        return gson.toJson(this);
     }
 }

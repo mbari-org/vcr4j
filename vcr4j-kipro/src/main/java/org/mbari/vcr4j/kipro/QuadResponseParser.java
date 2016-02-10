@@ -10,14 +10,25 @@ import com.google.gson.GsonBuilder;
  */
 public class QuadResponseParser {
 
-    private static final Gson gson = new GsonBuilder()
+    private static final Gson GSON = new GsonBuilder()
             .setPrettyPrinting()
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
             .create();
 
-
     public void update(String json) {
 
+    }
+
+    private class ConnectionID {
+        private int connectionID;
+
+        public ConnectionID(int connectionID) {
+            this.connectionID = connectionID;
+        }
+
+        public int getConnectionID() {
+            return connectionID;
+        }
     }
 
 }
