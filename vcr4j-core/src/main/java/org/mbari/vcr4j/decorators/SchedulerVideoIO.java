@@ -64,7 +64,6 @@ public class SchedulerVideoIO<S extends VideoState, E extends VideoError> implem
 
             @Override
             public void onNext(VideoCommand videoCommand) {
-                System.out.println("WHOA " + new VideoCommandAsString(videoCommand));
                 commandQueue.send(videoCommand);
             }
         };
@@ -129,14 +128,12 @@ public class SchedulerVideoIO<S extends VideoState, E extends VideoError> implem
                 VideoCommand videoCommand = null;
                 try {
                     videoCommand = pendingQueue.poll(3600L, TimeUnit.SECONDS);
-                    System.out.println("COMMANDQUEUE: " + new VideoCommandAsString(videoCommand));
-                    io.getCommandSubject().onNext(videoCommand);
                 }
                 catch (InterruptedException e) {
                     // TODO ?
                 }
                 if (videoCommand != null) {
-                    getCommandSubject().onNext(videoCommand);
+                    io.getCommandSubject().onNext(videoCommand);
                 }
             }
         };

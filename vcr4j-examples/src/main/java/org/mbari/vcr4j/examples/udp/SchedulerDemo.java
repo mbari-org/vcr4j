@@ -26,26 +26,27 @@ public class SchedulerDemo {
         timeServer.start();
 
         UDPVideoIO rawIO = new UDPVideoIO("localhost", 9000);
-        VideoIO<UDPState, UDPError> io = new SchedulerVideoIO<>(rawIO, Executors.newSingleThreadExecutor());
+        VideoIO<UDPState, UDPError> io = new SchedulerVideoIO<>(rawIO, Executors.newCachedThreadPool());
 
         LoggingDecorator decorator = new LoggingDecorator<>(io);
+        //LoggingDecorator decorator1 = new LoggingDecorator(rawIO);
         VideoController controller = new VideoController(io); // Wrap io with a standard control
 
         controller.requestStatus();
         controller.requestTimecode();
-//        controller.requestTimestamp();
-//        controller.play();
+        controller.requestTimestamp();
+        controller.play();
         Thread.sleep(2000);
-//        controller.requestStatus();
-//        Thread.sleep(100);
-//        for (int i = 0; i < 10; i++) {
-//            controller.requestTimecode();
-//            Thread.sleep(400);
-//        }
+        controller.requestStatus();
+        Thread.sleep(100);
+        for (int i = 0; i < 10; i++) {
+            controller.requestTimecode();
+            Thread.sleep(400);
+        }
 
-//        controller.stop();  // Does nothing as our UDP client just reports timecode. NO VCR Control
-//        controller.requestStatus();
-//        controller.requestTimecode();
+        controller.stop();  // Does nothing as our UDP client just reports timecode. NO VCR Control
+        controller.requestStatus();
+        controller.requestTimecode();
         io.close();
         timeServer.stop();
         System.exit(0);
