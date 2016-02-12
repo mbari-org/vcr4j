@@ -15,8 +15,6 @@ import rx.Subscriber;
  */
 public class RS422LoggingDecorator extends LoggingDecorator<RS422State, RS422Error> {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
-
     Subscriber<RS422Timecode> timecodeSubscriber = new Subscriber<RS422Timecode>() {
         @Override
         public void onCompleted() {

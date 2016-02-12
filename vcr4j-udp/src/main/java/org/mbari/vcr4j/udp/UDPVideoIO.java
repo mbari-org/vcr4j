@@ -8,6 +8,8 @@ import org.mbari.vcr4j.time.Timecode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Observable;
+import rx.Scheduler;
+import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 import rx.subjects.SerializedSubject;
 import rx.subjects.Subject;
@@ -56,6 +58,7 @@ public class UDPVideoIO implements VideoIO<UDPState, UDPError> {
                 inetAddress,
                 port);
 
+        // Do the IO off of the calling thread
         commandSubject.filter(vc -> vc.equals(VideoCommands.REQUEST_TIMECODE) || vc.equals(VideoCommands.REQUEST_TIMECODE))
                 .subscribe(vc -> sendCommand(requestTimecodePacket));
 

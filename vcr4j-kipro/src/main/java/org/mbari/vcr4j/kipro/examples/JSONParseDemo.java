@@ -1,8 +1,9 @@
-package org.mbari.vcr4j.kipro;
+package org.mbari.vcr4j.kipro.examples;
 
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.mbari.vcr4j.kipro.json.ConfigEvent;
 
 /**
  * @author Brian Schlining
@@ -34,7 +35,7 @@ public class JSONParseDemo {
                 "}\n" +
                 "]";
 
-        QuadConfigEvent[] event = gson.fromJson(json, QuadConfigEvent[].class);
+        ConfigEvent[] event = gson.fromJson(json, ConfigEvent[].class);
         System.out.println(event);
 
         String json1 = gson.toJson(event);

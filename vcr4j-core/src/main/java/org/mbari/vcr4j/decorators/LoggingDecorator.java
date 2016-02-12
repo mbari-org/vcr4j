@@ -16,9 +16,9 @@ import rx.Subscriber;
  */
 public class LoggingDecorator<S extends VideoState, E extends VideoError> implements Decorator {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
-    private final Subscriber<E> errorSubscriber = new Subscriber<E>() {
+    protected final Subscriber<E> errorSubscriber = new Subscriber<E>() {
         @Override
         public void onCompleted() {
             log.debug("Error observable is closed");
@@ -37,7 +37,7 @@ public class LoggingDecorator<S extends VideoState, E extends VideoError> implem
         }
     };
 
-    private final Subscriber<VideoIndex> indexSubscriber = new Subscriber<VideoIndex>() {
+    protected final Subscriber<VideoIndex> indexSubscriber = new Subscriber<VideoIndex>() {
         @Override
         public void onCompleted() {
             log.debug("Index observable is closed");
@@ -56,7 +56,7 @@ public class LoggingDecorator<S extends VideoState, E extends VideoError> implem
         }
     };
 
-    private final Subscriber<S> stateSubscriber = new Subscriber<S>() {
+    protected final Subscriber<S> stateSubscriber = new Subscriber<S>() {
         @Override
         public void onCompleted() {
             log.debug("State observable is closed");
@@ -75,7 +75,7 @@ public class LoggingDecorator<S extends VideoState, E extends VideoError> implem
         }
     };
 
-    private final Subscriber<VideoCommand> commandSubscriber = new Subscriber<VideoCommand>() {
+    protected final Subscriber<VideoCommand> commandSubscriber = new Subscriber<VideoCommand>() {
         @Override
         public void onCompleted() {
             log.debug("State observable is closed");

@@ -10,13 +10,17 @@
  * limitations under the License.
  */
 
-package org.mbari.vcr4j.kipro;
+package org.mbari.vcr4j.kipro.json;
 
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.mbari.vcr4j.time.Timecode;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * The KiPro web interface uses AJAX to poll for status events. We can use that like so:
@@ -57,12 +61,9 @@ import java.util.Optional;
  * @author Brian Schlining
  * @since 2016-02-04T16:54:00
  */
-class QuadConfigEvent {
+public class ConfigEvent {
 
-    private static final Gson gson = new GsonBuilder()
-            .setPrettyPrinting()
-            .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-            .create();
+    private static final Gson gson = Constants.GSON;
 
     private int intValue;
     private int lastConfigUpdate;
@@ -70,7 +71,7 @@ class QuadConfigEvent {
     private int paramType;
     private String strValue;
 
-    public QuadConfigEvent(int intValue, int lastConfigUpdate, String paramId, int paramType, String strValue) {
+    public ConfigEvent(int intValue, int lastConfigUpdate, String paramId, int paramType, String strValue) {
         this.intValue = intValue;
         this.lastConfigUpdate = lastConfigUpdate;
         this.paramId = paramId;
@@ -98,11 +99,29 @@ class QuadConfigEvent {
         return strValue;
     }
 
-    public static QuadConfigEvent[] from(String json) {
-        return  gson.fromJson(json, QuadConfigEvent[].class);
+    public static ConfigEvent[] fromJSON(String json) {
+        return  gson.fromJson(json, ConfigEvent[].class);
     }
 
     public String toJSON() {
         return gson.toJson(this);
+    }
+
+    public static String buildRequest(String httpAddress, int connectionID) {
+        return httpAddress + "config?action=wait_for_config_events&connectionid=" + connectionID;
+    }
+
+    public static Optional<Timecode> toTimecode(ConfigEvent[] events) {
+        List<Timecode> timecodes = Arrays.stream(events)
+                .filter(e -> e.paramId.equalsIgnoreCase(Constants.EParams.DISPLAY_TIMECODE))
+                .map(e -> new Timecode(e.getStrValue()))
+                .collect(Collectors.toList());
+
+        if (timecodes.isEmpty()) {
+            return Optional.empty();
+        }
+        else {
+            return Optional.of(timecodes.get(0));
+        }
     }
 }
