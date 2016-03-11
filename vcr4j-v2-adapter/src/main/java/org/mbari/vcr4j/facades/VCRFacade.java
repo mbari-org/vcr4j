@@ -12,7 +12,6 @@ import org.mbari.vcr4j.VideoState;
 import org.mbari.vcr4j.commands.SeekTimecodeCmd;
 import org.mbari.vcr4j.commands.ShuttleCmd;
 import org.mbari.vcr4j.commands.VideoCommands;
-import org.mbari.vcr4j.rs422.RS422VideoIO;
 import org.mbari.vcr4j.rs422.commands.PresetUserbitsCmd;
 import org.mbari.vcr4j.rs422.commands.RS422VideoCommands;
 import org.mbari.vcr4j.time.Timecode;
@@ -24,43 +23,11 @@ import org.mbari.vcr4j.time.Timecode;
 public class VCRFacade<S extends VideoState, E extends VideoError> extends VCRAdapter {
 
     private final VideoIO<S, E> videoIO;
-    private final IVCRState vcrState;
-    private final IVCRError vcrError;
+    private final IVCRReply reply;
 
     public VCRFacade(VideoIO<S, E> videoIO) {
         this.videoIO = videoIO;
-
-        // --- Timecode
-        videoIO.getIndexObservable().forEach(vi ->
-            vi.getTimecode().ifPresent(tc -> getVcrTimecode().timecodeProperty().setValue(tc))
-        );
-
-        // --- Userbits
-        if (videoIO instanceof RS422VideoIO) {
-            RS422VideoIO rs422VideoIO = (RS422VideoIO) videoIO;
-            rs422VideoIO.getUserbitsObservable()
-                    .forEach(ub -> getVcrUserbits().setUserbits(ub.getUserbits()));
-        }
-
-        // --- State
-        if (videoIO instanceof RS422VideoIO) {
-            RS422VideoIO rs422VideoIO = (RS422VideoIO) videoIO;
-            vcrState = new RS422StateFacade<>(rs422VideoIO);
-        }
-        else {
-            vcrState = new VCRStateFacade<>(videoIO);
-        }
-
-        // -- Error
-        if (videoIO instanceof RS422VideoIO) {
-            RS422VideoIO rs422VideoIO = (RS422VideoIO) videoIO;
-            vcrError = new RS422ErrorFacade<>(rs422VideoIO);
-        }
-        else {
-            vcrError = new VCRErrorFacade<>(videoIO);
-        }
-
-
+        this.reply = new VCRReplyFacade<>(videoIO);
     }
 
     @Override
@@ -86,29 +53,27 @@ public class VCRFacade<S extends VideoState, E extends VideoError> extends VCRAd
 
     @Override
     public IVCRError getVcrError() {
-        return vcrError;
+        return reply.getVcrError();
     }
 
     @Override
     public IVCRReply getVcrReply() {
-
-        // TODO wire up a VCRReply with the correct objects
-        return super.getVcrReply();
+        return reply;
     }
 
     @Override
     public IVCRState getVcrState() {
-        return vcrState;
+        return reply.getVcrState();
     }
 
     @Override
     public IVCRTimecode getVcrTimecode() {
-        return super.getVcrTimecode();
+        return reply.getVcrTimecode();
     }
 
     @Override
     public IVCRUserbits getVcrUserbits() {
-        return super.getVcrUserbits();
+        return reply.getVcrUserbits();
     }
 
     @Override
@@ -231,5 +196,9 @@ public class VCRFacade<S extends VideoState, E extends VideoError> extends VCRAd
     @Override
     public void stop() {
         videoIO.send(VideoCommands.STOP);
+    }
+
+    public VideoIO<S, E> getVideoIO() {
+        return videoIO;
     }
 }
