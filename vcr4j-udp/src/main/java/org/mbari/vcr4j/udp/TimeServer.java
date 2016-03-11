@@ -20,7 +20,7 @@ public class TimeServer {
 
     private final DatagramSocket socket;
     private final AtomicBoolean run = new AtomicBoolean(false);
-    private Thread serverThread;
+    private volatile Thread serverThread;
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 

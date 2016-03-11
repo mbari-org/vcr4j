@@ -13,7 +13,6 @@ import rx.subjects.PublishSubject;
 import rx.subjects.SerializedSubject;
 import rx.subjects.Subject;
 
-import java.time.Instant;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -121,7 +120,7 @@ public class SchedulerVideoIO<S extends VideoState, E extends VideoError> implem
      */
     private class CommandQueue {
         final BlockingQueue<VideoCommand> pendingQueue = new LinkedBlockingQueue<VideoCommand>();
-        final Thread thread;
+        final Thread thread; // All IO will be done on this thread
         AtomicBoolean isRunning = new AtomicBoolean(true);
         final Runnable runnable = () -> {
             while(isRunning.get()) {
@@ -147,7 +146,7 @@ public class SchedulerVideoIO<S extends VideoState, E extends VideoError> implem
         }
 
         public CommandQueue() {
-            thread = new Thread(runnable, getClass().getName() + "-" + Instant.now());
+            thread = new Thread(runnable, SchedulerVideoIO.this.getClass().getSimpleName());
             thread.setDaemon(true);
             thread.start();
         }

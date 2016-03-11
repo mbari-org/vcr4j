@@ -49,6 +49,7 @@
         <module>vcr4j-jssc</module>
         <module>vcr4j-kipro</module>
         <module>vcr4j-examples</module>
+        <module>vcr4j-v2-adapter</module>
   </modules>
     <build>
         <plugins>

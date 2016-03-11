@@ -8,13 +8,17 @@ import org.mbari.vcr4j.udp.TimeServer;
 import org.mbari.vcr4j.udp.UDPError;
 import org.mbari.vcr4j.udp.UDPState;
 import org.mbari.vcr4j.udp.UDPVideoIO;
-import rx.Scheduler;
-import rx.schedulers.Schedulers;
 
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
+ * This adds a twist to a SimpleDemo. By default, all IO done by a VideoIO object is executed
+ * on the calling thread. This is rarely exactly what you want, especially when running
+ * VideoIO in a UI. We have a class `SchedulerVideoIO` that decorates any VideoIO object. The
+ * SchedulerVideoIO will execute all IO on it's own internal thread. The responses are propagate
+ * through the observables on threads determined by an Executor or Scheduler that you provide
+ * through it's constructor.
+ *
  * @author Brian Schlining
  * @since 2016-02-11T16:51:00
  */
@@ -28,8 +32,8 @@ public class SchedulerDemo {
         UDPVideoIO rawIO = new UDPVideoIO("localhost", 9000);
         VideoIO<UDPState, UDPError> io = new SchedulerVideoIO<>(rawIO, Executors.newCachedThreadPool());
 
-        LoggingDecorator decorator = new LoggingDecorator<>(io);
-        //LoggingDecorator decorator1 = new LoggingDecorator(rawIO);
+        LoggingDecorator decorator = new LoggingDecorator<>(io); // Logs for our Scheduled IO
+        //LoggingDecorator decorator1 = new LoggingDecorator(rawIO); // Logs for the underlying raw IO
         VideoController controller = new VideoController(io); // Wrap io with a standard control
 
         controller.requestStatus();
