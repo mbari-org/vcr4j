@@ -1,4 +1,4 @@
-package org.mbari.vcr4j.facades;
+package org.mbari.vcr4j.adapter;
 
 import org.mbari.vcr4j.IVCRError;
 import org.mbari.vcr4j.IVCRReply;

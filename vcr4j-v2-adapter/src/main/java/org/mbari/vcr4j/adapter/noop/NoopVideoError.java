@@ -1,4 +1,4 @@
-package org.mbari.vcr4j.adapter;
+package org.mbari.vcr4j.adapter.noop;
 
 import org.mbari.vcr4j.VideoCommand;
 import org.mbari.vcr4j.VideoError;

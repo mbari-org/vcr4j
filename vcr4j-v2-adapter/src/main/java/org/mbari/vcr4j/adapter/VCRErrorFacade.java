@@ -1,10 +1,9 @@
-package org.mbari.vcr4j.facades;
+package org.mbari.vcr4j.adapter;
 
 import org.mbari.vcr4j.VCRErrorAdapter;
 import org.mbari.vcr4j.VideoError;
 import org.mbari.vcr4j.VideoIO;
 import org.mbari.vcr4j.VideoState;
-import org.mbari.vcr4j.rs422.RS422Error;
 
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;

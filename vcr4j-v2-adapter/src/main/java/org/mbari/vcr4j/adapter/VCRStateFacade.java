@@ -1,4 +1,4 @@
-package org.mbari.vcr4j.facades;
+package org.mbari.vcr4j.adapter;
 
 import org.mbari.vcr4j.VCRStateAdapter;
 import org.mbari.vcr4j.VideoError;
