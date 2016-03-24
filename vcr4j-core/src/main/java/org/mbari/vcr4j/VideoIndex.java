@@ -11,6 +11,7 @@ import java.util.Optional;
  * Represents the index into the video. One or more fields may be defined.
  */
 public class VideoIndex {
+
     private final Optional<Instant> timestamp;
     private final Optional<Duration> elapsedTime;
     private final Optional<Timecode> timecode;
@@ -74,7 +75,6 @@ public class VideoIndex {
         Instant tsThis = timestamp.orElse(Instant.MIN);
         Instant tsThat = that.getTimestamp().orElse(Instant.MIN);
         return tsThis.equals(tsThat);
-
 
     }
 

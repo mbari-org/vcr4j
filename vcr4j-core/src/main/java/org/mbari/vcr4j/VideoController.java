@@ -12,11 +12,11 @@ import rx.Observable;
 import java.time.Duration;
 import java.time.Instant;
 
-public class VideoController {
+public class VideoController<S extends VideoState, E extends VideoError> {
 
-    private final VideoIO io;
+    private final VideoIO<S, E> io;
 
-    public VideoController(VideoIO io) {
+    public VideoController(VideoIO<S, E> io) {
         this.io = io;
     }
 
@@ -81,11 +81,11 @@ public class VideoController {
         io.send(VideoCommands.STOP);
     }
 
-    public Observable<VideoError> getErrorObservable() {
+    public Observable<E> getErrorObservable() {
         return io.getErrorObservable();
     }
 
-    public Observable<VideoState> getStateObservable() {
+    public Observable<S> getStateObservable() {
         return io.getStateObservable();
     }
 
@@ -93,4 +93,7 @@ public class VideoController {
         return io.getIndexObservable();
     }
 
+    public VideoIO<S, E> getVideoIO() {
+        return io;
+    }
 }
