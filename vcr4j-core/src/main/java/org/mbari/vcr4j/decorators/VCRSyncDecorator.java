@@ -25,7 +25,7 @@ public class VCRSyncDecorator<S extends VideoState, E extends VideoError> implem
     private Timer timer = new Timer(getClass().getSimpleName() + "-" + System.currentTimeMillis(), true);
 
 
-    // Kill the timer when the commandSubject gets close
+    // Kill the timer when the commandSubject gets closed
     Subscriber<VideoCommand> subscriber = new Subscriber<VideoCommand>() {
         @Override
         public void onCompleted() {

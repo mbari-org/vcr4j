@@ -50,6 +50,7 @@ public class SchedulerVideoIO<S extends VideoState, E extends VideoError> implem
         stateObservable = io.getStateObservable().observeOn(scheduler);
         indexObservable = io.getIndexObservable().observeOn(scheduler);
 
+
         commandSubscriber = new Subscriber<VideoCommand>() {
             @Override
             public void onCompleted() {
