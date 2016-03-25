@@ -48,9 +48,10 @@
         <module>vcr4j-purejavacomm</module>
         <module>vcr4j-jssc</module>
         <module>vcr4j-kipro</module>
+        <module>vcr4j-javafx</module>
         <module>vcr4j-v2-adapter</module>
         <module>vcr4j-examples</module>
-  </modules>
+    </modules>
     <build>
         <plugins>
             <!-- Filter resources using UTF-8 -->
