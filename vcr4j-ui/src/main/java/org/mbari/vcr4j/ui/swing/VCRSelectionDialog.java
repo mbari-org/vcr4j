@@ -85,13 +85,8 @@ public class VCRSelectionDialog extends JDialog {
         if (cancelButton == null) {
             cancelButton = new JButton();
             cancelButton.setText("Cancel");
-            cancelButton.addActionListener(new java.awt.event.ActionListener() {
-
-                public void actionPerformed(java.awt.event.ActionEvent e) {
-                    VCRSelectionDialog.this.setVisible(false);
-                }
-
-            });
+            cancelButton.addActionListener(e ->
+                    VCRSelectionDialog.this.setVisible(false));
         }
 
         return cancelButton;
