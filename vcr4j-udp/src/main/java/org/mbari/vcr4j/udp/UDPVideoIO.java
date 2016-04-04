@@ -58,7 +58,6 @@ public class UDPVideoIO implements VideoIO<UDPState, UDPError> {
                 inetAddress,
                 port);
 
-        // Do the IO off of the calling thread
         commandSubject.filter(vc -> vc.equals(VideoCommands.REQUEST_TIMECODE) || vc.equals(VideoCommands.REQUEST_INDEX))
                 .subscribe(vc -> sendCommand(requestTimecodePacket));
 
