@@ -32,7 +32,12 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
+
+import javafx.beans.property.ObjectProperty;
 import org.mbari.util.Dispatcher;
+import org.mbari.vcr4j.VideoController;
+import org.mbari.vcr4j.VideoError;
+import org.mbari.vcr4j.VideoState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,16 +60,13 @@ public class VCRSelectionDialog extends JDialog {
     private Action okAction = null;
     private JButton okButton = null;
     private VCRSelectionPanel vcrSelectionPanel = null;
+    private final ObjectProperty<VideoController<? extends VideoState, ? extends VideoError>> videoController;
 
 
-    public VCRSelectionDialog() {
-        super();
-        initialize();
-    }
 
-
-    public VCRSelectionDialog(Frame owner) throws HeadlessException {
+    public VCRSelectionDialog(Frame owner, ObjectProperty<VideoController<? extends VideoState, ? extends VideoError>> videoController) throws HeadlessException {
         super(owner, true);
+        this.videoController = videoController;
         initialize();
         this.setLocationRelativeTo(owner);
     }
@@ -111,7 +113,8 @@ public class VCRSelectionDialog extends JDialog {
                 public void actionPerformed(ActionEvent e) {
                     log.debug("Opening a dialog to select the VCR");
                     VCRSelectionDialog.this.setVisible(false);
-                    Dispatcher.getDispatcher(IVCR.class).setValueObject(getVcrSelectionPanel().getVcr());
+                    getVcrSelectionPanel().connect();
+                    //Dispatcher.getDispatcher(IVCR.class).setValueObject(getVcrSelectionPanel().getVcr());
                     log.debug("Connection to VCR is now established");
                 }
             };
@@ -144,7 +147,7 @@ public class VCRSelectionDialog extends JDialog {
 
     private VCRSelectionPanel getVcrSelectionPanel() {
         if (vcrSelectionPanel == null) {
-            vcrSelectionPanel = new VCRSelectionPanel();
+            vcrSelectionPanel = new VCRSelectionPanel(videoController);
         }
 
         return vcrSelectionPanel;
@@ -161,15 +164,15 @@ public class VCRSelectionDialog extends JDialog {
 
 
     public void setVisible(boolean b) {
-        if (b) {
-            IVCR vcr = (IVCR) Dispatcher.getDispatcher(IVCR.class).getValueObject();
-
-            if (vcr == null) {
-                vcr = new VCRAdapter();
-            }
-
-            getVcrSelectionPanel().setVcr(vcr);
-        }
+//        if (b) {
+//            IVCR vcr = (IVCR) Dispatcher.getDispatcher(IVCR.class).getValueObject();
+//
+//            if (vcr == null) {
+//                vcr = new VCRAdapter();
+//            }
+//
+//            getVcrSelectionPanel().setVcr(vcr);
+//        }
 
         super.setVisible(b);
     }

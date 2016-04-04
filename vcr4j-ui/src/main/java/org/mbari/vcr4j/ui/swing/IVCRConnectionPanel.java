@@ -44,4 +44,7 @@ public interface IVCRConnectionPanel {
      *         that the panel makes.
      */
     String getVcrPanelName();
+
+    void connect();
+
 }

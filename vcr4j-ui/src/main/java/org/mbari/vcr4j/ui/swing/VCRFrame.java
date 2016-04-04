@@ -62,13 +62,14 @@ public class VCRFrame extends JFrame {
     private JMenu vcrMenu = null;
     private VCRPanel vcrPanel = null;
 
-    private JDialog connectDialog = new VCRSelectionDialog(this);
+    private JDialog connectDialog;
 
     /**
      * This is the default constructor
      */
     public VCRFrame() {
         super();
+        connectDialog = new VCRSelectionDialog(this, getVcrPanel().videoControllerProperty());
         initialize();
     }
 
@@ -267,6 +268,7 @@ public class VCRFrame extends JFrame {
     public void setVideoController(VideoController<? extends VideoState, ? extends VideoError> videoController) {
         getVcrPanel().setVideoController(videoController);
     }
+
 
 }
 

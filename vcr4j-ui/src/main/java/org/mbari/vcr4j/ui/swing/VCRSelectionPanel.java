@@ -25,8 +25,12 @@ import java.awt.event.ActionListener;
 import javax.swing.ButtonGroup;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+
+import javafx.beans.property.ObjectProperty;
 import org.mbari.vcr4j.IVCR;
-import org.mbari.vcr4j.timer.MonitoringVCR;
+import org.mbari.vcr4j.VideoController;
+import org.mbari.vcr4j.VideoError;
+import org.mbari.vcr4j.VideoState;
 
 /**
  * Class description
@@ -49,11 +53,14 @@ public class VCRSelectionPanel extends JPanel {
     private VCRConnectionPanel vcrConnectionPanelUDP02 = null;
     private JPanel vcrTypePanel = null;
 
+    private final ObjectProperty<VideoController<? extends VideoState, ? extends VideoError>> videoController;
+
     /**
      * This is the default constructor
      */
-    public VCRSelectionPanel() {
+    public VCRSelectionPanel(ObjectProperty<VideoController<? extends VideoState, ? extends VideoError>> videoController) {
         super();
+        this.videoController = videoController;
         initialize();
     }
 
@@ -85,88 +92,89 @@ public class VCRSelectionPanel extends JPanel {
         return rs422RBListener;
     }
 
-    private ActionListener getUdp01Listener() {
-        if (udp01RBListener == null) {
-            udp01RBListener = new java.awt.event.ActionListener() {
+//    private ActionListener getUdp01Listener() {
+//        if (udp01RBListener == null) {
+//            udp01RBListener = new java.awt.event.ActionListener() {
+//
+//                public void actionPerformed(java.awt.event.ActionEvent e) {
+//                    if (udp01RB.isSelected()) {
+//                        setCurrentConnectionPanel(getVcrConnectionPanelUDP01());
+//                    }
+//                }
+//            };
+//        }
+//
+//        return udp01RBListener;
+//    }
+//
+//
+//    private JRadioButton getUdp01RB() {
+//        if (udp01RB == null) {
+//            udp01RB = new JRadioButton();
+//            udp01RB.setText(getVcrConnectionPanelUDP01().getVcrPanelName());
+//            udp01RB.addActionListener(getUdp01Listener());
+//        }
+//
+//        return udp01RB;
+//    }
+//
+//    private ActionListener getUdp02Listener() {
+//        if (udp02RBListener == null) {
+//            udp02RBListener = new java.awt.event.ActionListener() {
+//
+//                public void actionPerformed(java.awt.event.ActionEvent e) {
+//                    if (udp02RB.isSelected()) {
+//                        setCurrentConnectionPanel(getVcrConnectionPanelUDP02());
+//                    }
+//                }
+//            };
+//        }
+//
+//        return udp02RBListener;
+//    }
+//
+//
+//    private JRadioButton getUdp02RB() {
+//        if (udp02RB == null) {
+//            udp02RB = new JRadioButton();
+//            udp02RB.setText(getVcrConnectionPanelUDP02().getVcrPanelName());
+//            udp02RB.addActionListener(getUdp02Listener());
+//        }
+//
+//        return udp02RB;
+//    }
 
-                public void actionPerformed(java.awt.event.ActionEvent e) {
-                    if (udp01RB.isSelected()) {
-                        setCurrentConnectionPanel(getVcrConnectionPanelUDP01());
-                    }
-                }
-            };
-        }
-
-        return udp01RBListener;
+    public void connect() {
+        currentConnectionPanel.connect();
     }
 
 
-    private JRadioButton getUdp01RB() {
-        if (udp01RB == null) {
-            udp01RB = new JRadioButton();
-            udp01RB.setText(getVcrConnectionPanelUDP01().getVcrPanelName());
-            udp01RB.addActionListener(getUdp01Listener());
-        }
-
-        return udp01RB;
-    }
-
-    private ActionListener getUdp02Listener() {
-        if (udp02RBListener == null) {
-            udp02RBListener = new java.awt.event.ActionListener() {
-
-                public void actionPerformed(java.awt.event.ActionEvent e) {
-                    if (udp02RB.isSelected()) {
-                        setCurrentConnectionPanel(getVcrConnectionPanelUDP02());
-                    }
-                }
-            };
-        }
-
-        return udp02RBListener;
-    }
-
-
-    private JRadioButton getUdp02RB() {
-        if (udp02RB == null) {
-            udp02RB = new JRadioButton();
-            udp02RB.setText(getVcrConnectionPanelUDP02().getVcrPanelName());
-            udp02RB.addActionListener(getUdp02Listener());
-        }
-
-        return udp02RB;
-    }
-
-
-    public IVCR getVcr() {
-        return currentConnectionPanel.getVcr();
-    }
 
 
     private VCRConnectionPanel getVcrConnectionPanelRs422() {
         if (vcrConnectionPanelRs422 == null) {
-            vcrConnectionPanelRs422 = new org.mbari.vcr4j.rs422.VCRConnectionPanel();
+            vcrConnectionPanelRs422 = new RXTXConnectionPanel(videoController);
         }
 
         return vcrConnectionPanelRs422;
     }
 
 
-    private VCRConnectionPanel getVcrConnectionPanelUDP01() {
-        if (vcrConnectionPanelUDP01 == null) {
-            vcrConnectionPanelUDP01 = new org.mbari.vcr4j.udp01.VCRConnectionPanel();
-        }
-
-        return vcrConnectionPanelUDP01;
-    }
-
-    private VCRConnectionPanel getVcrConnectionPanelUDP02() {
-        if (vcrConnectionPanelUDP02 == null) {
-            vcrConnectionPanelUDP02 = new org.mbari.vcr4j.udp02.VCRConnectionPanel();
-        }
-
-        return vcrConnectionPanelUDP02;
-    }
+//    private VCRConnectionPanel getVcrConnectionPanelUDP01() {
+//        if (vcrConnectionPanelUDP01 == null) {
+//            vcrConnectionPanelUDP01 = new org.mbari.vcr4j.udp01.VCRConnectionPanel();
+//        }
+//
+//        return vcrConnectionPanelUDP01;
+//    }
+//
+//    private VCRConnectionPanel getVcrConnectionPanelUDP02() {
+//        if (vcrConnectionPanelUDP02 == null) {
+//            vcrConnectionPanelUDP02 = new org.mbari.vcr4j.udp02.VCRConnectionPanel();
+//        }
+//
+//        return vcrConnectionPanelUDP02;
+//    }
 
     private JPanel getVcrTypePanel() {
         if (vcrTypePanel == null) {
@@ -175,8 +183,8 @@ public class VCRSelectionPanel extends JPanel {
                     javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION,
                     javax.swing.border.TitledBorder.DEFAULT_POSITION, null, null));
             vcrTypePanel.add(getRs422RB(), null);
-            vcrTypePanel.add(getUdp01RB(), null);
-            vcrTypePanel.add(getUdp02RB(), null);
+//            vcrTypePanel.add(getUdp01RB(), null);
+//            vcrTypePanel.add(getUdp02RB(), null);
         }
 
         return vcrTypePanel;
@@ -196,8 +204,8 @@ public class VCRSelectionPanel extends JPanel {
         ButtonGroup bg = new ButtonGroup();
 
         bg.add(getRs422RB());
-        bg.add(getUdp01RB());
-        bg.add(getUdp02RB());
+//        bg.add(getUdp01RB());
+//        bg.add(getUdp02RB());
     }
 
     private void setCurrentConnectionPanel(VCRConnectionPanel vcrConnectionPanel) {
@@ -217,38 +225,38 @@ public class VCRSelectionPanel extends JPanel {
      *
      * @param vcr
      */
-    public void setVcr(IVCR vcr) {
-        if (vcr instanceof MonitoringVCR) {
-            vcr = ((MonitoringVCR) vcr).getVcr();
-        }
-
-        if (vcr instanceof org.mbari.vcr4j.rs422.VCR) {
-            getRs422RB().setSelected(true);
-            getRs422RBListener().actionPerformed(null);
-        }
-        else if (vcr instanceof org.mbari.vcr4j.udp01.VCR) {
-            org.mbari.vcr4j.udp01.VCR udpVcr = (org.mbari.vcr4j.udp01.VCR) vcr;
-
-            getUdp01RB().setSelected(true);
-
-            org.mbari.vcr4j.udp01.VCRConnectionPanel panel = (org.mbari.vcr4j.udp01
-                .VCRConnectionPanel) getVcrConnectionPanelUDP01();
-
-            panel.getPortField().setText(udpVcr.getPort() + "");
-            panel.getHostField().setText(udpVcr.getInetAddress().getHostName());
-            getUdp01Listener().actionPerformed(null);
-        }
-        else if (vcr instanceof org.mbari.vcr4j.udp02.VCR) {
-            org.mbari.vcr4j.udp02.VCR udpVcr = (org.mbari.vcr4j.udp02.VCR) vcr;
-
-            getUdp02RB().setSelected(true);
-
-            org.mbari.vcr4j.udp02.VCRConnectionPanel panel = (org.mbari.vcr4j.udp02
-                .VCRConnectionPanel) getVcrConnectionPanelUDP02();
-
-            panel.getPortField().setText(udpVcr.getPort() + "");
-            panel.getHostField().setText(udpVcr.getInetAddress().getHostName());
-            getUdp02Listener().actionPerformed(null);
-        }
-    }
+//    public void setVcr(IVCR vcr) {
+//        if (vcr instanceof MonitoringVCR) {
+//            vcr = ((MonitoringVCR) vcr).getVcr();
+//        }
+//
+//        if (vcr instanceof org.mbari.vcr4j.rs422.VCR) {
+//            getRs422RB().setSelected(true);
+//            getRs422RBListener().actionPerformed(null);
+//        }
+//        else if (vcr instanceof org.mbari.vcr4j.udp01.VCR) {
+//            org.mbari.vcr4j.udp01.VCR udpVcr = (org.mbari.vcr4j.udp01.VCR) vcr;
+//
+//            getUdp01RB().setSelected(true);
+//
+//            org.mbari.vcr4j.udp01.VCRConnectionPanel panel = (org.mbari.vcr4j.udp01
+//                .VCRConnectionPanel) getVcrConnectionPanelUDP01();
+//
+//            panel.getPortField().setText(udpVcr.getPort() + "");
+//            panel.getHostField().setText(udpVcr.getInetAddress().getHostName());
+//            getUdp01Listener().actionPerformed(null);
+//        }
+//        else if (vcr instanceof org.mbari.vcr4j.udp02.VCR) {
+//            org.mbari.vcr4j.udp02.VCR udpVcr = (org.mbari.vcr4j.udp02.VCR) vcr;
+//
+//            getUdp02RB().setSelected(true);
+//
+//            org.mbari.vcr4j.udp02.VCRConnectionPanel panel = (org.mbari.vcr4j.udp02
+//                .VCRConnectionPanel) getVcrConnectionPanelUDP02();
+//
+//            panel.getPortField().setText(udpVcr.getPort() + "");
+//            panel.getHostField().setText(udpVcr.getInetAddress().getHostName());
+//            getUdp02Listener().actionPerformed(null);
+//        }
+//    }
 }

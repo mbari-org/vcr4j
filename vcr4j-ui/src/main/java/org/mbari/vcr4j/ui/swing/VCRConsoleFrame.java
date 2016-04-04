@@ -101,58 +101,44 @@ public class VCRConsoleFrame extends JFrame {
         this.setTitle("VCR Console");
         menuFile.setText("File");
         menuFileExit.setText("Exit");
-        menuFileExit.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                menuFileExitActionPerformed(e);
-            }
-        });
+        menuFileExit.addActionListener(this::menuFileExitActionPerformed);
         menuHelp.setText("Help");
         menuHelpAbout.setText("About");
-        menuHelpAbout.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                menuHelpAboutActionPerformed(e);
-            }
-        });
+        menuHelpAbout.addActionListener(this::menuHelpAboutActionPerformed);
         menuConnect.setText("Connect to VCR");
-        menuConnect.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                Set<CommPortIdentifier> ports = RXTXUtilities.getAvailableSerialPorts();
-                String[] portNames = ports.stream()
-                        .map(CommPortIdentifier::getName)
-                        .sorted()
-                        .toArray(String[]::new);
+        menuConnect.addActionListener(e -> {
+            Set<CommPortIdentifier> ports = RXTXUtilities.getAvailableSerialPorts();
+            String[] portNames = ports.stream()
+                    .map(CommPortIdentifier::getName)
+                    .sorted()
+                    .toArray(String[]::new);
 
 
 
-                if (portNames.length == 0) {
-                    JOptionPane.showMessageDialog(VCRConsoleFrame.this,
-                            "No serial ports were found. Unable to connect to a VCR.", "Error",
-                            JOptionPane.ERROR_MESSAGE);
+            if (portNames.length == 0) {
+                JOptionPane.showMessageDialog(VCRConsoleFrame.this,
+                        "No serial ports were found. Unable to connect to a VCR.", "Error",
+                        JOptionPane.ERROR_MESSAGE);
 
-                    return;
-                }
-
-                String s = (String) JOptionPane.showInputDialog(VCRConsoleFrame.this, "Select a serial port",
-                    "VCR Serial Port", JOptionPane.PLAIN_MESSAGE, null, portNames, portNames[0]);
-
-                if ((s != null) && (s.length() > 0)) {
-                    try {
-
-                        RXTXVideoIO io = RXTXVideoIO.open(s);
-                        Decorator syncDecorator = new VCRSyncDecorator<>(io);
-                        Decorator statusDecorator = new RS422StatusDecorator(io);
-                        vcrPanel.setVideoController(new VideoController<>(io));
-                    }
-                    catch (Exception e1) {
-
-                        e1.printStackTrace();
-                    }
-                }
+                return;
             }
 
+            String s = (String) JOptionPane.showInputDialog(VCRConsoleFrame.this, "Select a serial port",
+                "VCR Serial Port", JOptionPane.PLAIN_MESSAGE, null, portNames, portNames[0]);
+
+            if ((s != null) && (s.length() > 0)) {
+                try {
+
+                    RXTXVideoIO io = RXTXVideoIO.open(s);
+                    Decorator syncDecorator = new VCRSyncDecorator<>(io);
+                    Decorator statusDecorator = new RS422StatusDecorator(io);
+                    vcrPanel.setVideoController(new VideoController<>(io));
+                }
+                catch (Exception e1) {
+
+                    e1.printStackTrace();
+                }
+            }
         });
         menuFile.add(menuConnect);
         menuFile.add(menuFileExit);
