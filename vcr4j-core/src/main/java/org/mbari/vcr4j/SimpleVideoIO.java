@@ -5,12 +5,12 @@ import rx.subjects.Subject;
 
 /**
  * Sometimes you need a VideoIO object that is an amalgam of observables from different sources.
- * This facade provides a way to wrap up a VideoIO object using disparate observables
+ * This class provides a way assemble a VideoIO object using disparate observables
  *
  * @author Brian Schlining
  * @since 2016-04-04T16:07:00
  */
-public class VideoIOFacade<S extends VideoState, E extends VideoError> implements VideoIO<S, E> {
+public class SimpleVideoIO<S extends VideoState, E extends VideoError> implements VideoIO<S, E> {
 
     private final String connectionID;
     private final Subject<VideoCommand, VideoCommand> commandSubject;
@@ -18,7 +18,7 @@ public class VideoIOFacade<S extends VideoState, E extends VideoError> implement
     private final Observable<S> stateObservable;
     private final Observable<VideoIndex> indexObservable;
 
-    public VideoIOFacade(String connectionID,
+    public SimpleVideoIO(String connectionID,
             Subject<VideoCommand, VideoCommand> commandSubject,
             Observable<S> stateObservable,
             Observable<E> errorObservable,
