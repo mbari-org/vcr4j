@@ -73,7 +73,9 @@ public class SerialCommVideoIO extends RS422VideoIO  {
             SerialPort serialPort = SerialPort.getCommPort(portName);
             serialPort.openPort();
             serialPort.setBaudRate(38400);
+            serialPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_SEMI_BLOCKING | SerialPort.TIMEOUT_WRITE_BLOCKING, 100, 0);
             serialPort.setNumDataBits(8);
+            serialPort.setParity(SerialPort.ODD_PARITY);
             serialPort.setNumStopBits(1);
             serialPort.setFlowControl(SerialPort.FLOW_CONTROL_RTS_ENABLED);
 

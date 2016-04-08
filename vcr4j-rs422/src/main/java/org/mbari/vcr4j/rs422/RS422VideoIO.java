@@ -180,6 +180,8 @@ public abstract class RS422VideoIO implements VCRVideoIO {
             readResponse(command, videoCommand);
         }
         catch (IOException | RS422Exception e) {
+            responseParser.getErrorObservable()
+                    .onNext(new RS422Error(RS422Error.UNDEFINED_COMMAND, Optional.ofNullable(videoCommand)));
             log.error("Failed to send a command to the VCR", e);
         }
         catch (InterruptedException e) {
