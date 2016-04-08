@@ -1,14 +1,9 @@
-# vcr4j
-=====
+# VCR4J
 
-Java API for communicating with video tape recorders that support the Sony 9-pin protocol
+Video controls for various devices. Used by MBARI's video annotation and reference system.
 
-## Overview
 
-The vcr4j project is a Java API for communicating with video cassette recorders (VCR) that support the Sony 9-pin communication protocol over RS422 (a serial port). It was originally developed by the [Monterey Bay Aquarium Research Institute](http://www.mbari.org) in support of the [Video Annotation and Reference System](https://github.com/hohonuuli/vars) (VARS).
+## Notes
 
-## To Build:
-
-	  mvn clean install
-
-The resulting jar can be found in the target directory
+- When testing on Mac OS X 10.11 using a GUC232A usb-to-serial device and prolific's drivers. THe port doesn't seem to close property with RXTX. I'm force to unplug and replug it in after each test to reset the port.
+- When testing on Mac OS X 10.11 using a GUC232A usb-to-serial device neither JSSC or Purejavacomm appear to work. PJC does work with the serial ports on the DeckLink cards though.
