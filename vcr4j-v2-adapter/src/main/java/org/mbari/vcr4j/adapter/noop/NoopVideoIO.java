@@ -39,6 +39,7 @@ public class NoopVideoIO implements VideoIO<NoopVideoState, NoopVideoError> {
                 || vc.equals(VideoCommands.REQUEST_TIMESTAMP))
                 .forEach(vc -> indexObservable.onNext(INDEX));
 
+
     }
 
     @Override
@@ -61,7 +62,7 @@ public class NoopVideoIO implements VideoIO<NoopVideoState, NoopVideoError> {
 
     @Override
     public String getConnectionID() {
-        return "not connnected";
+        return "not connected";
     }
 
     @Override

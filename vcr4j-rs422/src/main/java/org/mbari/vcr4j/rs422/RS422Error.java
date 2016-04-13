@@ -7,6 +7,8 @@ import org.mbari.vcr4j.VideoCommand;
 
 public class RS422Error implements VideoError {
 
+    public static final int OTHER_ERROR = 0x02;
+
     /** SONY - Checksum error in the command sent */
     public static final int CHECKSUM_ERROR = 0x04;
 
@@ -28,10 +30,29 @@ public class RS422Error implements VideoError {
     /** SONY - Invalid command sent to VCR */
     public static final int              UNDEFINED_COMMAND = 0x01;
     private final int                    error;
-    private final Optional<VideoCommand> videoCommand;
+    private final String message;
+    private final VideoCommand videoCommand;
 
-    public RS422Error(int error, Optional<VideoCommand> videoCommand) {
-        this.error        = error;
+
+    public RS422Error(int error) {
+        this(error, null, null);
+    }
+
+    public RS422Error(int error, VideoCommand videoCommand) {
+        this(error, null, videoCommand);
+    }
+
+    public RS422Error(String errorMsg) {
+        this(OTHER_ERROR, errorMsg, null);
+    }
+
+    public RS422Error(String errorMsg, VideoCommand videoCommand) {
+        this(OTHER_ERROR, errorMsg, videoCommand);
+    }
+
+    public RS422Error(int error, String errorMsg, VideoCommand videoCommand) {
+        this.error = error;
+        this.message = errorMsg;
         this.videoCommand = videoCommand;
     }
 
@@ -84,9 +105,12 @@ public class RS422Error implements VideoError {
      */
     @Override
     public Optional<VideoCommand> getVideoCommand() {
-        return videoCommand;
+        return Optional.ofNullable(videoCommand);
     }
 
+    public String getMessage() {
+        return message;
+    }
 
     /**
      * RS422Error objects are equal if they have the same error code

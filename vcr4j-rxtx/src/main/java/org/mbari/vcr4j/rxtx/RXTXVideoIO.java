@@ -63,7 +63,10 @@ public class RXTXVideoIO extends RS422VideoIO {
 
     @Override
     public void close() {
-        log.info("Closing serial port:" + serialPort.getName());
+
+        if (serialPort != null) {
+            log.info("Closing serial port:" + serialPort.getName());
+        }
 
         try {
             getCommandSubject().onCompleted();

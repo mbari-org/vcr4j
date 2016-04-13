@@ -47,6 +47,9 @@ public class RS422ResponseParser {
         return ((byte) temp);
     }
 
+    public void update(byte[] command, byte[] cmd, byte[] data, byte[] checksum) {
+        update(command, cmd, data, checksum);
+    }
 
     /**
      * Update the state objects associated with the VCR's response
@@ -56,7 +59,7 @@ public class RS422ResponseParser {
      * @param checksum The checksum of the VCR's reply
      *
      */
-    public void update(byte[] command, byte[] cmd, byte[] data, byte[] checksum, Optional<VideoCommand> videoCommand) {
+    public void update(byte[] command, byte[] cmd, byte[] data, byte[] checksum, VideoCommand videoCommand) {
         byte commandChecksum = calculateChecksum(command);
 
         // Make sure the checksum matches corectly. The VCRError for bad checksums

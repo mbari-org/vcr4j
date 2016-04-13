@@ -190,9 +190,11 @@ public class VCRPanel extends JPanel {
         add(getVcrButtonPanel());
 
         videoController.addListener((obs, oldVal, newVal) -> {
+            log.debug("Setting videoController to " + newVal);
             getTimeCodeField().setText("NO VIDEO");
             newVal.requestStatus();
         });
+        getTimeCodeField().setText("NO VIDEO");
 
     }
 

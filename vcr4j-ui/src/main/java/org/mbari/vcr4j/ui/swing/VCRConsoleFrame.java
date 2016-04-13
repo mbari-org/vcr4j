@@ -19,13 +19,17 @@ package org.mbari.vcr4j.ui.swing;
 import gnu.io.CommPortIdentifier;
 import org.mbari.vcr4j.VideoController;
 import org.mbari.vcr4j.decorators.Decorator;
+import org.mbari.vcr4j.decorators.LoggingDecorator;
 import org.mbari.vcr4j.decorators.VCRSyncDecorator;
 import org.mbari.vcr4j.rs422.VCRVideoIO;
 import org.mbari.vcr4j.rs422.commands.PresetUserbitsCmd;
 import org.mbari.vcr4j.rs422.commands.RS422VideoCommands;
+import org.mbari.vcr4j.rs422.decorators.RS422LoggingDecorator;
 import org.mbari.vcr4j.rs422.decorators.RS422StatusDecorator;
 import org.mbari.vcr4j.rxtx.RXTXUtilities;
 import org.mbari.vcr4j.rxtx.RXTXVideoIO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -67,6 +71,7 @@ public class VCRConsoleFrame extends JFrame {
     BorderLayout borderLayout1 = new BorderLayout();
     JPanel contentPane;
     UserbitPanel statusBar;
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     /** Construct the frame */
     public VCRConsoleFrame() {
@@ -128,10 +133,11 @@ public class VCRConsoleFrame extends JFrame {
 
             if ((s != null) && (s.length() > 0)) {
                 try {
-
+                    log.debug("Opening " + s);
                     RXTXVideoIO io = RXTXVideoIO.open(s);
                     Decorator syncDecorator = new VCRSyncDecorator<>(io);
                     Decorator statusDecorator = new RS422StatusDecorator(io);
+                    Decorator loggingDecorator = new RS422LoggingDecorator(io);
                     vcrPanel.setVideoController(new VideoController<>(io));
                 }
                 catch (Exception e1) {

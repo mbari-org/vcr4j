@@ -52,7 +52,7 @@ public class TimeCodeField extends JTextField {
 
     private Dimension size = new Dimension(180, 40);
 
-    private ObjectProperty<VideoController<? extends VideoState, ? extends VideoError>> videoController;
+    //private ObjectProperty<VideoController<? extends VideoState, ? extends VideoError>> videoController;
 
     /** No argument constructor */
     public TimeCodeField(ObjectProperty<VideoController<? extends VideoState, ? extends VideoError>> videoController) {

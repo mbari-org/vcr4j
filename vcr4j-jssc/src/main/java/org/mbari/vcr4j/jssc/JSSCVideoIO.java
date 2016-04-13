@@ -145,7 +145,7 @@ public class JSSCVideoIO implements VCRVideoIO {
 
         loggerHelper.logResponse(cmd, data, checksum);
 
-        responseParser.update(mostRecentCommand, cmd, data, checksum, Optional.of(videoCommand));
+        responseParser.update(mostRecentCommand, cmd, data, checksum, videoCommand);
 
     }
 

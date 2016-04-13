@@ -147,13 +147,14 @@ public abstract class RS422VideoIO implements VCRVideoIO {
             inputStream.read(checksum);
         }
         else {
+            responseParser.getErrorObservable().onNext(new RS422Error("Incoming checksum is missing", videoCommand));
             throw new IOException("Incoming checksum is missing. cmd[] =  " + NumberUtilities.toHexString(cmd)
                                   + " data[] = " + NumberUtilities.toHexString(data));
         }
 
         loggerHelper.logResponse(cmd, data, checksum);
 
-        responseParser.update(mostRecentCommand, cmd, data, checksum, Optional.of(videoCommand));
+        responseParser.update(mostRecentCommand, cmd, data, checksum, videoCommand);
 
     }
 
@@ -181,7 +182,7 @@ public abstract class RS422VideoIO implements VCRVideoIO {
         }
         catch (IOException | RS422Exception e) {
             responseParser.getErrorObservable()
-                    .onNext(new RS422Error(RS422Error.UNDEFINED_COMMAND, Optional.ofNullable(videoCommand)));
+                    .onNext(new RS422Error(RS422Error.UNDEFINED_COMMAND, videoCommand));
             log.error("Failed to send a command to the VCR", e);
         }
         catch (InterruptedException e) {
