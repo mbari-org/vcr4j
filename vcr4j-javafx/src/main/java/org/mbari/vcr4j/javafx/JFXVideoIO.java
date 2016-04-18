@@ -22,7 +22,7 @@ public class JFXVideoIO implements VideoIO<JFXVideoState, SimpleVideoError> {
 
     public static final double MAX_RATE = 8D; // According to JavaFX docs this is the max rate
     private static final double eps = 0.01;
-    public static final double FAST_FORWARD_RATE = 5D;
+    public static final double FAST_FORWARD_RATE = 3D;
 
     private final Subject<VideoCommand, VideoCommand> commandSubject =
             new SerializedSubject<>(PublishSubject.create());
