@@ -11,6 +11,8 @@ import org.mbari.vcr4j.kipro.json.ConfigEvent;
 import org.mbari.vcr4j.kipro.json.ConnectionID;
 import org.mbari.vcr4j.kipro.json.Constants;
 import org.mbari.vcr4j.time.Timecode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rx.Observable;
 import rx.subjects.PublishSubject;
 import rx.subjects.SerializedSubject;
@@ -31,6 +33,7 @@ public class QuadVideoIO implements VideoIO<QuadState, QuadError> {
     /** Always ends with "/" */
     private final String httpAddress;
     private final AtomicInteger connectionID = new AtomicInteger(0);
+    private static final Logger log = LoggerFactory.getLogger(QuadVideoIO.class);
 
 
     private final Subject<QuadError, QuadError> errorObservable = new SerializedSubject<>(PublishSubject.create());
@@ -59,6 +62,12 @@ public class QuadVideoIO implements VideoIO<QuadState, QuadError> {
         timecodeObservable.subscribe(tc -> {
             VideoIndex videoIndex = new VideoIndex(Optional.of(Instant.now()), Optional.empty(), Optional.of(tc));
             indexObservable.onNext(videoIndex);
+        });
+
+        errorObservable.subscribe(e -> {
+            if (e.hasConnectionError()) {
+                connect();
+            }
         });
 
     }
@@ -118,12 +127,19 @@ public class QuadVideoIO implements VideoIO<QuadState, QuadError> {
         Optional<String> response = sendRequestAndCheckError(request);
         AtomicBoolean ok = new AtomicBoolean(false);
         if (response.isPresent()) {
-            ConfigEvent[] events = ConfigEvent.fromJSON(response.get());
-            Optional<Timecode> timecode = ConfigEvent.toTimecode(events);
-            timecode.ifPresent(tc -> {
-                ok.set(true);
-                timecodeObservable.onNext(tc);
-            });
+            try {
+                ConfigEvent[] events = ConfigEvent.fromJSON(response.get());
+                Optional<Timecode> timecode = ConfigEvent.toTimecode(events);
+                timecode.ifPresent(tc -> {
+                    ok.set(true);
+                    timecodeObservable.onNext(tc);
+                });
+            }
+            catch (Exception e) {
+                // TODO ? Let's try reconnecting
+                log.debug("Failed to parser response. Response was: \n" + response);
+            }
+
         }
 
         if (!ok.get()) {
@@ -135,18 +151,39 @@ public class QuadVideoIO implements VideoIO<QuadState, QuadError> {
     private Optional<String> sendRequestAndCheckError(String request) {
         Optional<String> json;
         try {
-            json = Optional.of(sendRequest(request));
+            json = sendRequestWithErrorCheck(request);
         }
         catch (Exception e) {
-            QuadError error = new QuadError(true, true, Optional.empty(), Optional.of(e));
+            QuadError error = new QuadError(true, false, Optional.empty(), Optional.of(e));
             errorObservable.onNext(error);
             json = Optional.empty();
         }
         return json;
     }
 
+    private Optional<String> sendRequestWithErrorCheck(String request) {
+        Optional<String> opt = Optional.empty();
+        try {
+            HttpResponse<String> response = Unirest.get(request)
+                    .header("Accept", "application/json")
+                    .asString();
+            if (response.getStatus() == 404) {
+                QuadError error = new QuadError(true, true, Optional.empty(), Optional.empty());
+                errorObservable.onNext(error);
+            }
+            else {
+                opt = Optional.ofNullable(response.getBody());
+            }
+        }
+        catch (UnirestException e) {
+            QuadError error = new QuadError(true, true, Optional.empty(), Optional.of(e));
+            errorObservable.onNext(error);
+        }
+        return opt;
+    }
+
     public static String sendRequest(String request) {
-        System.out.println("REQUEST: " + request);
+        log.debug("REQUEST: {}", request);
         try {
             HttpResponse<String> response = Unirest.get(request)
                     .header("Accept", "application/json")

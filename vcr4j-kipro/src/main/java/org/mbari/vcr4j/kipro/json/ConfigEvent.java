@@ -16,6 +16,8 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.mbari.vcr4j.time.Timecode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.List;
@@ -64,6 +66,7 @@ import java.util.stream.Collectors;
 public class ConfigEvent {
 
     private static final Gson gson = Constants.GSON;
+    private static final Logger log = LoggerFactory.getLogger(ConfigEvent.class);
 
     private int intValue;
     private int lastConfigUpdate;
@@ -100,7 +103,7 @@ public class ConfigEvent {
     }
 
     public static ConfigEvent[] fromJSON(String json) {
-        return  gson.fromJson(json, ConfigEvent[].class);
+        return gson.fromJson(json, ConfigEvent[].class);
     }
 
     public String toJSON() {
