@@ -11,6 +11,12 @@ import org.mbari.vcr4j.kipro.decorators.QuadLoggingDecorator;
 import java.util.Map;
 
 /**
+ *
+ * Example:
+ *  1. Configure Network on Quad: 50.1 -> Set to DHCP, 50.1 -> read ip address
+ *  2. Run the following:
+ *   mvn exec:java -Dexec.mainClass=org.mbari.vcr4j.examples.kipro.SimpleDemo01 -Dexec.args="http://134.89.11.144"
+ *
  * @author Brian Schlining
  * @since 2016-02-11T13:13:00
  */
