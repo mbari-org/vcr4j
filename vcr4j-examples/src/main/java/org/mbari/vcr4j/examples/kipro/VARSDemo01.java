@@ -1,45 +1,52 @@
 package org.mbari.vcr4j.examples.kipro;
 
 import org.docopt.Docopt;
+import org.mbari.vcr4j.SimpleVideoIO;
 import org.mbari.vcr4j.VideoController;
 import org.mbari.vcr4j.VideoIO;
-import org.mbari.vcr4j.decorators.LoggingDecorator;
+import org.mbari.vcr4j.VideoIndex;
+import org.mbari.vcr4j.decorators.Decorator;
 import org.mbari.vcr4j.decorators.SchedulerVideoIO;
 import org.mbari.vcr4j.kipro.QuadError;
 import org.mbari.vcr4j.kipro.QuadState;
 import org.mbari.vcr4j.kipro.QuadVideoIO;
 import org.mbari.vcr4j.kipro.decorators.ConnectionPollingDecorator;
 import org.mbari.vcr4j.kipro.decorators.QuadLoggingDecorator;
+import rx.Observable;
 
 import java.util.Map;
 import java.util.concurrent.Executors;
 
 /**
- *
- * Example:
- *  1. Configure Network on Quad: 50.1 -> Set to DHCP, 50.1 -> read ip address
- *  2. Run the following:
- *   mvn exec:java -Dexec.mainClass=org.mbari.vcr4j.examples.kipro.SimpleDemo01 -Dexec.args="http://134.89.11.144"
- *
  * @author Brian Schlining
- * @since 2016-02-11T13:13:00
+ * @since 2016-04-21T11:50:00
  */
-public class SimpleDemo01 {
+public class VARSDemo01 {
 
     public static void main(String[] args) throws Exception {
-
-
-        String prog = SimpleDemo01.class.getName();
+        String prog = VARSDemo01.class.getName();
         String doc = "Usage: " + prog + " <httpAddress> [options]\n\n" +
                 "Options:\n" +
                 "  -h, --help";
         Map<String, Object> opts = new Docopt(doc).parse(args);
 
         String httpAddress = (String) opts.get("<httpAddress>");
+
         QuadVideoIO rawIO = QuadVideoIO.open(httpAddress);
-        VideoIO<QuadState, QuadError> io = new SchedulerVideoIO<>(rawIO, Executors.newCachedThreadPool());
-        new ConnectionPollingDecorator(io);
+        VideoIO<QuadState, QuadError> scheduledIO = new SchedulerVideoIO<>(rawIO, Executors.newCachedThreadPool());
+        new ConnectionPollingDecorator(scheduledIO);
+
+        // For the UI we need to filter videoIndices that don't have timecode (or the UI
+        // show --:--:--:-- every few seconds
+        Observable<VideoIndex> indexObservable = scheduledIO.getIndexObservable()
+                .filter(vi -> vi.getTimecode().isPresent());
+        VideoIO<QuadState, QuadError> io = new SimpleVideoIO<>(scheduledIO.getConnectionID(),
+                scheduledIO.getCommandSubject(),
+                scheduledIO.getStateObservable(),
+                scheduledIO.getErrorObservable(),
+                indexObservable);
         new QuadLoggingDecorator(io);
+
         VideoController controller = new VideoController(io); // Wrap io with a standard control
         controller.requestStatus();  // Does nothing yet
         controller.requestTimecode();
@@ -58,7 +65,5 @@ public class SimpleDemo01 {
         io.close();
 
         System.exit(0);
-
-
     }
 }

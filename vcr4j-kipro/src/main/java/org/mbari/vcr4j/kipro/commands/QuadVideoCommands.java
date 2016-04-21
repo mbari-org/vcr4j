@@ -7,7 +7,8 @@ import org.mbari.vcr4j.VideoCommand;
  * @since 2016-02-08T16:31:00
  */
 public enum QuadVideoCommands implements VideoCommand<Void> {
-    CONNECT("connect");
+    CONNECT("connect"),
+    CONFIG_EVENT("config event");
 
     private final String name;
 

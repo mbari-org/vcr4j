@@ -1,5 +1,6 @@
 package org.mbari.vcr4j.kipro.decorators;
 
+import org.mbari.vcr4j.VideoIO;
 import org.mbari.vcr4j.decorators.LoggingDecorator;
 import org.mbari.vcr4j.decorators.VideoErrorAsString;
 import org.mbari.vcr4j.kipro.QuadError;
@@ -34,7 +35,7 @@ public class QuadLoggingDecorator extends LoggingDecorator<QuadState, QuadError>
         }
     };
 
-    public QuadLoggingDecorator(QuadVideoIO io) {
+    public QuadLoggingDecorator(VideoIO<QuadState, QuadError> io) {
         super(io);
         errorSubscriber.unsubscribe();
         io.getErrorObservable().subscribe(quadErrorSubscriber);

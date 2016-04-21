@@ -7,6 +7,7 @@ import org.mbari.vcr4j.VideoCommand;
 import org.mbari.vcr4j.VideoIO;
 import org.mbari.vcr4j.VideoIndex;
 import org.mbari.vcr4j.commands.VideoCommands;
+import org.mbari.vcr4j.kipro.commands.QuadVideoCommands;
 import org.mbari.vcr4j.kipro.json.ConfigEvent;
 import org.mbari.vcr4j.kipro.json.ConnectionID;
 import org.mbari.vcr4j.kipro.json.Constants;
@@ -14,6 +15,8 @@ import org.mbari.vcr4j.time.Timecode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Observable;
+import rx.Scheduler;
+import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 import rx.subjects.SerializedSubject;
 import rx.subjects.Subject;
@@ -21,6 +24,7 @@ import rx.subjects.Subject;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -34,6 +38,7 @@ public class QuadVideoIO implements VideoIO<QuadState, QuadError> {
     private final String httpAddress;
     private final AtomicInteger connectionID = new AtomicInteger(0);
     private static final Logger log = LoggerFactory.getLogger(QuadVideoIO.class);
+    private final QuadError noError = new QuadError(false, false, Optional.empty(), Optional.empty());
 
 
     private final Subject<QuadError, QuadError> errorObservable = new SerializedSubject<>(PublishSubject.create());
@@ -41,6 +46,8 @@ public class QuadVideoIO implements VideoIO<QuadState, QuadError> {
     private final Subject<Timecode, Timecode> timecodeObservable =
             new SerializedSubject<>(PublishSubject.create());
     private final Subject<VideoIndex, VideoIndex> indexObservable =
+            new SerializedSubject<>(PublishSubject.create());
+    private final Subject<ConfigEvent[], ConfigEvent[]> configEventObservable =
             new SerializedSubject<>(PublishSubject.create());
 
     private final Subject<VideoCommand, VideoCommand> commandSubject = new SerializedSubject<>(PublishSubject.create());
@@ -50,31 +57,36 @@ public class QuadVideoIO implements VideoIO<QuadState, QuadError> {
         statusObservable.map(QuadState::getConnectionID)
                 .forEach(connectionID::set);
 
-        commandSubject.filter(vc -> vc.equals(VideoCommands.REQUEST_INDEX) || vc.equals(VideoCommands.REQUEST_TIMECODE))
-                .forEach(vc -> requestTimecode());
+        commandSubject.filter(vc -> vc.equals(QuadVideoCommands.CONNECT))
+                .forEach(vc -> connect());
 
+        // --- Filter for timecode requests and config events
+        commandSubject.filter(vc -> vc.equals(QuadVideoCommands.CONFIG_EVENT)
+                || vc.equals(VideoCommands.REQUEST_INDEX)
+                || vc.equals(VideoCommands.REQUEST_TIMECODE))
+                .forEach(vc -> requestConfigEvent());
+
+        // --- Filter for timestamp requests
         commandSubject.filter(vc -> vc.equals(VideoCommands.REQUEST_TIMESTAMP))
                 .forEach(vc -> {
                     VideoIndex videoIndex = new VideoIndex(Optional.of(Instant.now()), Optional.empty(), Optional.empty());
                     indexObservable.onNext(videoIndex);
                 });
 
+        // --- timecodes always include timestamp from system clock
         timecodeObservable.subscribe(tc -> {
             VideoIndex videoIndex = new VideoIndex(Optional.of(Instant.now()), Optional.empty(), Optional.of(tc));
             indexObservable.onNext(videoIndex);
         });
 
-        errorObservable.subscribe(e -> {
-            if (e.hasConnectionError()) {
-                connect();
-            }
-        });
+        configEventObservable.subscribe(ces ->
+                configEventsToTimecode(ces).ifPresent(timecodeObservable::onNext));
 
     }
 
     public static QuadVideoIO open(String httpAddress) {
         QuadVideoIO quadVideoIO = new QuadVideoIO(httpAddress);
-        quadVideoIO.connect();
+        quadVideoIO.send(QuadVideoCommands.CONNECT);
         return quadVideoIO;
     }
 
@@ -113,73 +125,63 @@ public class QuadVideoIO implements VideoIO<QuadState, QuadError> {
         return indexObservable;
     }
 
-    public void connect() {
+    private void connect() {
         String request = ConnectionID.buildRequest(httpAddress);
-        sendRequestAndCheckError(request).ifPresent(s -> {
+        sendRequestWithErrorCheck(request).ifPresent(s -> {
             ConnectionID id = ConnectionID.fromJSON(s);
             statusObservable.onNext(new QuadState(id.getConnectionid()));
         });
     }
 
-    public void requestTimecode() {
+    /**
+     * The KiPro returns timecode via config events
+     */
+    private void requestConfigEvent() {
         int cid = connectionID.get();
         String request = ConfigEvent.buildRequest(httpAddress, cid);
-        Optional<String> response = sendRequestAndCheckError(request);
-        AtomicBoolean ok = new AtomicBoolean(false);
+        Optional<String> response = sendRequestWithErrorCheck(request);
+        ConfigEvent[] events = {};
         if (response.isPresent()) {
             try {
-                ConfigEvent[] events = ConfigEvent.fromJSON(response.get());
-                Optional<Timecode> timecode = ConfigEvent.toTimecode(events);
-                timecode.ifPresent(tc -> {
-                    ok.set(true);
-                    timecodeObservable.onNext(tc);
-                });
+                events = ConfigEvent.fromJSON(response.get());
             }
             catch (Exception e) {
-                // TODO ? Let's try reconnecting
-                log.debug("Failed to parser response. Response was: \n" + response);
+                log.debug("Failed to parse response. Response was: \n" + response);
             }
-
         }
-
-        if (!ok.get()) {
-            QuadError error = new QuadError(true, false, Optional.empty(), Optional.empty());
-            errorObservable.onNext(error);
+        if (events.length > 0) {
+            configEventObservable.onNext(events);
         }
     }
 
-    private Optional<String> sendRequestAndCheckError(String request) {
-        Optional<String> json;
-        try {
-            json = sendRequestWithErrorCheck(request);
+    private Optional<Timecode> configEventsToTimecode(ConfigEvent[] configEvents) {
+        if (configEvents.length > 0) {
+            return ConfigEvent.toTimecode(configEvents);
         }
-        catch (Exception e) {
-            QuadError error = new QuadError(true, false, Optional.empty(), Optional.of(e));
-            errorObservable.onNext(error);
-            json = Optional.empty();
+        else {
+            return Optional.empty();
         }
-        return json;
     }
 
     private Optional<String> sendRequestWithErrorCheck(String request) {
-        Optional<String> opt = Optional.empty();
+        Optional<String> json = Optional.empty();
+        QuadError error = noError;
         try {
             HttpResponse<String> response = Unirest.get(request)
                     .header("Accept", "application/json")
                     .asString();
-            if (response.getStatus() == 404) {
-                QuadError error = new QuadError(true, true, Optional.empty(), Optional.empty());
-                errorObservable.onNext(error);
+            if (response.getStatus() != 200) {
+                error = new QuadError(true, true, Optional.empty(), Optional.empty());
             }
             else {
-                opt = Optional.ofNullable(response.getBody());
+                json = Optional.ofNullable(response.getBody());
             }
         }
         catch (UnirestException e) {
-            QuadError error = new QuadError(true, true, Optional.empty(), Optional.of(e));
-            errorObservable.onNext(error);
+            error = new QuadError(true, true, Optional.empty(), Optional.of(e));
         }
-        return opt;
+        errorObservable.onNext(error);
+        return json;
     }
 
     public static String sendRequest(String request) {
