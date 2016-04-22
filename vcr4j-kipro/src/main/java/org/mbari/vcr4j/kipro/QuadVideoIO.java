@@ -6,6 +6,7 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import org.mbari.vcr4j.VideoCommand;
 import org.mbari.vcr4j.VideoIO;
 import org.mbari.vcr4j.VideoIndex;
+import org.mbari.vcr4j.commands.InjectVideoIndexCmd;
 import org.mbari.vcr4j.commands.VideoCommands;
 import org.mbari.vcr4j.kipro.commands.QuadVideoCommands;
 import org.mbari.vcr4j.kipro.json.ConfigEvent;
@@ -29,6 +30,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
+ * Class that supports reading timecode from the kipro quad. This videoio also supports the
+ * `InjectVideoIndexCmd`
  * @author Brian Schlining
  * @since 2016-02-04T11:16:00
  */
@@ -72,6 +75,11 @@ public class QuadVideoIO implements VideoIO<QuadState, QuadError> {
                     VideoIndex videoIndex = new VideoIndex(Optional.of(Instant.now()), Optional.empty(), Optional.empty());
                     indexObservable.onNext(videoIndex);
                 });
+
+        // --- We occasionally will need to inject a video index
+        commandSubject.ofType(InjectVideoIndexCmd.class)
+                .map(InjectVideoIndexCmd::getValue)
+                .forEach(indexObservable::onNext);
 
         // --- timecodes always include timestamp from system clock
         timecodeObservable.subscribe(tc -> {

@@ -5,6 +5,7 @@ import org.mbari.vcr4j.VideoError;
 import org.mbari.vcr4j.VideoIO;
 import org.mbari.vcr4j.VideoIndex;
 import org.mbari.vcr4j.VideoState;
+import org.mbari.vcr4j.commands.InjectVideoIndexCmd;
 import rx.Observable;
 import rx.Scheduler;
 import rx.Subscriber;
@@ -70,6 +71,7 @@ public class SchedulerVideoIO<S extends VideoState, E extends VideoError> implem
 
         commandSubject = new SerializedSubject<>(PublishSubject.create());
         commandSubject.subscribe(commandSubscriber);
+
     }
 
     @Override
@@ -115,6 +117,7 @@ public class SchedulerVideoIO<S extends VideoState, E extends VideoError> implem
     public Observable<VideoIndex> getIndexObservable() {
         return indexObservable;
     }
+
 
     /**
      * This manages the commands to be sent in a separate thread.
