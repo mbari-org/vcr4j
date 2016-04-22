@@ -18,7 +18,7 @@ Example usage can be found in the `vcr4j-examples` module.
 ## Usage
 
 ### Adding to your project  
-Clone this repo and run `mvn install`. Pick the implementation or implementations that you need for your project and add the maven dependency:
+Clone this repo and run `mvn install`. Pick the implementation or implementations that you need for your project and add the maven dependency for it. Here's an example for adding RXTX support for VCR's via RS422:
 
 ```xml
 <dependency>
@@ -29,7 +29,7 @@ Clone this repo and run `mvn install`. Pick the implementation or implementation
 ```
 
 ### Creating a VideoIO object
-Then create the `VideoIO` object you need for managing your video device. Typically, each VideoIO object has an `open` method that accepts the parameters need to connect to the video device. There are a number of decorators that you can add to modify the behavior of a VideoIO object. Here's an example:
+`VideoIO` implementations manage the communication between java and the video device.  Simply create the `VideoIO` object you need for managing your video device. Typically, each VideoIO object has an `open` method that accepts the parameters need to connect to the video device. There are a number of decorators that you can add to modify the behavior of a VideoIO object. Here's an example:
 
 ```java
 // A basic VideoIO object opens a connection. Sends commands and parses responses. 
@@ -59,7 +59,7 @@ VideoIO<RS422State, RS422Error>  io =  // ... see above about creating one
 
 // watch for video indices (e.g. timecode) and print them out
 io.getIndexObservable()
-    .map(vi -> new VideoIndexAsString(vi)
+    .map(vi -> new VideoIndexAsString(vi))
     .subscribe(s -> System.out.println(s))
 
 VideoController<RS422State, RS422Error> controller = new VideoController(io);
@@ -71,6 +71,8 @@ controller.play()
 // You can request video index using either of these methods
 io.send(VideoCommands.REQUEST_INDEX
 controller.requestIndex()
+
+// etc.
 
 // When done with a videoIO object close it to free resources
 io.close()

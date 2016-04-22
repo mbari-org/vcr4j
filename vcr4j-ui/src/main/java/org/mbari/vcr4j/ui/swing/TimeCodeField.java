@@ -66,7 +66,12 @@ public class TimeCodeField extends JTextField {
 
             if (newVal != null) {
                 subscriber = newSubscriber();
-                newVal.getIndexObservable().subscribe(subscriber);
+
+                // Only deal with indices that have timecodes. Otherwise the TextField
+                // does a weird stutter between valid and invalid timecodes
+                newVal.getIndexObservable()
+                        .filter(vi -> vi.getTimecode().isPresent())
+                        .subscribe(subscriber);
             }
         });
     }
