@@ -23,7 +23,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class VARSDemo01 {
 
     public static void main(String[] args) throws Exception {
-        String prog = SimpleDemo02.class.getName();
+        String prog = VARSDemo01.class.getName();
         String doc = "Usage: " + prog + " <commport> [options]\n\n" +
                 "Options:\n" +
                 "  -h, --help";
@@ -78,21 +78,15 @@ public class VARSDemo01 {
         }
 
         // --- Shut down
-        // Unsubscibe from observables when stopping. Not totally nexcessary but makes shutdown a bit cleaner.
-        // e.g. Fewer interrupted exceptions form the VCRSyncDecorator
-        log.info("STOPPING DEVICE");
-        io.send(VideoCommands.STOP);
-        syncDecorator.unsubscribe();
-        statusDecorator.unsubscribe();
-        timeDecorator.unsubscribe();
-
-        // When the io object is closed exit
-        io.getCommandSubject().subscribe(vc -> {}, e -> {}, () -> System.exit(0));
-
         // Close everything when the VCR stops
         io.getStateObservable()
                 .filter(RS422State::isStopped)
                 .take(1)
                 .forEach(state -> io.close());
+
+        // e.g. Fewer interrupted exceptions form the VCRSyncDecorator
+        log.info("STOPPING DEVICE");
+        io.send(VideoCommands.STOP);
+
     }
 }

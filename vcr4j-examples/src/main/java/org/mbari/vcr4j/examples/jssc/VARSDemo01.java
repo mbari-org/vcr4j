@@ -1,28 +1,25 @@
-package org.mbari.vcr4j.examples.rxtx;
+package org.mbari.vcr4j.examples.jssc;
 
 import org.docopt.Docopt;
-import org.mbari.vcr4j.VideoState;
 import org.mbari.vcr4j.commands.VideoCommands;
 import org.mbari.vcr4j.decorators.Decorator;
 import org.mbari.vcr4j.decorators.VCRSyncDecorator;
 import org.mbari.vcr4j.decorators.VideoIndexAsString;
+import org.mbari.vcr4j.jssc.JSSCVideoIO;
 import org.mbari.vcr4j.rs422.RS422State;
 import org.mbari.vcr4j.rs422.decorators.RS422StatusDecorator;
 import org.mbari.vcr4j.rs422.decorators.UserbitsAsTimeDecorator;
-import org.mbari.vcr4j.rxtx.RXTX;
-import org.mbari.vcr4j.rxtx.RXTXVideoIO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * This is notional example of how we might use this in our video annotation system
  * @author Brian Schlining
- * @since 2016-02-03T14:42:00
+ * @since 2016-04-08T10:42:00
  */
 public class VARSDemo01 {
-
 
     public static void main(String[] args) throws Exception {
         String prog = VARSDemo01.class.getName();
@@ -35,10 +32,7 @@ public class VARSDemo01 {
 
         Logger log = LoggerFactory.getLogger(VARSDemo01.class);
 
-        // --- Connect to VCR
-        RXTX.setup(); // sets up native libraries
-        RXTXVideoIO io = RXTXVideoIO.open(portName); // Open serial port
-
+        JSSCVideoIO io = JSSCVideoIO.open(portName);
 
         // --- Decorate VideoIO like we would in VARS
         // VARS uses this decorator to keep the UI in sync with the VCR state and timecode
@@ -83,22 +77,15 @@ public class VARSDemo01 {
         }
 
         // --- Shut down
-        // Unsubscibe from observables when stopping. Not totally nexcessary but makes shutdown a bit cleaner.
-        // e.g. Fewer interrupted exceptions form the VCRSyncDecorator
-        log.info("STOPPING DEVICE");
-        io.send(VideoCommands.STOP);
-        syncDecorator.unsubscribe();
-        statusDecorator.unsubscribe();
-        timeDecorator.unsubscribe();
-
-        // When the io object is closed exit
-        io.getCommandSubject().subscribe(vc -> {}, e -> {}, () -> System.exit(0));
-
         // Close everything when the VCR stops
         io.getStateObservable()
                 .filter(RS422State::isStopped)
                 .take(1)
                 .forEach(state -> io.close());
+
+        // e.g. Fewer interrupted exceptions form the VCRSyncDecorator
+        log.info("STOPPING DEVICE");
+        io.send(VideoCommands.STOP);
 
     }
 }
