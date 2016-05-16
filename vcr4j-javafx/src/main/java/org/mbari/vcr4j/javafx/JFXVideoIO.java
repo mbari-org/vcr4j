@@ -21,7 +21,7 @@ import rx.subjects.Subject;
 public class JFXVideoIO implements VideoIO<JFXVideoState, SimpleVideoError> {
 
     public static final double MAX_RATE = 8D; // According to JavaFX docs this is the max rate
-    private static final double eps = 0.01;
+    private static final double eps = 0.1;
     public static final double FAST_FORWARD_RATE = 3D;
 
     private final Subject<VideoCommand, VideoCommand> commandSubject =
@@ -48,7 +48,10 @@ public class JFXVideoIO implements VideoIO<JFXVideoState, SimpleVideoError> {
 
         commandSubject.ofType(ShuttleCmd.class)
                 .filter(vc -> vc.getValue() >= 0) // JavaFX only support shuttle forward
-                .forEach(vc -> mediaPlayer.setRate(vc.getValue() * MAX_RATE));
+                .forEach(vc -> {
+                    mediaPlayer.setRate(vc.getValue() * MAX_RATE);
+                    mediaPlayer.play();
+                });
 
         commandSubject.filter(vc -> vc.equals(VideoCommands.PLAY))
                 .forEach(vc -> {
@@ -60,13 +63,16 @@ public class JFXVideoIO implements VideoIO<JFXVideoState, SimpleVideoError> {
                 .forEach(vc -> requestStatus());
 
         commandSubject.filter(vc -> vc.equals(VideoCommands.FAST_FORWARD))
-                .forEach(vc -> mediaPlayer.setRate(FAST_FORWARD_RATE));
+                .forEach(vc -> {
+                    mediaPlayer.setRate(FAST_FORWARD_RATE);
+                    mediaPlayer.play();
+                });
 
         commandSubject.filter(vc -> vc.equals(VideoCommands.PAUSE))
                 .forEach(vc -> mediaPlayer.pause());
 
         commandSubject.filter(vc -> vc.equals(VideoCommands.STOP))
-                .forEach(vc -> mediaPlayer.stop());
+                .forEach(vc -> mediaPlayer.pause());
 
         commandSubject.ofType(SeekElapsedTimeCmd.class)
                 .forEach(vc -> seekDuration(vc.getValue()));
@@ -111,11 +117,15 @@ public class JFXVideoIO implements VideoIO<JFXVideoState, SimpleVideoError> {
         return indexObservable;
     }
 
+    public Subject<VideoIndex, VideoIndex> getIndexSubject() {
+        return indexObservable;
+    }
+
     public MediaPlayer getMediaPlayer() {
         return mediaPlayer;
     }
 
-    private void requestCurrentTime() {
+    public void requestCurrentTime() {
         Duration currentTime = mediaPlayer.getCurrentTime();
         java.time.Duration duration = java.time.Duration.ofMillis((long) currentTime.toMillis());
         indexObservable.onNext(new VideoIndex(duration));
@@ -125,7 +135,7 @@ public class JFXVideoIO implements VideoIO<JFXVideoState, SimpleVideoError> {
         double currentRate = mediaPlayer.getCurrentRate();
         boolean fastForward = currentRate > 1;
         boolean shuttling = currentRate > 0;
-        boolean stopped = Math.abs(currentRate - 0D) <= eps;
+        boolean stopped = Math.abs(currentRate) <= eps;
         //boolean tapeEnd = mediaPlayer.getCurrentTime().compareTo(mediaPlayer.getTotalDuration()) >= 0;
         boolean playing = Math.abs(currentRate - 1D) <= eps;
         stateObservable.onNext(new JFXVideoState(fastForward, shuttling, stopped, playing));
