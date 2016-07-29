@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.mbari.vcr4j</groupId>
         <artifactId>vcr4j</artifactId>
-        <version>3.0.0</version>
+        <version>3.0.1-SNAPSHOT</version>
     </parent>
     <artifactId>vcr4j-rxtx</artifactId>
     <name>vcr4j-rxtx</name>
