@@ -48,30 +48,18 @@ public class JFXVideoIO implements VideoIO<JFXVideoState, SimpleVideoError> {
 
         commandSubject.ofType(ShuttleCmd.class)
                 .filter(vc -> vc.getValue() >= 0) // JavaFX only support shuttle forward
-                .forEach(vc -> {
-                    mediaPlayer.play();
-                    mediaPlayer.setRate(vc.getValue() * MAX_RATE);
-                });
+                .forEach(vc -> playAtRate(vc.getValue() * MAX_RATE));
 
         commandSubject.filter(vc -> vc.equals(VideoCommands.PLAY))
-                .forEach(vc -> {
-                    mediaPlayer.play();
-                    mediaPlayer.setRate(1.0);
-                });
+                .forEach(vc -> playAtRate(1.0));
 
         commandSubject.filter(vc -> vc.equals(VideoCommands.REQUEST_STATUS))
                 .forEach(vc -> requestStatus());
 
         commandSubject.filter(vc -> vc.equals(VideoCommands.FAST_FORWARD))
-                .forEach(vc -> {
-                    mediaPlayer.play();
-                    mediaPlayer.setRate(FAST_FORWARD_RATE);
-                });
+                .forEach(vc -> playAtRate(FAST_FORWARD_RATE));
 
-        commandSubject.filter(vc -> vc.equals(VideoCommands.PAUSE))
-                .forEach(vc -> mediaPlayer.pause());
-
-        commandSubject.filter(vc -> vc.equals(VideoCommands.STOP))
+        commandSubject.filter(vc -> vc.equals(VideoCommands.PAUSE) || vc.equals(VideoCommands.STOP))
                 .forEach(vc -> mediaPlayer.pause());
 
         commandSubject.ofType(SeekElapsedTimeCmd.class)
@@ -145,5 +133,11 @@ public class JFXVideoIO implements VideoIO<JFXVideoState, SimpleVideoError> {
     private void seekDuration(java.time.Duration duration) {
         Duration jfxDuration = Duration.millis(duration.toMillis());
         mediaPlayer.seek(jfxDuration);
+    }
+
+    private void playAtRate(double rate) {
+        mediaPlayer.pause();
+        mediaPlayer.setRate(rate);
+        mediaPlayer.play();
     }
 }
