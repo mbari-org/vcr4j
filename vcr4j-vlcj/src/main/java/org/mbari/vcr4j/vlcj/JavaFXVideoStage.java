@@ -130,6 +130,7 @@ public class JavaFXVideoStage extends Stage {
             return pixelWriter;
         }
 
+        /* VLCj 3.10.0
         @Override
         public void display(DirectMediaPlayer mediaPlayer, Memory[] nativeBuffers, BufferFormat bufferFormat) {
             if (writableImage == null) {
@@ -140,7 +141,30 @@ public class JavaFXVideoStage extends Stage {
                 try {
                     ByteBuffer byteBuffer = nativeBuffer.getByteBuffer(0, nativeBuffer.size());
                     getPixelWriter().setPixels(0, 0, bufferFormat.getWidth(), bufferFormat.getHeight(), pixelFormat, byteBuffer, bufferFormat.getPitches()[0]);
-                } finally {
+                }
+                finally {
+                    mediaPlayer.unlock();
+                }
+            });
+        } */
+
+        /**
+         * For VLCJ experimental
+         * @param mediaPlayer
+         * @param nativeBuffers
+         * @param bufferFormat
+         */
+        @Override
+        public void display(DirectMediaPlayer mediaPlayer, ByteBuffer[] nativeBuffers, BufferFormat bufferFormat) {
+            if (writableImage == null) {
+                return;
+            }
+            Platform.runLater(() -> {
+                ByteBuffer byteBuffer = mediaPlayer.lock()[0];
+                try {
+                    getPixelWriter().setPixels(0, 0, bufferFormat.getWidth(), bufferFormat.getHeight(), pixelFormat, byteBuffer, bufferFormat.getPitches()[0]);
+                }
+                finally {
                     mediaPlayer.unlock();
                 }
             });

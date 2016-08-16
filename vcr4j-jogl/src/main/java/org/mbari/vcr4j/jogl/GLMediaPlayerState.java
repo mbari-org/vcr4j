@@ -1,13 +1,13 @@
-package org.mbari.vcr4j.vlcj;
+package org.mbari.vcr4j.jogl;
 
+import com.jogamp.opengl.util.av.GLMediaPlayer;
 import org.mbari.vcr4j.VideoState;
-import uk.co.caprica.vlcj.player.MediaPlayer;
 
 /**
  * @author Brian Schlining
- * @since 2016-04-18T15:44:00
+ * @since 2016-08-15T16:35:00
  */
-public class MediaPlayerState implements VideoState {
+public class GLMediaPlayerState implements VideoState {
 
     private final boolean connected;
     private final boolean fastForwarding;
@@ -17,9 +17,9 @@ public class MediaPlayerState implements VideoState {
     private final boolean shuttling;
     private final boolean stopped;
 
-    public  MediaPlayerState(MediaPlayer mediaPlayer) {
-        connected = mediaPlayer.isMediaParsed();
-        float rate = mediaPlayer.getRate();
+    public GLMediaPlayerState(GLMediaPlayer mediaPlayer) {
+        connected = mediaPlayer.isGLOriented();
+        float rate = mediaPlayer.getPlaySpeed();
         fastForwarding = rate > 1;
         reverseDirection = rate < 0;
         rewinding = rate < -1;
@@ -27,8 +27,10 @@ public class MediaPlayerState implements VideoState {
         float shuttleRate = Math.abs(rate);
         shuttling = shuttleRate > 0 && shuttleRate < 1;
 
-        playing = mediaPlayer.isPlaying();
-        stopped = !playing;
+        playing = mediaPlayer.getState().equals(GLMediaPlayer.State.Playing);
+
+        stopped = mediaPlayer.getState().equals(GLMediaPlayer.State.Paused);
+
     }
 
     @Override

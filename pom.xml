@@ -54,6 +54,7 @@
         <module>vcr4j-v2-adapter</module>
         <module>vcr4j-examples</module>
         <module>vcr4j-ui</module>
+        <module>vcr4j-jogl</module>
     </modules>
     <build>
         <plugins>
