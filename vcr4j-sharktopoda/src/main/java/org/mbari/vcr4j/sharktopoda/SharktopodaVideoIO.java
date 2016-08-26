@@ -3,6 +3,13 @@ package org.mbari.vcr4j.sharktopoda;
 import org.mbari.vcr4j.VideoCommand;
 import org.mbari.vcr4j.VideoIO;
 import org.mbari.vcr4j.VideoIndex;
+import org.mbari.vcr4j.commands.VideoCommands;
+import org.mbari.vcr4j.sharktopoda.commands.OpenCmd;
+import org.mbari.vcr4j.sharktopoda.model.request.Open;
+import org.mbari.vcr4j.sharktopoda.model.request.Pause;
+import org.mbari.vcr4j.sharktopoda.model.request.Play;
+import org.mbari.vcr4j.sharktopoda.model.response.FramecaptureResponse;
+import org.mbari.vcr4j.sharktopoda.model.response.IVideoInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Observable;
@@ -26,9 +33,11 @@ public class SharktopodaVideoIO implements VideoIO<SharktopodaState, Sharktopoda
 
     private final int port;
     private final InetAddress inetAddress;
-    private final UUID uuid; // ONe VideoIO to one window in Sharktopoda
+    private final UUID uuid; // One VideoIO to one window in Sharktopoda
     private DatagramSocket socket;
 
+    private final Subject<FramecaptureResponse, FramecaptureResponse>  framecaptureSubject = new SerializedSubject<>(PublishSubject.create());
+    private final Subject<IVideoInfo, IVideoInfo> videoInfoSubject = new SerializedSubject<>(PublishSubject.create());
     private final Subject<SharktopodaState, SharktopodaState> stateSubject = new SerializedSubject<>(PublishSubject.create());
     private final Subject<SharktopodaError, SharktopodaError> errorSubject = new SerializedSubject<>(PublishSubject.create());
     /**
@@ -38,12 +47,22 @@ public class SharktopodaVideoIO implements VideoIO<SharktopodaState, Sharktopoda
     private final Subject<VideoCommand, VideoCommand> commandSubject = new SerializedSubject<>(PublishSubject.create());
     private final Logger log = LoggerFactory.getLogger(getClass());
 
-    private final SharktopodaResponseParser responseParser = new SharktopodaResponseParser(stateSubject, errorSubject, indexSubject);
+    private final SharktopodaResponseParser responseParser = new SharktopodaResponseParser(stateSubject,
+            errorSubject, indexSubject, videoInfoSubject, framecaptureSubject);
 
     public SharktopodaVideoIO(UUID uuid, String host, int port) throws UnknownHostException, SocketException {
         this.uuid = uuid;
         this.port = port;
         inetAddress = InetAddress.getByName(host);
+
+        commandSubject.ofType(OpenCmd.class)
+                .forEach(this::doOpen);
+
+        commandSubject.filter(cmd -> cmd.equals(VideoCommands.PLAY))
+                .forEach(cmd -> doPlay());
+
+        commandSubject.filter(cmd -> cmd.equals(VideoCommands.PAUSE) || cmd.equals(VideoCommands.STOP))
+                .forEach(cmd -> doPause());
     }
 
     private DatagramSocket getSocket() throws SocketException {
@@ -57,32 +76,32 @@ public class SharktopodaVideoIO implements VideoIO<SharktopodaState, Sharktopoda
     }
 
     private synchronized void sendCommandAndListenForResponse(DatagramPacket packet,
-            int sizeBytes, Optional<VideoCommand> command) {
+            int sizeBytes, VideoCommand command) {
         try {
-            DatagramSocket s = getSocket();
-            s.send(packet);
-
             byte[] msg = new byte[sizeBytes];
             DatagramPacket incomingPacket = new DatagramPacket(msg, msg.length);
+
+            DatagramSocket s = getSocket();
+            s.send(packet);
             s.receive(incomingPacket);    // blocks until returned on timeout
 
             int numBytes = incomingPacket.getLength();
             byte[] response = new byte[numBytes];
             System.arraycopy(incomingPacket.getData(), 0, response, 0, numBytes);
 
-            responseParser.parse(response);
+            responseParser.parse(command, response);
         }
         catch (Exception e) {
             // response will be null
             if (log.isErrorEnabled()) {
                 log.error("UDP connection failed.", e);
-                errorSubject.onNext(new SharktopodaError(true, false, command));
+                errorSubject.onNext(new SharktopodaError(true, false, Optional.of(command)));
             }
         }
 
     }
 
-    private synchronized void sendCommand(DatagramPacket packet, Optional<VideoCommand> command) {
+    private synchronized void sendCommand(DatagramPacket packet, VideoCommand command) {
         try {
             DatagramSocket s = getSocket();
             s.send(packet);
@@ -91,7 +110,7 @@ public class SharktopodaVideoIO implements VideoIO<SharktopodaState, Sharktopoda
             // response will be null
             if (log.isErrorEnabled()) {
                 log.error("UDP connection failed.", e);
-                errorSubject.onNext(new SharktopodaError(true, false, command));
+                errorSubject.onNext(new SharktopodaError(true, false, Optional.of(command)));
             }
         }
     }
@@ -108,7 +127,7 @@ public class SharktopodaVideoIO implements VideoIO<SharktopodaState, Sharktopoda
 
     @Override
     public String getConnectionID() {
-        return null;
+        return uuid.toString() + "@" + inetAddress.getCanonicalHostName() + ":" + port ;
     }
 
     @Override
@@ -129,5 +148,44 @@ public class SharktopodaVideoIO implements VideoIO<SharktopodaState, Sharktopoda
     @Override
     public Observable<VideoIndex> getIndexObservable() {
         return indexSubject;
+    }
+
+    /**
+     * Tracks information about what videos are open.
+     * @return
+     */
+    public Subject<IVideoInfo, IVideoInfo> getVideoInfoSubject() {
+        return videoInfoSubject;
+    }
+
+    /**
+     * Tracks information about framecaptures
+     * @return
+     */
+    public Subject<FramecaptureResponse, FramecaptureResponse> getFramecaptureSubject() {
+        return framecaptureSubject;
+    }
+
+    private DatagramPacket asPacket(Object cmd) {
+        byte[] b = Constants.GSON.toJson(cmd).getBytes();
+        return new DatagramPacket(b, b.length, inetAddress, port);
+    }
+
+    private void doOpen(OpenCmd cmd) {
+        Open obj = new Open(cmd.getValue(), uuid);
+        DatagramPacket packet = asPacket(obj);
+        sendCommandAndListenForResponse(packet, 1024, cmd);
+    }
+
+    private void doPlay() {
+        Play obj = new Play(uuid, 1.0);
+        DatagramPacket packet = asPacket(obj);
+        sendCommand(packet, VideoCommands.PLAY);
+    }
+
+    private void doPause() {
+        Pause obj = new Pause(uuid);
+        DatagramPacket packet = asPacket(obj);
+        sendCommand(packet, VideoCommands.PAUSE);
     }
 }

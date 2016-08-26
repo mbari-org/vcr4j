@@ -35,6 +35,7 @@
     <orderEntry type="library" name="Maven: org.json:json:20140107" level="project" />
     <orderEntry type="module" module-name="vcr4j-jserialcomm" />
     <orderEntry type="library" name="Maven: com.fazecast:jSerialComm:1.3.11" level="project" />
+    <orderEntry type="module" module-name="vcr4j-sharktopoda" />
     <orderEntry type="library" name="Maven: com.offbytwo:docopt:0.6.0.20150202" level="project" />
     <orderEntry type="library" name="Maven: ch.qos.logback:logback-classic:1.1.3" level="project" />
     <orderEntry type="library" name="Maven: ch.qos.logback:logback-core:1.1.3" level="project" />

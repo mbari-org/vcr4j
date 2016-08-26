@@ -8,9 +8,27 @@ import org.mbari.vcr4j.VideoState;
  */
 public class SharktopodaState implements VideoState {
 
+    public enum State {
+        PAUSED,
+        PLAYING,
+        SHUTTLE_FORWARD,
+        SHUTTLE_REVERSE,
+        NOT_FOUND
+    }
+
+    private final State state;
+
+    public SharktopodaState(State state) {
+        this.state = state;
+    }
+
+    public State getState() {
+        return state;
+    }
+
     @Override
     public boolean isConnected() {
-        return false;
+        return !state.equals(State.NOT_FOUND);
     }
 
     @Override
@@ -20,31 +38,31 @@ public class SharktopodaState implements VideoState {
 
     @Override
     public boolean isFastForwarding() {
-        return false;
+        return state.equals(State.SHUTTLE_FORWARD);
     }
 
     @Override
     public boolean isPlaying() {
-        return false;
+        return state.equals(State.PLAYING);
     }
 
     @Override
     public boolean isReverseDirection() {
-        return false;
+        return state.equals(State.SHUTTLE_REVERSE);
     }
 
     @Override
     public boolean isRewinding() {
-        return false;
+        return isReverseDirection();
     }
 
     @Override
     public boolean isShuttling() {
-        return false;
+        return state.equals(State.SHUTTLE_FORWARD) || state.equals(State.SHUTTLE_REVERSE);
     }
 
     @Override
     public boolean isStopped() {
-        return false;
+        return state.equals(State.PLAYING);
     }
 }
