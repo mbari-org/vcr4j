@@ -55,6 +55,7 @@
         <module>vcr4j-examples</module>
         <module>vcr4j-ui</module>
         <module>vcr4j-jogl</module>
+        <module>vcr4j-sharktopoda</module>
     </modules>
     <build>
         <plugins>
