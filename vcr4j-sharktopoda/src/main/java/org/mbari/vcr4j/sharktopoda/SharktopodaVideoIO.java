@@ -8,6 +8,7 @@ import org.mbari.vcr4j.sharktopoda.commands.OpenCmd;
 import org.mbari.vcr4j.sharktopoda.model.request.Open;
 import org.mbari.vcr4j.sharktopoda.model.request.Pause;
 import org.mbari.vcr4j.sharktopoda.model.request.Play;
+import org.mbari.vcr4j.sharktopoda.model.request.RequestStatus;
 import org.mbari.vcr4j.sharktopoda.model.response.FramecaptureResponse;
 import org.mbari.vcr4j.sharktopoda.model.response.IVideoInfo;
 import org.slf4j.Logger;
@@ -47,13 +48,15 @@ public class SharktopodaVideoIO implements VideoIO<SharktopodaState, Sharktopoda
     private final Subject<VideoCommand, VideoCommand> commandSubject = new SerializedSubject<>(PublishSubject.create());
     private final Logger log = LoggerFactory.getLogger(getClass());
 
-    private final SharktopodaResponseParser responseParser = new SharktopodaResponseParser(stateSubject,
-            errorSubject, indexSubject, videoInfoSubject, framecaptureSubject);
+    private final SharktopodaResponseParser responseParser;
 
     public SharktopodaVideoIO(UUID uuid, String host, int port) throws UnknownHostException, SocketException {
         this.uuid = uuid;
         this.port = port;
         inetAddress = InetAddress.getByName(host);
+
+        responseParser = new SharktopodaResponseParser(uuid,
+                stateSubject, errorSubject, indexSubject, videoInfoSubject, framecaptureSubject);
 
         commandSubject.ofType(OpenCmd.class)
                 .forEach(this::doOpen);
@@ -63,6 +66,9 @@ public class SharktopodaVideoIO implements VideoIO<SharktopodaState, Sharktopoda
 
         commandSubject.filter(cmd -> cmd.equals(VideoCommands.PAUSE) || cmd.equals(VideoCommands.STOP))
                 .forEach(cmd -> doPause());
+
+        commandSubject.filter(cmd -> cmd.equals(VideoCommands.REQUEST_STATUS))
+                .forEach(cmd -> doRequestStatus());
     }
 
     private DatagramSocket getSocket() throws SocketException {
@@ -187,5 +193,11 @@ public class SharktopodaVideoIO implements VideoIO<SharktopodaState, Sharktopoda
         Pause obj = new Pause(uuid);
         DatagramPacket packet = asPacket(obj);
         sendCommand(packet, VideoCommands.PAUSE);
+    }
+
+    private void doRequestStatus() {
+        RequestStatus obj = new RequestStatus(uuid);
+        DatagramPacket packet = asPacket(obj);
+        sendCommandAndListenForResponse(packet, 1024, VideoCommands.REQUEST_STATUS);
     }
 }

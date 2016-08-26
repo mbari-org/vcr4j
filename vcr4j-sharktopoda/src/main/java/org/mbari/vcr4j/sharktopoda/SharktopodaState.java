@@ -2,6 +2,8 @@ package org.mbari.vcr4j.sharktopoda;
 
 import org.mbari.vcr4j.VideoState;
 
+import java.util.Arrays;
+
 /**
  * @author Brian Schlining
  * @since 2016-08-25T16:40:00
@@ -9,11 +11,21 @@ import org.mbari.vcr4j.VideoState;
 public class SharktopodaState implements VideoState {
 
     public enum State {
-        PAUSED,
-        PLAYING,
-        SHUTTLE_FORWARD,
-        SHUTTLE_REVERSE,
-        NOT_FOUND
+        PAUSED("paused"),
+        PLAYING("playing"),
+        SHUTTLE_FORWARD("shuttling forward"),
+        SHUTTLE_REVERSE("shuttling reverse"),
+        NOT_FOUND("not found");
+
+        private final String name;
+
+        State(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
     }
 
     private final State state;
@@ -64,5 +76,13 @@ public class SharktopodaState implements VideoState {
     @Override
     public boolean isStopped() {
         return state.equals(State.PLAYING);
+    }
+
+    public static SharktopodaState parse(String name) {
+        State state = Arrays.stream(State.values())
+                .filter(s -> s.getName().equalsIgnoreCase(name))
+                .findFirst()
+                .orElse(State.NOT_FOUND);
+        return new SharktopodaState(state);
     }
 }
