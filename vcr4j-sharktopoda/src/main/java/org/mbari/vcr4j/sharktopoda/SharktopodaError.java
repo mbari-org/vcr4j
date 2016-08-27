@@ -14,10 +14,15 @@ public class SharktopodaError implements VideoError {
     private final Optional<VideoCommand> videoCommand;
     private final boolean connectionError;
     private final boolean parserError;
+    private final boolean unknownError;
 
-    public SharktopodaError(boolean connectionError, boolean parserError, Optional<VideoCommand> videoCommand) {
+    public SharktopodaError(boolean connectionError,
+            boolean parserError,
+            boolean unknownError,
+            Optional<VideoCommand> videoCommand) {
         this.connectionError = connectionError;
         this.parserError = parserError;
+        this.unknownError = unknownError;
         this.videoCommand = videoCommand;
     }
 
@@ -28,7 +33,7 @@ public class SharktopodaError implements VideoError {
 
     @Override
     public boolean hasError() {
-        return connectionError || parserError;
+        return connectionError || parserError ||unknownError;
     }
 
     public boolean isConnectionError() {
@@ -37,6 +42,10 @@ public class SharktopodaError implements VideoError {
 
     public boolean isParseError() {
         return  parserError;
+    }
+
+    public boolean isUnknownError() {
+        return unknownError;
     }
 
 

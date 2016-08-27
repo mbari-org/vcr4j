@@ -75,7 +75,7 @@ public class SharktopodaVideoIO implements VideoIO<SharktopodaState, Sharktopoda
         if ((socket == null) || socket.isClosed() || !socket.isConnected()) {
             socket = new DatagramSocket(0);
             socket.connect(inetAddress, port);
-            socket.setSoTimeout(4000);
+            socket.setSoTimeout(8000);
         }
 
         return socket;
@@ -84,11 +84,18 @@ public class SharktopodaVideoIO implements VideoIO<SharktopodaState, Sharktopoda
     private synchronized void sendCommandAndListenForResponse(DatagramPacket packet,
             int sizeBytes, VideoCommand command) {
         try {
+            int timeout = (command instanceof OpenCmd) ? 20000 : 1000;
             byte[] msg = new byte[sizeBytes];
             DatagramPacket incomingPacket = new DatagramPacket(msg, msg.length);
 
             DatagramSocket s = getSocket();
+            s.setSoTimeout(timeout);
             s.send(packet);
+
+            if (log.isDebugEnabled()) {
+                log.debug(command.toString() + " -> " + new String(packet.getData()));
+            }
+
             s.receive(incomingPacket);    // blocks until returned on timeout
 
             int numBytes = incomingPacket.getLength();
@@ -101,7 +108,7 @@ public class SharktopodaVideoIO implements VideoIO<SharktopodaState, Sharktopoda
             // response will be null
             if (log.isErrorEnabled()) {
                 log.error("UDP connection failed.", e);
-                errorSubject.onNext(new SharktopodaError(true, false, Optional.of(command)));
+                errorSubject.onNext(new SharktopodaError(true, false, false, Optional.of(command)));
             }
         }
 
@@ -111,12 +118,15 @@ public class SharktopodaVideoIO implements VideoIO<SharktopodaState, Sharktopoda
         try {
             DatagramSocket s = getSocket();
             s.send(packet);
+            if (log.isDebugEnabled()) {
+                log.debug(command.toString() + " -> " + new String(packet.getData()));
+            }
         }
         catch (Exception e) {
             // response will be null
             if (log.isErrorEnabled()) {
                 log.error("UDP connection failed.", e);
-                errorSubject.onNext(new SharktopodaError(true, false, Optional.of(command)));
+                errorSubject.onNext(new SharktopodaError(true, false, false, Optional.of(command)));
             }
         }
     }
@@ -186,7 +196,7 @@ public class SharktopodaVideoIO implements VideoIO<SharktopodaState, Sharktopoda
     private void doPlay() {
         Play obj = new Play(uuid, 1.0);
         DatagramPacket packet = asPacket(obj);
-        sendCommand(packet, VideoCommands.PLAY);
+        sendCommandAndListenForResponse(packet, 1024, VideoCommands.PLAY);
     }
 
     private void doPause() {

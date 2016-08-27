@@ -2,6 +2,7 @@ package org.mbari.vcr4j.examples.sharktopoda;
 
 import org.docopt.Docopt;
 import org.mbari.vcr4j.commands.VideoCommands;
+import org.mbari.vcr4j.decorators.LoggingDecorator;
 import org.mbari.vcr4j.sharktopoda.SharktopodaVideoIO;
 import org.mbari.vcr4j.sharktopoda.commands.OpenCmd;
 
@@ -31,15 +32,18 @@ public class SimpleDemo01 {
         URL url = new URL((String) opts.get("<url>"));
 
         SharktopodaVideoIO io = new SharktopodaVideoIO(UUID.randomUUID(), "localhost" , port);
+        //new LoggingDecorator<>(io);
         io.send(new OpenCmd(url));
         Thread.sleep(2000);
         io.send(VideoCommands.PLAY);
         for (int i = 0; i < 10; i++) {
             io.send(VideoCommands.REQUEST_STATUS);
-            Thread.sleep(500);
+            Thread.sleep(100);
         }
 
         io.send(VideoCommands.PAUSE);
+        io.send(VideoCommands.REQUEST_STATUS);
+        //io.send(VideoCommands.REQUEST_STATUS);
 
     }
 }

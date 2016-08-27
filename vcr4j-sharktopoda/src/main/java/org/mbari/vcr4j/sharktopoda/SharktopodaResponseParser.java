@@ -7,9 +7,13 @@ import org.mbari.vcr4j.sharktopoda.commands.OpenCmd;
 import org.mbari.vcr4j.sharktopoda.model.response.FramecaptureResponse;
 import org.mbari.vcr4j.sharktopoda.model.response.IVideoInfo;
 import org.mbari.vcr4j.sharktopoda.model.response.OpenResponse;
+import org.mbari.vcr4j.sharktopoda.model.response.PlayResponse;
 import org.mbari.vcr4j.sharktopoda.model.response.RequestStatusResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rx.subjects.Subject;
 
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -25,6 +29,7 @@ public class SharktopodaResponseParser {
     private final Subject<VideoIndex, VideoIndex> indexSubject;
     private final Subject<IVideoInfo, IVideoInfo> videoInfoSubject;
     private final Subject<FramecaptureResponse, FramecaptureResponse> framecaptureSubject;
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
 
     public SharktopodaResponseParser(UUID uuid,
@@ -44,10 +49,16 @@ public class SharktopodaResponseParser {
 
     public void parse(VideoCommand command, byte[] response) {
         String msg = new String(response);
-
+        log.debug(command + " <-  " + msg);
         // --- route to correct subject
-        if (command instanceof OpenCmd)  handleOpen(msg);
-        else if (command.equals(VideoCommands.REQUEST_STATUS)) handleRequestStatus(msg);
+        try {
+            if (command instanceof OpenCmd) handleOpen(msg);
+            else if (command.equals(VideoCommands.REQUEST_STATUS)) handleRequestStatus(msg);
+        }
+        catch (Exception e) {
+            SharktopodaError error = new SharktopodaError(false, true, false, Optional.of(command));
+            errorSubject.onNext(error);
+        }
 
     }
 
@@ -67,6 +78,18 @@ public class SharktopodaResponseParser {
         RequestStatusResponse r = Constants.GSON.fromJson(msg, RequestStatusResponse.class);
         if (r.getUuid().equals(uuid)) {
             SharktopodaState state = SharktopodaState.parse(r.getStatus());
+            stateSubject.onNext(state);
+        }
+    }
+
+    private void handlePlay(String msg) {
+        PlayResponse r = Constants.GSON.fromJson(msg, PlayResponse.class);
+        if (r.getStatus().equalsIgnoreCase("ok")) {
+            SharktopodaState state = new SharktopodaState(SharktopodaState.State.PLAYING);
+            stateSubject.onNext(state);
+        }
+        else {
+            SharktopodaState state = new SharktopodaState(SharktopodaState.State.UNKNOWN_ERROR);
             stateSubject.onNext(state);
         }
     }

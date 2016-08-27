@@ -15,7 +15,8 @@ public class SharktopodaState implements VideoState {
         PLAYING("playing"),
         SHUTTLE_FORWARD("shuttling forward"),
         SHUTTLE_REVERSE("shuttling reverse"),
-        NOT_FOUND("not found");
+        NOT_FOUND("not found"),
+        UNKNOWN_ERROR("error");
 
         private final String name;
 
@@ -75,7 +76,7 @@ public class SharktopodaState implements VideoState {
 
     @Override
     public boolean isStopped() {
-        return state.equals(State.PLAYING);
+        return state.equals(State.PAUSED);
     }
 
     public static SharktopodaState parse(String name) {
