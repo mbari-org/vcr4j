@@ -2,6 +2,7 @@ package org.mbari.vcr4j.sharktopoda;
 
 import org.mbari.vcr4j.VideoCommand;
 import org.mbari.vcr4j.VideoIndex;
+import org.mbari.vcr4j.commands.SeekElapsedTimeCmd;
 import org.mbari.vcr4j.commands.VideoCommands;
 import org.mbari.vcr4j.sharktopoda.commands.OpenCmd;
 import org.mbari.vcr4j.sharktopoda.model.request.RequestElapsedTime;
@@ -32,7 +33,6 @@ public class SharktopodaResponseParser {
     private final Subject<SharktopodaError, SharktopodaError> errorSubject;
     private final Subject<VideoIndex, VideoIndex> indexSubject;
     private final Subject<IVideoInfo, IVideoInfo> videoInfoSubject;
-    private final Subject<FramecaptureResponse, FramecaptureResponse> framecaptureSubject;
     private final Logger log = LoggerFactory.getLogger(getClass());
 
 
@@ -40,15 +40,13 @@ public class SharktopodaResponseParser {
             Subject<SharktopodaState, SharktopodaState> stateSubject,
             Subject<SharktopodaError, SharktopodaError> errorSubject,
             Subject<VideoIndex, VideoIndex> indexSubject,
-            Subject<IVideoInfo, IVideoInfo> videoInfoSubject,
-            Subject<FramecaptureResponse, FramecaptureResponse> framecaptureSubject) {
+            Subject<IVideoInfo, IVideoInfo> videoInfoSubject) {
 
         this.uuid = uuid;
         this.stateSubject = stateSubject;
         this.errorSubject = errorSubject;
         this.indexSubject = indexSubject;
         this.videoInfoSubject = videoInfoSubject;
-        this.framecaptureSubject = framecaptureSubject;
     }
 
     public void parse(VideoCommand command, byte[] response) {
@@ -130,4 +128,5 @@ public class SharktopodaResponseParser {
 
         }
     }
+
 }

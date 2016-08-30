@@ -1,5 +1,6 @@
 package org.mbari.vcr4j.sharktopoda.model.request;
 
+import java.io.File;
 import java.util.UUID;
 
 /**
@@ -12,9 +13,10 @@ public class Framecapture {
     private String imageLocation;
     private UUID imageReferenceUuid;
 
-    public Framecapture(UUID uuid, String imageLocation, UUID imageReferenceUuid) {
+    public Framecapture(UUID uuid, UUID imageReferenceUuid, String imageLocation) {
         this.uuid = uuid;
-        this.imageLocation = imageLocation;
         this.imageReferenceUuid = imageReferenceUuid;
+        this.imageLocation = imageLocation;
+
     }
 }
