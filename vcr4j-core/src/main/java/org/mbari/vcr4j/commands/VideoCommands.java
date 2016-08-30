@@ -8,7 +8,7 @@ public enum VideoCommands implements VideoCommand<Void> {
     PLAY("play"),
     REQUEST_DEVICE_TYPE("request device type"),
     REQUEST_ELAPSED_TIME("request elapsed time"),
-    REQUEST_INDEX("request index"),
+    REQUEST_INDEX("request index"),  // This should always return an index for the video
     REQUEST_STATUS("request status"),
     REQUEST_TIMECODE("request timecode"),
     REQUEST_TIMESTAMP("request timestamp"),

@@ -4,15 +4,16 @@ import java.util.UUID;
 
 /**
  * @author Brian Schlining
- * @since 2016-08-27T15:23:00
+ * @since 2016-08-29T09:47:00
  */
-public class PlayResponse {
+public class PauseResponse {
+
     private String response;
     private String status;
     private UUID uuid;
 
 
-    public PlayResponse(UUID uuid, String status) {
+    public PauseResponse(UUID uuid, String status) {
         this.response = "open";
         this.status = status;
     }

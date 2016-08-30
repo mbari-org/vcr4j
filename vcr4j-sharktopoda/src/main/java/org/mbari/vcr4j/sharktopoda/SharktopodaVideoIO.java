@@ -3,12 +3,17 @@ package org.mbari.vcr4j.sharktopoda;
 import org.mbari.vcr4j.VideoCommand;
 import org.mbari.vcr4j.VideoIO;
 import org.mbari.vcr4j.VideoIndex;
+import org.mbari.vcr4j.commands.ShuttleCmd;
 import org.mbari.vcr4j.commands.VideoCommands;
 import org.mbari.vcr4j.sharktopoda.commands.OpenCmd;
+import org.mbari.vcr4j.sharktopoda.commands.SharkCommands;
+import org.mbari.vcr4j.sharktopoda.model.request.Close;
 import org.mbari.vcr4j.sharktopoda.model.request.Open;
 import org.mbari.vcr4j.sharktopoda.model.request.Pause;
 import org.mbari.vcr4j.sharktopoda.model.request.Play;
+import org.mbari.vcr4j.sharktopoda.model.request.RequestElapsedTime;
 import org.mbari.vcr4j.sharktopoda.model.request.RequestStatus;
+import org.mbari.vcr4j.sharktopoda.model.request.RequestVideoInfo;
 import org.mbari.vcr4j.sharktopoda.model.response.FramecaptureResponse;
 import org.mbari.vcr4j.sharktopoda.model.response.IVideoInfo;
 import org.slf4j.Logger;
@@ -32,6 +37,9 @@ import java.util.UUID;
  */
 public class SharktopodaVideoIO implements VideoIO<SharktopodaState, SharktopodaError> {
 
+    public static final double MAX_SHUTTLE_RATE = 8.0;
+    public static final double DEFAULT_SHUTTLE_RATE = 3.0;
+
     private final int port;
     private final InetAddress inetAddress;
     private final UUID uuid; // One VideoIO to one window in Sharktopoda
@@ -50,6 +58,7 @@ public class SharktopodaVideoIO implements VideoIO<SharktopodaState, Sharktopoda
 
     private final SharktopodaResponseParser responseParser;
 
+    // TODO add timeout for opening movies to the constructor
     public SharktopodaVideoIO(UUID uuid, String host, int port) throws UnknownHostException, SocketException {
         this.uuid = uuid;
         this.port = port;
@@ -61,6 +70,9 @@ public class SharktopodaVideoIO implements VideoIO<SharktopodaState, Sharktopoda
         commandSubject.ofType(OpenCmd.class)
                 .forEach(this::doOpen);
 
+        commandSubject.filter(cmd -> cmd.equals(SharkCommands.CLOSE))
+                .forEach(cmd -> doClose());
+
         commandSubject.filter(cmd -> cmd.equals(VideoCommands.PLAY))
                 .forEach(cmd -> doPlay());
 
@@ -69,6 +81,23 @@ public class SharktopodaVideoIO implements VideoIO<SharktopodaState, Sharktopoda
 
         commandSubject.filter(cmd -> cmd.equals(VideoCommands.REQUEST_STATUS))
                 .forEach(cmd -> doRequestStatus());
+
+        commandSubject.filter(cmd -> cmd.equals(VideoCommands.FAST_FORWARD))
+                .forEach(cmd -> doShuttle(DEFAULT_SHUTTLE_RATE, cmd));
+
+        commandSubject.filter(cmd -> cmd.equals(VideoCommands.REWIND))
+                .forEach(cmd -> doShuttle(-DEFAULT_SHUTTLE_RATE, cmd));
+
+        commandSubject.ofType(ShuttleCmd.class)
+                .forEach(cmd -> doShuttle(cmd.getValue() * MAX_SHUTTLE_RATE, cmd));
+
+        commandSubject.filter(cmd -> cmd.equals(VideoCommands.REQUEST_ELAPSED_TIME)
+                    || cmd.equals(VideoCommands.REQUEST_INDEX))
+                .forEach(this::doRequestIndex);
+
+        commandSubject.filter(cmd -> cmd.equals(SharkCommands.REQUEST_VIDEO_INFO))
+                .forEach(cmd -> doRequestVideoInfo());
+
     }
 
     private DatagramSocket getSocket() throws SocketException {
@@ -193,6 +222,12 @@ public class SharktopodaVideoIO implements VideoIO<SharktopodaState, Sharktopoda
         sendCommandAndListenForResponse(packet, 1024, cmd);
     }
 
+    private void doClose() {
+        Close obj = new Close(uuid);
+        DatagramPacket packet = asPacket(obj);
+        sendCommand(packet, SharkCommands.CLOSE);
+    }
+
     private void doPlay() {
         Play obj = new Play(uuid, 1.0);
         DatagramPacket packet = asPacket(obj);
@@ -202,12 +237,30 @@ public class SharktopodaVideoIO implements VideoIO<SharktopodaState, Sharktopoda
     private void doPause() {
         Pause obj = new Pause(uuid);
         DatagramPacket packet = asPacket(obj);
-        sendCommand(packet, VideoCommands.PAUSE);
+        sendCommandAndListenForResponse(packet, 1024, VideoCommands.PAUSE);
     }
 
     private void doRequestStatus() {
         RequestStatus obj = new RequestStatus(uuid);
         DatagramPacket packet = asPacket(obj);
         sendCommandAndListenForResponse(packet, 1024, VideoCommands.REQUEST_STATUS);
+    }
+
+    private void doShuttle(double rate, VideoCommand command) {
+        Play obj = new Play(uuid, rate);
+        DatagramPacket packet = asPacket(obj);
+        sendCommandAndListenForResponse(packet, 1024, command);
+    }
+
+    private void doRequestIndex(VideoCommand command) {
+        RequestElapsedTime obj = new RequestElapsedTime(uuid);
+        DatagramPacket packet = asPacket(obj);
+        sendCommandAndListenForResponse(packet, 1024, command);
+    }
+
+    private void doRequestVideoInfo() {
+        RequestVideoInfo obj = new RequestVideoInfo(uuid);
+        DatagramPacket packet = asPacket(obj);
+        sendCommandAndListenForResponse(packet, 2048, SharkCommands.REQUEST_VIDEO_INFO);
     }
 }

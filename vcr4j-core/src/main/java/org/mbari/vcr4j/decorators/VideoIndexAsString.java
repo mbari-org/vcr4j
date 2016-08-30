@@ -16,7 +16,7 @@ public class VideoIndexAsString {
                 .append("'");
 
         index.getElapsedTime().ifPresent(duration -> {
-            double minutes = duration.toMillis() /  1000D * 60D;
+            double minutes = duration.toMillis() /  1000D / 60D;
             sb.append(",elapsed_time_minutes:")
                     .append(minutes);
         });
