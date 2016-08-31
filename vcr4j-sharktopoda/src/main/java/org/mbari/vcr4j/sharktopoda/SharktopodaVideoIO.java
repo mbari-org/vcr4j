@@ -8,16 +8,18 @@ import org.mbari.vcr4j.commands.ShuttleCmd;
 import org.mbari.vcr4j.commands.VideoCommands;
 import org.mbari.vcr4j.sharktopoda.commands.OpenCmd;
 import org.mbari.vcr4j.sharktopoda.commands.SharkCommands;
+import org.mbari.vcr4j.sharktopoda.commands.ShowCmd;
+import org.mbari.vcr4j.sharktopoda.model.VideoInformation;
 import org.mbari.vcr4j.sharktopoda.model.request.Close;
 import org.mbari.vcr4j.sharktopoda.model.request.Open;
 import org.mbari.vcr4j.sharktopoda.model.request.Pause;
 import org.mbari.vcr4j.sharktopoda.model.request.Play;
+import org.mbari.vcr4j.sharktopoda.model.request.RequestAllVideoInfos;
 import org.mbari.vcr4j.sharktopoda.model.request.RequestElapsedTime;
 import org.mbari.vcr4j.sharktopoda.model.request.RequestStatus;
 import org.mbari.vcr4j.sharktopoda.model.request.RequestVideoInfo;
 import org.mbari.vcr4j.sharktopoda.model.request.SeekElapsedTime;
-import org.mbari.vcr4j.sharktopoda.model.response.FramecaptureResponse;
-import org.mbari.vcr4j.sharktopoda.model.response.IVideoInfo;
+import org.mbari.vcr4j.sharktopoda.model.request.Show;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Observable;
@@ -47,7 +49,7 @@ public class SharktopodaVideoIO implements VideoIO<SharktopodaState, Sharktopoda
     private final UUID uuid; // One VideoIO to one window in Sharktopoda
     private DatagramSocket socket;
 
-    private final Subject<IVideoInfo, IVideoInfo> videoInfoSubject = new SerializedSubject<>(PublishSubject.create());
+    private final Subject<VideoInformation, VideoInformation> videoInfoSubject = new SerializedSubject<>(PublishSubject.create());
     private final Subject<SharktopodaState, SharktopodaState> stateSubject = new SerializedSubject<>(PublishSubject.create());
     private final Subject<SharktopodaError, SharktopodaError> errorSubject = new SerializedSubject<>(PublishSubject.create());
     /**
@@ -71,8 +73,17 @@ public class SharktopodaVideoIO implements VideoIO<SharktopodaState, Sharktopoda
         commandSubject.ofType(OpenCmd.class)
                 .forEach(this::doOpen);
 
+        commandSubject.filter(cmd -> cmd.equals(SharkCommands.SHOW))
+                .forEach(cmd -> doShow());
+
         commandSubject.filter(cmd -> cmd.equals(SharkCommands.CLOSE))
                 .forEach(cmd -> doClose());
+
+        commandSubject.filter(cmd -> cmd.equals(SharkCommands.REQUEST_ALL_VIDEO_INFOS))
+                .forEach(cmd -> doRequestAllVideoInfos());
+
+        commandSubject.filter(cmd -> cmd.equals(SharkCommands.REQUEST_VIDEO_INFO))
+                .forEach(cmd -> doRequestVideoInfo());
 
         commandSubject.filter(cmd -> cmd.equals(VideoCommands.PLAY))
                 .forEach(cmd -> doPlay());
@@ -101,7 +112,6 @@ public class SharktopodaVideoIO implements VideoIO<SharktopodaState, Sharktopoda
 
         commandSubject.ofType(SeekElapsedTimeCmd.class)
                 .forEach(this::doSeekElapsedTime);
-
 
     }
 
@@ -204,7 +214,7 @@ public class SharktopodaVideoIO implements VideoIO<SharktopodaState, Sharktopoda
      * Tracks information about what videos are open.
      * @return
      */
-    public Subject<IVideoInfo, IVideoInfo> getVideoInfoSubject() {
+    public Observable<VideoInformation> getVideoInfoSubject() {
         return videoInfoSubject;
     }
 
@@ -225,6 +235,12 @@ public class SharktopodaVideoIO implements VideoIO<SharktopodaState, Sharktopoda
         Open obj = new Open(cmd.getValue(), uuid);
         DatagramPacket packet = asPacket(obj);
         sendCommandAndListenForResponse(packet, 1024, cmd);
+    }
+
+    private void doShow() {
+        Show obj = new Show(uuid);
+        DatagramPacket packet = asPacket(obj);
+        sendCommand(packet, SharkCommands.SHOW);
     }
 
     private void doClose() {
@@ -267,6 +283,12 @@ public class SharktopodaVideoIO implements VideoIO<SharktopodaState, Sharktopoda
         RequestVideoInfo obj = new RequestVideoInfo(uuid);
         DatagramPacket packet = asPacket(obj);
         sendCommandAndListenForResponse(packet, 2048, SharkCommands.REQUEST_VIDEO_INFO);
+    }
+
+    private void doRequestAllVideoInfos() {
+        RequestAllVideoInfos obj = new RequestAllVideoInfos();
+        DatagramPacket packet = asPacket(obj);
+        sendCommandAndListenForResponse(packet, 4096, SharkCommands.REQUEST_ALL_VIDEO_INFOS);
     }
 
     private void doSeekElapsedTime(SeekElapsedTimeCmd command) {

@@ -2,14 +2,13 @@ package org.mbari.vcr4j.sharktopoda;
 
 import org.mbari.vcr4j.VideoCommand;
 import org.mbari.vcr4j.VideoIndex;
-import org.mbari.vcr4j.commands.SeekElapsedTimeCmd;
 import org.mbari.vcr4j.commands.VideoCommands;
 import org.mbari.vcr4j.sharktopoda.commands.OpenCmd;
-import org.mbari.vcr4j.sharktopoda.model.request.RequestElapsedTime;
-import org.mbari.vcr4j.sharktopoda.model.response.FramecaptureResponse;
-import org.mbari.vcr4j.sharktopoda.model.response.IVideoInfo;
+import org.mbari.vcr4j.sharktopoda.commands.SharkCommands;
+import org.mbari.vcr4j.sharktopoda.model.VideoInformation;
 import org.mbari.vcr4j.sharktopoda.model.response.OpenResponse;
 import org.mbari.vcr4j.sharktopoda.model.response.PlayResponse;
+import org.mbari.vcr4j.sharktopoda.model.response.RequestAllVideoInfosReponse;
 import org.mbari.vcr4j.sharktopoda.model.response.RequestElapsedTimeResponse;
 import org.mbari.vcr4j.sharktopoda.model.response.RequestStatusResponse;
 import org.mbari.vcr4j.sharktopoda.model.response.RequestVideoInfoResponse;
@@ -18,8 +17,11 @@ import org.slf4j.LoggerFactory;
 import rx.subjects.Subject;
 
 import java.time.Duration;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * @author Brian Schlining
@@ -32,7 +34,7 @@ public class SharktopodaResponseParser {
     private final Subject<SharktopodaState, SharktopodaState> stateSubject;
     private final Subject<SharktopodaError, SharktopodaError> errorSubject;
     private final Subject<VideoIndex, VideoIndex> indexSubject;
-    private final Subject<IVideoInfo, IVideoInfo> videoInfoSubject;
+    private final Subject<VideoInformation, VideoInformation> videoInfoSubject;
     private final Logger log = LoggerFactory.getLogger(getClass());
 
 
@@ -40,7 +42,7 @@ public class SharktopodaResponseParser {
             Subject<SharktopodaState, SharktopodaState> stateSubject,
             Subject<SharktopodaError, SharktopodaError> errorSubject,
             Subject<VideoIndex, VideoIndex> indexSubject,
-            Subject<IVideoInfo, IVideoInfo> videoInfoSubject) {
+            Subject<VideoInformation, VideoInformation> videoInfoSubject) {
 
         this.uuid = uuid;
         this.stateSubject = stateSubject;
@@ -60,6 +62,8 @@ public class SharktopodaResponseParser {
             else if (command.equals(VideoCommands.REQUEST_STATUS)) handleRequestStatus(msg);
             else if (command.equals(VideoCommands.REQUEST_INDEX)) handleRequestIndex(msg);
             else if (command.equals(VideoCommands.REQUEST_ELAPSED_TIME)) handleRequestIndex(msg);
+            else if (command.equals(SharkCommands.REQUEST_VIDEO_INFO)) handleRequestVideoInfo(msg);
+            else if (command.equals(SharkCommands.REQUEST_ALL_VIDEO_INFOS)) handleRequestAllVideoInfos(msg);
         }
         catch (Exception e) {
             SharktopodaError error = new SharktopodaError(false, true, false, Optional.of(command));
@@ -125,8 +129,20 @@ public class SharktopodaResponseParser {
     private void handleRequestVideoInfo(String msg) {
         RequestVideoInfoResponse r = Constants.GSON.fromJson(msg, RequestVideoInfoResponse.class);
         if (r.getUuid().equals(uuid)) {
-
+            List<VideoInformation.Video> videos = Collections.singletonList(new VideoInformation.Video(r.getUuid(), r.getUrl()));
+            VideoInformation info = new VideoInformation(VideoInformation.RequestType.FOCUSED, videos);
+            videoInfoSubject.onNext(info);
         }
+    }
+
+    private void handleRequestAllVideoInfos(String msg) {
+        RequestAllVideoInfosReponse r = Constants.GSON.fromJson(msg, RequestAllVideoInfosReponse.class);
+        List<VideoInformation.Video> videos = r.getVideos()
+                .stream()
+                .map(v -> new VideoInformation.Video(v.getUuid(), v.getUrl()))
+                .collect(Collectors.toList());
+        VideoInformation info = new VideoInformation(VideoInformation.RequestType.ALL, videos);
+        videoInfoSubject.onNext(info);
     }
 
 }

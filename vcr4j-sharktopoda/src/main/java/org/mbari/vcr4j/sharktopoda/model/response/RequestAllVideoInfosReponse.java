@@ -26,7 +26,7 @@ public class RequestAllVideoInfosReponse implements IVideoInfo {
         return videos;
     }
 
-    public class Video {
+    public static class Video {
         UUID uuid;
         URL url;
 
