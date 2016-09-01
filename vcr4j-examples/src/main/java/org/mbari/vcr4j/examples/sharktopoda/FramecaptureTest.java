@@ -34,7 +34,7 @@ public class FramecaptureTest {
     public static void main(String[] args) throws Exception {
 
 
-        String prog = SeekElapsedTimeTest.class.getName();
+        String prog = FramecaptureTest.class.getName();
         String doc = "Usage: " + prog + " <port> <url> <dir>\n" +
                 "Options:\n" +
                 "  -h, --help";

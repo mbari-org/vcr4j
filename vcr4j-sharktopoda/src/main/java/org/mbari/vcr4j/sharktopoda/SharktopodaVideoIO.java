@@ -10,16 +10,7 @@ import org.mbari.vcr4j.sharktopoda.commands.OpenCmd;
 import org.mbari.vcr4j.sharktopoda.commands.SharkCommands;
 import org.mbari.vcr4j.sharktopoda.commands.ShowCmd;
 import org.mbari.vcr4j.sharktopoda.model.VideoInformation;
-import org.mbari.vcr4j.sharktopoda.model.request.Close;
-import org.mbari.vcr4j.sharktopoda.model.request.Open;
-import org.mbari.vcr4j.sharktopoda.model.request.Pause;
-import org.mbari.vcr4j.sharktopoda.model.request.Play;
-import org.mbari.vcr4j.sharktopoda.model.request.RequestAllVideoInfos;
-import org.mbari.vcr4j.sharktopoda.model.request.RequestElapsedTime;
-import org.mbari.vcr4j.sharktopoda.model.request.RequestStatus;
-import org.mbari.vcr4j.sharktopoda.model.request.RequestVideoInfo;
-import org.mbari.vcr4j.sharktopoda.model.request.SeekElapsedTime;
-import org.mbari.vcr4j.sharktopoda.model.request.Show;
+import org.mbari.vcr4j.sharktopoda.model.request.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Observable;
@@ -112,6 +103,9 @@ public class SharktopodaVideoIO implements VideoIO<SharktopodaState, Sharktopoda
 
         commandSubject.ofType(SeekElapsedTimeCmd.class)
                 .forEach(this::doSeekElapsedTime);
+
+        commandSubject.filter(cmd -> cmd.equals(SharkCommands.FRAMEADVANCE))
+                .forEach(cmd -> doFrameAdvance());
 
     }
 
@@ -295,5 +289,11 @@ public class SharktopodaVideoIO implements VideoIO<SharktopodaState, Sharktopoda
         SeekElapsedTime obj = new SeekElapsedTime(uuid, command.getValue().toMillis());
         DatagramPacket packet = asPacket(obj);
         sendCommand(packet, command);
+    }
+
+    private void doFrameAdvance() {
+        FrameAdvance obj = new FrameAdvance(uuid);
+        DatagramPacket packet = asPacket(obj);
+        sendCommand(packet, SharkCommands.FRAMEADVANCE);
     }
 }
