@@ -76,13 +76,13 @@ public class FramecaptureTest {
 
         for (int i = 0; i < 10; i++) {
             io.send(new SeekElapsedTimeCmd(Duration.ofSeconds(i)));
-            Thread.sleep(300);
+            Thread.sleep(500);
             io.send(new FramecaptureCmd(UUID.randomUUID(), new File(file, "trashme-seek-" + i + ".png")));
         }
 
         io.send(VideoCommands.PLAY);
         for (int i = 0; i < 10; i++) {
-            Thread.sleep(300);
+            Thread.sleep(500);
             io.send(new FramecaptureCmd(UUID.randomUUID(), new File(file, "trashme-play-" + i + ".png")));
         }
         io.send(SharkCommands.CLOSE);
