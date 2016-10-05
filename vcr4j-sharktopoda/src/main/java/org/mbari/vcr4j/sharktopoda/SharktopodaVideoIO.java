@@ -204,6 +204,10 @@ public class SharktopodaVideoIO implements VideoIO<SharktopodaState, Sharktopoda
         return indexSubject;
     }
 
+    public Subject<VideoIndex, VideoIndex> getIndexSubject() {
+        return indexSubject;
+    }
+
     /**
      * Tracks information about what videos are open.
      * @return

@@ -58,10 +58,18 @@ public class FramecaptureDecorator implements Decorator {
             }
 
         }
+        if (server != null) {
+            server.close();
+        }
         log.info("Shutting down UDP server that listens to Sharktopoda for framegrabs");
 
     });
 
+    /**
+     *
+     * @param io
+     * @param port The out-of-band port tha should be used by Sharktopoda
+     */
     public FramecaptureDecorator(SharktopodaVideoIO io, int port) {
         this.io = io;
         this.port = port;

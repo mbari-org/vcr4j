@@ -44,7 +44,10 @@ public class VCRSyncDecorator<S extends VideoState, E extends VideoError> implem
     };
 
     public VCRSyncDecorator(VideoIO<S, E> io) {
+        this(io, 1000, 40, 500);
+    }
 
+    public VCRSyncDecorator(VideoIO<S, E> io, long statusInterval, long timecodeInterval,  long timestampInterval) {
         io.getCommandSubject().subscribe(subscriber);
 
         TimerTask statusTask = new TimerTask() {
@@ -53,7 +56,7 @@ public class VCRSyncDecorator<S extends VideoState, E extends VideoError> implem
                 io.send(VideoCommands.REQUEST_STATUS);
             }
         };
-        timer.schedule(statusTask, 0, 1000);
+        timer.schedule(statusTask, 0, statusInterval);
 
         TimerTask timecodeTask = new TimerTask() {
             @Override
@@ -61,7 +64,7 @@ public class VCRSyncDecorator<S extends VideoState, E extends VideoError> implem
                 io.send(VideoCommands.REQUEST_TIMECODE);
             }
         };
-        timer.schedule(timecodeTask, 0, 40);
+        timer.schedule(timecodeTask, 0, timecodeInterval);
 
         // Since timecode is the primary index, we ask for timestamps much less frequently.
         // Most devices don't support it anyway. But we use it at MBARI as we write time
@@ -72,8 +75,7 @@ public class VCRSyncDecorator<S extends VideoState, E extends VideoError> implem
                 io.send(VideoCommands.REQUEST_TIMESTAMP);
             }
         };
-        timer.schedule(timestampTask, 0, 500);
-
+        timer.schedule(timestampTask, 0, timestampInterval);
     }
 
     protected Timer getTimer() {
