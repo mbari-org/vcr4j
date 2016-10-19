@@ -13,7 +13,7 @@ dependency>
 
 ## Usage
 
-```
+```java
 // You only need to call this once per app to configure the native libraries
 RXTX.setup(); 
 
