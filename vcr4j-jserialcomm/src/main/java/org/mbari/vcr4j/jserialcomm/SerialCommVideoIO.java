@@ -11,6 +11,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Created by brian on 3/26/16.
@@ -86,5 +89,21 @@ public class SerialCommVideoIO extends RS422VideoIO  {
         catch (Exception e) {
             throw new RS422Exception("Failed to open " + portName, e);
         }
+    }
+
+    public static Set<String> getAvailableSerialPorts() {
+        SerialPort[] ports = SerialPort.getCommPorts();
+        Set<String> portNames = new HashSet<>();
+        for (SerialPort port : ports) {
+            try {
+                port.openPort();
+                port.closePort();
+                portNames.add(port.getDescriptivePortName());
+            }
+            catch (Exception e) {
+                // Port is not available
+            }
+        }
+        return portNames;
     }
 }
