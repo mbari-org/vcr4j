@@ -19,3 +19,18 @@ RXTX.setup();
 
 VideoIO<RS422State, RS422Error> io = RXTXVideoIO.open(serialPortName);
 ```
+
+## Developer Notes
+
+The `rxtx` library included in this module is not the same as you will find in Maven Central. If you're planning to use this module for additional builds you should install the rxtx jar into your local maven repo. You can do this using:
+
+```
+cd vcr4j/vcr4j-rxtx/src/main/lib/
+mvn install:install-file \
+  -Dfile=rxtx-java-2.2.0.jar \
+  -DgroupId=gnu.io.rxtx \
+  -DartifactId=rxtx-java \
+  -Dversion=2.2.0 \
+  -Dpackaging=jar
+  
+```
