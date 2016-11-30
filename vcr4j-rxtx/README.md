@@ -32,5 +32,4 @@ mvn install:install-file \
   -DartifactId=rxtx-java \
   -Dversion=2.2.0 \
   -Dpackaging=jar
-  
 ```
