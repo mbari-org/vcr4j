@@ -19,8 +19,7 @@ import java.util.Optional;
  * Decorator that listens for RequestUserbitsAsTimeCmds. Usage:
  * <pre>
  * VideoIO<RS422State, RS422Error> io = // ...
- * UserbitsAsTimeDecorator decorator = new UserbitsAsTimeDecorator(io.getCommandSubject(),
- *         io.getIndexObservable(), io.getUserbitsObservable());
+ * UserbitsAsTimeDecorator decorator = new UserbitsAsTimeDecorator(io);
  * decorator.getIndexObservable().subscribe(index -> doSomething());
  *
  * io.send(RequestUserbitsAsTimeCmd.COMMAND);
