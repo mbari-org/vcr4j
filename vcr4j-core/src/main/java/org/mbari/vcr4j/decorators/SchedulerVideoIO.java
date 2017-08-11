@@ -123,7 +123,7 @@ public class SchedulerVideoIO<S extends VideoState, E extends VideoError> implem
      * This manages the commands to be sent in a separate thread.
      */
     private class CommandQueue {
-        final BlockingQueue<VideoCommand> pendingQueue = new LinkedBlockingQueue<VideoCommand>();
+        final BlockingQueue<VideoCommand> pendingQueue = new LinkedBlockingQueue<>();
         final Thread thread; // All IO will be done on this thread
         AtomicBoolean isRunning = new AtomicBoolean(true);
         final Runnable runnable = () -> {

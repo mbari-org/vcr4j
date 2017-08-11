@@ -5,6 +5,7 @@ import org.mbari.vcr4j.sharktopoda.Constants;
 import org.mbari.vcr4j.sharktopoda.SharktopodaVideoIO;
 import org.mbari.vcr4j.sharktopoda.commands.ConnectCmd;
 import org.mbari.vcr4j.sharktopoda.commands.FramecaptureCmd;
+import org.mbari.vcr4j.sharktopoda.commands.SharkCommands;
 import org.mbari.vcr4j.sharktopoda.model.request.Connect;
 import org.mbari.vcr4j.sharktopoda.model.request.Framecapture;
 import org.mbari.vcr4j.sharktopoda.model.response.FramecaptureResponse;
@@ -51,8 +52,10 @@ public class FramecaptureDecorator implements Decorator {
             }
             catch (Exception e) {
                 log.info("Error while reading UDP datagram", e);
-                if (server != null) {
+                if (!server.isClosed()) {
                     server.close();
+                }
+                if (server != null) {
                     server = null;
                 }
             }
@@ -94,14 +97,19 @@ public class FramecaptureDecorator implements Decorator {
             }
         };
 
-        io.getCommandSubject().ofType(FramecaptureCmd.class)
+        io.getCommandSubject()
+                .ofType(FramecaptureCmd.class)
                 .subscribe(subscriber);
 
-        io.getCommandSubject().ofType(ConnectCmd.class)
+        io.getCommandSubject()
+                .ofType(ConnectCmd.class)
                 .forEach(this::doConnect);
 
-        io.send(new ConnectCmd(port));
+        io.getCommandSubject()
+                .filter(cmd -> cmd == SharkCommands.CLOSE)
+                .forEach(cmd -> ok = false);
 
+        io.send(new ConnectCmd(port));
 
     }
 
@@ -139,6 +147,7 @@ public class FramecaptureDecorator implements Decorator {
 
     @Override
     public void unsubscribe() {
+        server.close();
         ok = false;
         subscriber.unsubscribe();
     }
