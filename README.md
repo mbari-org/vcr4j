@@ -6,7 +6,7 @@ Video controls for various devices. Used by MBARI's video annotation and referen
 VideoController ---> VideoIO ---> Observable<VideoError>
                              |--> Observable<VideoIndex>
                              |--> Observable<VideoState>
-                             `--> Subject<VideoCommand, VideoCommand>
+                             `--> Subject<VideoCommand>
 ```
 
 The `VideoIO` object sends `VideoCommand` objects via the `commandSubject`. Response are parsed and the appropriate observable: `errorObservable`, `indexObservable`, or `stateObservable` is updated. 
