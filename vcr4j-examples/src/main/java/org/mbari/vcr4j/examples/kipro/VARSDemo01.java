@@ -1,18 +1,17 @@
 package org.mbari.vcr4j.examples.kipro;
 
+import io.reactivex.Observable;
 import org.docopt.Docopt;
 import org.mbari.vcr4j.SimpleVideoIO;
 import org.mbari.vcr4j.VideoController;
 import org.mbari.vcr4j.VideoIO;
 import org.mbari.vcr4j.VideoIndex;
-import org.mbari.vcr4j.decorators.Decorator;
 import org.mbari.vcr4j.decorators.SchedulerVideoIO;
 import org.mbari.vcr4j.kipro.QuadError;
 import org.mbari.vcr4j.kipro.QuadState;
 import org.mbari.vcr4j.kipro.QuadVideoIO;
 import org.mbari.vcr4j.kipro.decorators.ConnectionPollingDecorator;
 import org.mbari.vcr4j.kipro.decorators.QuadLoggingDecorator;
-import rx.Observable;
 
 import java.util.Map;
 import java.util.concurrent.Executors;

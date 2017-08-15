@@ -1,13 +1,13 @@
 package org.mbari.vcr4j.rs422.decorators;
 
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
 import org.mbari.vcr4j.decorators.LoggingDecorator;
 import org.mbari.vcr4j.rs422.VCRVideoIO;
 import org.mbari.vcr4j.rs422.RS422Error;
 import org.mbari.vcr4j.rs422.RS422State;
 import org.mbari.vcr4j.rs422.RS422Timecode;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import rx.Subscriber;
+
 
 /**
  * @author Brian Schlining
@@ -15,9 +15,11 @@ import rx.Subscriber;
  */
 public class RS422LoggingDecorator extends LoggingDecorator<RS422State, RS422Error> {
 
-    Subscriber<RS422Timecode> timecodeSubscriber = new Subscriber<RS422Timecode>() {
+    private Disposable disposable;
+
+    private Observer<RS422Timecode> timecodeSubscriber = new Observer<RS422Timecode>() {
         @Override
-        public void onCompleted() {
+        public void onComplete() {
             log.debug("Timecode observable is closed");
         }
 
@@ -32,6 +34,11 @@ public class RS422LoggingDecorator extends LoggingDecorator<RS422State, RS422Err
                 log.debug("Received: " + new RS422TimecodeAsString(timecode).toString());
             }
         }
+
+        @Override
+        public void onSubscribe(Disposable disposable) {
+            RS422LoggingDecorator.this.disposable = disposable;
+        }
     };
 
     public RS422LoggingDecorator(VCRVideoIO io) {
@@ -43,7 +50,6 @@ public class RS422LoggingDecorator extends LoggingDecorator<RS422State, RS422Err
     @Override
     public void unsubscribe() {
         super.unsubscribe();
-        timecodeSubscriber.unsubscribe();
-
+        disposable.dispose();
     }
 }

@@ -1,13 +1,12 @@
 package org.mbari.vcr4j.decorators;
 
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
 import org.mbari.vcr4j.VideoCommand;
 import org.mbari.vcr4j.VideoError;
 import org.mbari.vcr4j.VideoIO;
 import org.mbari.vcr4j.VideoState;
 import org.mbari.vcr4j.commands.VideoCommands;
-import rx.Observable;
-import rx.Subscriber;
-import rx.subjects.Subject;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -24,11 +23,12 @@ public class VCRSyncDecorator<S extends VideoState, E extends VideoError> implem
 
     private Timer timer = new Timer(getClass().getSimpleName() + "-" + System.currentTimeMillis(), true);
 
+    private Disposable disposable;
 
     // Kill the timer when the commandSubject gets closed
-    Subscriber<VideoCommand> subscriber = new Subscriber<VideoCommand>() {
+    Observer<VideoCommand> subscriber = new Observer<VideoCommand>() {
         @Override
-        public void onCompleted() {
+        public void onComplete() {
             timer.cancel();
         }
 
@@ -40,6 +40,11 @@ public class VCRSyncDecorator<S extends VideoState, E extends VideoError> implem
         @Override
         public void onNext(VideoCommand videoCommand) {
 
+        }
+
+        @Override
+        public void onSubscribe(Disposable disposable) {
+            VCRSyncDecorator.this.disposable = disposable;
         }
     };
 
@@ -84,6 +89,6 @@ public class VCRSyncDecorator<S extends VideoState, E extends VideoError> implem
 
     @Override
     public void unsubscribe() {
-        subscriber.unsubscribe();
+        disposable.dispose();
     }
 }

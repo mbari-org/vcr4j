@@ -1,5 +1,8 @@
 package org.mbari.vcr4j.udp;
 
+import io.reactivex.Observable;
+import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subjects.Subject;
 import org.mbari.vcr4j.VideoCommand;
 import org.mbari.vcr4j.VideoIO;
 import org.mbari.vcr4j.VideoIndex;
@@ -7,12 +10,7 @@ import org.mbari.vcr4j.commands.VideoCommands;
 import org.mbari.vcr4j.time.Timecode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rx.Observable;
-import rx.Scheduler;
-import rx.schedulers.Schedulers;
-import rx.subjects.PublishSubject;
-import rx.subjects.SerializedSubject;
-import rx.subjects.Subject;
+
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -38,7 +36,7 @@ public class UDPVideoIO implements VideoIO<UDPState, UDPError> {
     private final Logger log = LoggerFactory.getLogger(getClass());
     private final Optional<VideoCommand> timecodeRequest = Optional.of(VideoCommands.REQUEST_TIMECODE);
     UDPResponseParser responseParser = new UDPResponseParser();
-    private final Subject<UDPState, UDPState> stateSubject = new SerializedSubject<>(PublishSubject.create());
+    private final Subject<UDPState> stateSubject;
 
     /**
      * UDP request are done in real time. So we should always add a timestamp to the VideoIndex
@@ -46,11 +44,17 @@ public class UDPVideoIO implements VideoIO<UDPState, UDPError> {
     private final Observable<VideoIndex> indexObservable = responseParser.getTimecodeObservable()
             .map(tc -> new VideoIndex(Optional.of(Instant.now()), Optional.empty(), Optional.of(tc)));
 
-    private final Subject<VideoCommand, VideoCommand> commandSubject = new SerializedSubject<>(PublishSubject.create());
+    private final Subject<VideoCommand> commandSubject;
 
 
     public UDPVideoIO(String host, int port) throws UnknownHostException, SocketException {
         this.port = port;
+
+        PublishSubject<UDPState>  s1 = PublishSubject.create();
+        stateSubject = s1.toSerialized();
+        PublishSubject<VideoCommand> s2 = PublishSubject.create();
+        commandSubject = s2.toSerialized();
+
         inetAddress = InetAddress.getByName(host);
         incomingPacket = new DatagramPacket(receiveMessage, receiveMessage.length);
         requestTimecodePacket = new DatagramPacket(GET_TIMECODE,
@@ -102,10 +106,10 @@ public class UDPVideoIO implements VideoIO<UDPState, UDPError> {
             socket.close();
         }
         stateSubject.onNext(UDPState.STOPPED);
-        commandSubject.onCompleted();
-        stateSubject.onCompleted();
-        responseParser.getErrorObservable().onCompleted();
-        responseParser.getTimecodeObservable().onCompleted();
+        commandSubject.onComplete();
+        stateSubject.onComplete();
+        responseParser.getErrorObservable().onComplete();
+        responseParser.getTimecodeObservable().onComplete();
 
     }
 
@@ -115,7 +119,7 @@ public class UDPVideoIO implements VideoIO<UDPState, UDPError> {
     }
 
     @Override
-    public Subject<VideoCommand, VideoCommand> getCommandSubject() {
+    public Subject<VideoCommand> getCommandSubject() {
         return commandSubject;
     }
 

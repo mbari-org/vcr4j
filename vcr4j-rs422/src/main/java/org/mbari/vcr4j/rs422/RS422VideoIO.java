@@ -18,6 +18,10 @@ import java.io.OutputStream;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Optional;
+
+import io.reactivex.Observable;
+import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subjects.Subject;
 import org.mbari.util.NumberUtilities;
 import org.mbari.vcr4j.VideoCommand;
 import org.mbari.vcr4j.VideoIndex;
@@ -28,11 +32,6 @@ import org.mbari.vcr4j.rs422.commands.RS422VideoCommands;
 import org.mbari.vcr4j.util.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rx.Observable;
-import rx.schedulers.Schedulers;
-import rx.subjects.PublishSubject;
-import rx.subjects.SerializedSubject;
-import rx.subjects.Subject;
 
 /**
  * @author Brian Schlining
@@ -45,7 +44,7 @@ public abstract class RS422VideoIO implements VCRVideoIO {
     private final Logger log = LoggerFactory.getLogger(getClass());
     private final LoggerHelper loggerHelper = new LoggerHelper(log);
     private final RS422ResponseParser responseParser = new RS422ResponseParser();
-    private final Subject<VideoCommand, VideoCommand> commandSubject = new SerializedSubject<>(PublishSubject.create());
+    private final Subject<VideoCommand> commandSubject;
     private OutputStream outputStream;    // Sends commands to VCR
     private InputStream inputStream;      // Reads responses from VCR
     private final Observable<VideoIndex> indexObservable = Observable
@@ -78,6 +77,9 @@ public abstract class RS422VideoIO implements VCRVideoIO {
         this.inputStream = inputStream;
         this.outputStream = outputStream;
         this.ioDelay = ioDelay;
+
+        PublishSubject<VideoCommand> s1 = PublishSubject.create();
+        commandSubject = s1.toSerialized();
 
         commandSubject.subscribe(vc -> {
                 if (vc.equals(RS422VideoCommands.REQUEST_USERBITS)) {
@@ -192,7 +194,7 @@ public abstract class RS422VideoIO implements VCRVideoIO {
     }
 
     @Override
-    public Subject<VideoCommand, VideoCommand> getCommandSubject() {
+    public Subject<VideoCommand> getCommandSubject() {
         return commandSubject;
     }
 
@@ -236,6 +238,5 @@ public abstract class RS422VideoIO implements VCRVideoIO {
     public Observable<RS422Userbits> getUserbitsObservable() {
         return responseParser.getUserbitsObservable();
     }
-
 
 }

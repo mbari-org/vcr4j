@@ -21,18 +21,16 @@
 package org.mbari.vcr4j.ui.swing;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import javax.swing.*;
 import javax.swing.border.Border;
 
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
 import javafx.beans.property.ObjectProperty;
 import org.mbari.swing.JFancyButton;
-import org.mbari.util.IObserver;
-import org.mbari.vcr4j.IVCR;
 import org.mbari.vcr4j.VideoController;
 import org.mbari.vcr4j.VideoError;
 import org.mbari.vcr4j.VideoState;
-import rx.Subscriber;
 
 /**
  * <p>A generic VCRButton. Clicks on this will be sent to the IVCR object
@@ -55,7 +53,7 @@ import rx.Subscriber;
  */
 public abstract class VCRButton extends JFancyButton {
 
-    private volatile Subscriber<VideoState> subscriber;
+    private volatile Disposable disposable;
 
     Icon offIcon;
 
@@ -73,14 +71,13 @@ public abstract class VCRButton extends JFancyButton {
         setBorder(border);
 
         videoController.addListener((obs, oldVal, newVal ) -> {
-            if (oldVal != null && subscriber != null) {
-                subscriber.unsubscribe();
-                subscriber = null;
+            if (oldVal != null && disposable != null) {
+                disposable.dispose();
+                disposable = null;
             }
 
             if (newVal != null) {
-                subscriber = newSubscriber();
-                newVal.getStateObservable().subscribe(subscriber);
+                newVal.getStateObservable().subscribe(newSubscriber());
             }
         });
 
@@ -115,10 +112,10 @@ public abstract class VCRButton extends JFancyButton {
         return videoController;
     }
 
-    private Subscriber<VideoState> newSubscriber() {
-        return new Subscriber<VideoState>() {
+    private Observer<VideoState> newSubscriber() {
+        return new Observer<VideoState>() {
             @Override
-            public void onCompleted() {}
+            public void onComplete() {}
 
             @Override
             public void onError(Throwable throwable) {}
@@ -126,6 +123,11 @@ public abstract class VCRButton extends JFancyButton {
             @Override
             public void onNext(VideoState videoState) {
                 VCRButton.this.onNext(videoState);
+            }
+
+            @Override
+            public void onSubscribe(Disposable disposable) {
+                VCRButton.this.disposable = disposable;
             }
         };
     }

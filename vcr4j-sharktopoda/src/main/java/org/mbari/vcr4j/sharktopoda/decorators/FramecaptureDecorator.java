@@ -1,5 +1,10 @@
 package org.mbari.vcr4j.sharktopoda.decorators;
 
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subjects.Subject;
 import org.mbari.vcr4j.decorators.Decorator;
 import org.mbari.vcr4j.sharktopoda.Constants;
 import org.mbari.vcr4j.sharktopoda.SharktopodaVideoIO;
@@ -11,11 +16,6 @@ import org.mbari.vcr4j.sharktopoda.model.request.Framecapture;
 import org.mbari.vcr4j.sharktopoda.model.response.FramecaptureResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rx.Observable;
-import rx.Subscriber;
-import rx.subjects.PublishSubject;
-import rx.subjects.SerializedSubject;
-import rx.subjects.Subject;
 
 import java.io.File;
 import java.net.DatagramPacket;
@@ -35,38 +35,12 @@ public class FramecaptureDecorator implements Decorator {
     private DatagramSocket server;
 
     private final Logger log = LoggerFactory.getLogger(getClass());
-    private final Subject<FramecaptureResponse, FramecaptureResponse> framecaptureSubject = new SerializedSubject<>(PublishSubject.create());
+    private final Subject<FramecaptureResponse> framecaptureSubject;
+    private Disposable disposable;
     private volatile boolean ok = true;
-    private final Subscriber<FramecaptureCmd> subscriber;
+    private final Observer<FramecaptureCmd> subscriber;
 
-    private final Thread receiverThread = new Thread(() -> {
-        byte[] buffer = new byte[4096];
-        DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
-        while(ok) {
-            try {
-                getServer().receive(packet);
-                String msg = new String(packet.getData(), 0, packet.getLength());
-                log.debug("GOT MSG: " + msg);
-                FramecaptureResponse r = Constants.GSON.fromJson(msg, FramecaptureResponse.class);
-                framecaptureSubject.onNext(r);
-            }
-            catch (Exception e) {
-                log.info("Error while reading UDP datagram", e);
-                if (!server.isClosed()) {
-                    server.close();
-                }
-                if (server != null) {
-                    server = null;
-                }
-            }
-
-        }
-        if (server != null) {
-            server.close();
-        }
-        log.info("Shutting down UDP server that listens to Sharktopoda for framegrabs");
-
-    });
+    private final Thread receiverThread;
 
     /**
      *
@@ -76,13 +50,44 @@ public class FramecaptureDecorator implements Decorator {
     public FramecaptureDecorator(SharktopodaVideoIO io, int port) {
         this.io = io;
         this.port = port;
+        PublishSubject<FramecaptureResponse> s1 = PublishSubject.create();
+        framecaptureSubject = s1.toSerialized();
+
+        receiverThread = new Thread(() -> {
+            byte[] buffer = new byte[4096];
+            DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
+            while(ok) {
+                try {
+                    getServer().receive(packet);
+                    String msg = new String(packet.getData(), 0, packet.getLength());
+                    log.debug("GOT MSG: " + msg);
+                    FramecaptureResponse r = Constants.GSON.fromJson(msg, FramecaptureResponse.class);
+                    framecaptureSubject.onNext(r);
+                }
+                catch (Exception e) {
+                    log.info("Error while reading UDP datagram", e);
+                    if (!server.isClosed()) {
+                        server.close();
+                    }
+                    if (server != null) {
+                        server = null;
+                    }
+                }
+
+            }
+            if (server != null) {
+                server.close();
+            }
+            log.info("Shutting down UDP server that listens to Sharktopoda for framegrabs");
+
+        });
 
         receiverThread.setDaemon(true);
         receiverThread.start();
 
-        subscriber = new Subscriber<FramecaptureCmd>() {
+        subscriber = new Observer<FramecaptureCmd>() {
             @Override
-            public void onCompleted() {
+            public void onComplete() {
                 ok = false;
             }
 
@@ -94,6 +99,11 @@ public class FramecaptureDecorator implements Decorator {
             @Override
             public void onNext(FramecaptureCmd cmd) {
                 doFrameCapture(cmd);
+            }
+
+            @Override
+            public void onSubscribe(Disposable disposable) {
+                FramecaptureDecorator.this.disposable = disposable;
             }
         };
 
@@ -149,6 +159,6 @@ public class FramecaptureDecorator implements Decorator {
     public void unsubscribe() {
         server.close();
         ok = false;
-        subscriber.unsubscribe();
+        disposable.dispose();
     }
 }

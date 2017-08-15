@@ -1,19 +1,20 @@
 package org.mbari.vcr4j.decorators;
 
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.Scheduler;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subjects.Subject;
 import org.mbari.vcr4j.VideoCommand;
 import org.mbari.vcr4j.VideoError;
 import org.mbari.vcr4j.VideoIO;
 import org.mbari.vcr4j.VideoIndex;
 import org.mbari.vcr4j.VideoState;
-import org.mbari.vcr4j.commands.InjectVideoIndexCmd;
-import rx.Observable;
-import rx.Scheduler;
-import rx.Subscriber;
-import rx.schedulers.Schedulers;
-import rx.subjects.PublishSubject;
-import rx.subjects.SerializedSubject;
-import rx.subjects.Subject;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -36,9 +37,10 @@ public class SchedulerVideoIO<S extends VideoState, E extends VideoError> implem
     private final Observable<S> stateObservable;
     private final Observable<VideoIndex> indexObservable;
     private final CommandQueue commandQueue = new CommandQueue();
-    private final Subject<VideoCommand, VideoCommand> commandSubject;
+    private final Subject<VideoCommand> commandSubject;
     private final Scheduler scheduler;
-    private final Subscriber<VideoCommand> commandSubscriber;
+    private final Observer<VideoCommand> commandObserver;
+    private final List<Disposable> disposables = new ArrayList<>();
 
     public SchedulerVideoIO(VideoIO<S, E> io, Executor executor) {
         this(io, Schedulers.from(executor));
@@ -52,10 +54,10 @@ public class SchedulerVideoIO<S extends VideoState, E extends VideoError> implem
         indexObservable = io.getIndexObservable().observeOn(scheduler);
 
 
-        commandSubscriber = new Subscriber<VideoCommand>() {
+        commandObserver = new Observer<VideoCommand>() {
             @Override
-            public void onCompleted() {
-                io.getCommandSubject().onCompleted();
+            public void onComplete() {
+                io.getCommandSubject().onComplete();
             }
 
             @Override
@@ -67,16 +69,22 @@ public class SchedulerVideoIO<S extends VideoState, E extends VideoError> implem
             public void onNext(VideoCommand videoCommand) {
                 commandQueue.send(videoCommand);
             }
+
+            @Override
+            public void onSubscribe(Disposable disposable) {
+                disposables.add(disposable);
+            }
         };
 
-        commandSubject = new SerializedSubject<>(PublishSubject.create());
-        commandSubject.subscribe(commandSubscriber);
+        PublishSubject<VideoCommand> subject = PublishSubject.create();
+        commandSubject = subject.toSerialized();
+        commandSubject.subscribe(commandObserver);
 
     }
 
     @Override
     public void unsubscribe() {
-        commandSubscriber.unsubscribe();
+        disposables.forEach(Disposable::dispose);
         errorObservable.unsubscribeOn(scheduler);
         stateObservable.unsubscribeOn(scheduler);
         indexObservable.unsubscribeOn(scheduler);
@@ -89,7 +97,7 @@ public class SchedulerVideoIO<S extends VideoState, E extends VideoError> implem
     }
 
     @Override
-    public Subject<VideoCommand, VideoCommand> getCommandSubject() {
+    public Subject<VideoCommand> getCommandSubject() {
         return commandSubject;
     }
 

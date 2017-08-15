@@ -3,6 +3,9 @@ package org.mbari.vcr4j.kipro;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import io.reactivex.Observable;
+import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subjects.Subject;
 import org.mbari.vcr4j.VideoCommand;
 import org.mbari.vcr4j.VideoIO;
 import org.mbari.vcr4j.VideoIndex;
@@ -11,22 +14,13 @@ import org.mbari.vcr4j.commands.VideoCommands;
 import org.mbari.vcr4j.kipro.commands.QuadVideoCommands;
 import org.mbari.vcr4j.kipro.json.ConfigEvent;
 import org.mbari.vcr4j.kipro.json.ConnectionID;
-import org.mbari.vcr4j.kipro.json.Constants;
 import org.mbari.vcr4j.time.Timecode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rx.Observable;
-import rx.Scheduler;
-import rx.schedulers.Schedulers;
-import rx.subjects.PublishSubject;
-import rx.subjects.SerializedSubject;
-import rx.subjects.Subject;
+
 
 import java.time.Instant;
-import java.util.Arrays;
 import java.util.Optional;
-import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -44,19 +38,32 @@ public class QuadVideoIO implements VideoIO<QuadState, QuadError> {
     private final QuadError noError = new QuadError(false, false, Optional.empty(), Optional.empty());
 
 
-    private final Subject<QuadError, QuadError> errorObservable = new SerializedSubject<>(PublishSubject.create());
-    private final Subject<QuadState, QuadState> statusObservable = new SerializedSubject<>(PublishSubject.create());
-    private final Subject<Timecode, Timecode> timecodeObservable =
-            new SerializedSubject<>(PublishSubject.create());
-    private final Subject<VideoIndex, VideoIndex> indexObservable =
-            new SerializedSubject<>(PublishSubject.create());
-    private final Subject<ConfigEvent[], ConfigEvent[]> configEventObservable =
-            new SerializedSubject<>(PublishSubject.create());
+    private final Subject<QuadError> errorObservable;
+    private final Subject<QuadState> statusObservable;
+    private final Subject<Timecode> timecodeObservable;
+    private final Subject<VideoIndex> indexObservable;
+    private final Subject<ConfigEvent[]> configEventObservable;
 
-    private final Subject<VideoCommand, VideoCommand> commandSubject = new SerializedSubject<>(PublishSubject.create());
+    private final Subject<VideoCommand> commandSubject;
 
     public QuadVideoIO(String httpAddress) {
         this.httpAddress = httpAddress.endsWith("/") ? httpAddress : httpAddress + "/";
+
+        PublishSubject<QuadError> s1 = PublishSubject.create();
+        errorObservable = s1.toSerialized();
+        PublishSubject<QuadState> s2 = PublishSubject.create();
+        statusObservable = s2.toSerialized();
+        PublishSubject<Timecode> s3 = PublishSubject.create();
+        timecodeObservable = s3.toSerialized();
+        PublishSubject<VideoIndex> s4 = PublishSubject.create();
+        indexObservable = s4.toSerialized();
+        PublishSubject<ConfigEvent[]> s5 = PublishSubject.create();
+        configEventObservable = s5.toSerialized();
+        PublishSubject<VideoCommand> s6 = PublishSubject.create();
+        commandSubject = s6.toSerialized();
+
+
+
         statusObservable.map(QuadState::getConnectionID)
                 .forEach(connectionID::set);
 
@@ -109,7 +116,7 @@ public class QuadVideoIO implements VideoIO<QuadState, QuadError> {
     }
 
     @Override
-    public Subject<VideoCommand, VideoCommand> getCommandSubject() {
+    public Subject<VideoCommand> getCommandSubject() {
         return commandSubject;
     }
 

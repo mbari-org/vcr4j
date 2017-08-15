@@ -1,5 +1,8 @@
 package org.mbari.vcr4j.sharktopoda;
 
+import io.reactivex.Observable;
+import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subjects.Subject;
 import org.mbari.vcr4j.VideoCommand;
 import org.mbari.vcr4j.VideoIO;
 import org.mbari.vcr4j.VideoIndex;
@@ -8,15 +11,11 @@ import org.mbari.vcr4j.commands.ShuttleCmd;
 import org.mbari.vcr4j.commands.VideoCommands;
 import org.mbari.vcr4j.sharktopoda.commands.OpenCmd;
 import org.mbari.vcr4j.sharktopoda.commands.SharkCommands;
-import org.mbari.vcr4j.sharktopoda.commands.ShowCmd;
 import org.mbari.vcr4j.sharktopoda.model.VideoInformation;
 import org.mbari.vcr4j.sharktopoda.model.request.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rx.Observable;
-import rx.subjects.PublishSubject;
-import rx.subjects.SerializedSubject;
-import rx.subjects.Subject;
+
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -40,14 +39,14 @@ public class SharktopodaVideoIO implements VideoIO<SharktopodaState, Sharktopoda
     private final UUID uuid; // One VideoIO to one window in Sharktopoda
     private DatagramSocket socket;
 
-    private final Subject<VideoInformation, VideoInformation> videoInfoSubject = new SerializedSubject<>(PublishSubject.create());
-    private final Subject<SharktopodaState, SharktopodaState> stateSubject = new SerializedSubject<>(PublishSubject.create());
-    private final Subject<SharktopodaError, SharktopodaError> errorSubject = new SerializedSubject<>(PublishSubject.create());
+    private final Subject<VideoInformation> videoInfoSubject;
+    private final Subject<SharktopodaState> stateSubject;
+    private final Subject<SharktopodaError> errorSubject;
     /**
      * UDP request are done in real time. So we should always add a timestamp to the VideoIndex
      */
-    private final Subject<VideoIndex, VideoIndex> indexSubject = new SerializedSubject<>(PublishSubject.create());
-    private final Subject<VideoCommand, VideoCommand> commandSubject = new SerializedSubject<>(PublishSubject.create());
+    private final Subject<VideoIndex> indexSubject;
+    private final Subject<VideoCommand> commandSubject;
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     private final SharktopodaResponseParser responseParser;
@@ -57,6 +56,17 @@ public class SharktopodaVideoIO implements VideoIO<SharktopodaState, Sharktopoda
         this.uuid = uuid;
         this.port = port;
         inetAddress = InetAddress.getByName(host);
+
+        PublishSubject<VideoInformation> s1 = PublishSubject.create();
+        videoInfoSubject = s1.toSerialized();
+        PublishSubject<SharktopodaState> s2 = PublishSubject.create();
+        stateSubject = s2.toSerialized();
+        PublishSubject<SharktopodaError> s3 = PublishSubject.create();
+        errorSubject = s3.toSerialized();
+        PublishSubject<VideoIndex> s4 = PublishSubject.create();
+        indexSubject = s4.toSerialized();
+        PublishSubject<VideoCommand> s5 = PublishSubject.create();
+        commandSubject = s5.toSerialized();
 
         responseParser = new SharktopodaResponseParser(uuid,
                 stateSubject, errorSubject, indexSubject, videoInfoSubject);
@@ -175,7 +185,7 @@ public class SharktopodaVideoIO implements VideoIO<SharktopodaState, Sharktopoda
     }
 
     @Override
-    public Subject<VideoCommand, VideoCommand> getCommandSubject() {
+    public Subject<VideoCommand> getCommandSubject() {
         return commandSubject;
     }
 
@@ -204,7 +214,7 @@ public class SharktopodaVideoIO implements VideoIO<SharktopodaState, Sharktopoda
         return indexSubject;
     }
 
-    public Subject<VideoIndex, VideoIndex> getIndexSubject() {
+    public Subject<VideoIndex> getIndexSubject() {
         return indexSubject;
     }
 

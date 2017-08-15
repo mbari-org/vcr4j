@@ -1,5 +1,8 @@
 package org.mbari.vcr4j.jssc;
 
+import io.reactivex.Observable;
+import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subjects.Subject;
 import jssc.SerialPort;
 import jssc.SerialPortException;
 import jssc.SerialPortTimeoutException;
@@ -19,10 +22,6 @@ import org.mbari.vcr4j.rs422.commands.RS422ByteCommands;
 import org.mbari.vcr4j.rs422.commands.RS422VideoCommands;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rx.Observable;
-import rx.subjects.PublishSubject;
-import rx.subjects.SerializedSubject;
-import rx.subjects.Subject;
 
 import java.io.IOException;
 import java.time.Instant;
@@ -43,7 +42,7 @@ public class JSSCVideoIO implements VCRVideoIO {
     private final long ioDelay;
 
     private final RS422ResponseParser responseParser = new RS422ResponseParser();
-    private final Subject<VideoCommand, VideoCommand> commandSubject = new SerializedSubject<>(PublishSubject.create());
+    private final Subject<VideoCommand> commandSubject;
 
     /**
      * Maximum receive timeout in millisecs
@@ -57,6 +56,9 @@ public class JSSCVideoIO implements VCRVideoIO {
     public JSSCVideoIO(SerialPort serialPort, long ioDelay) {
         this.serialPort = serialPort;
         this.ioDelay = ioDelay;
+
+        PublishSubject<VideoCommand> s1 = PublishSubject.create();
+        commandSubject = s1.toSerialized();
 
         commandSubject.subscribe(vc -> {
             if (vc.equals(RS422VideoCommands.REQUEST_USERBITS)) {
@@ -173,13 +175,13 @@ public class JSSCVideoIO implements VCRVideoIO {
         log.info("Closing serial port:" + serialPort.getPortName());
 
         try {
-            getCommandSubject().onCompleted();
+            getCommandSubject().onComplete();
             serialPort.closePort();
             responseParser.getStatusObservable().onNext(RS422State.STOPPED);
-            responseParser.getStatusObservable().onCompleted();
-            responseParser.getTimecodeObservable().onCompleted();
-            responseParser.getErrorObservable().onCompleted();
-            responseParser.getUserbitsObservable().onCompleted();
+            responseParser.getStatusObservable().onComplete();
+            responseParser.getTimecodeObservable().onComplete();
+            responseParser.getErrorObservable().onComplete();
+            responseParser.getUserbitsObservable().onComplete();
             serialPort = null;
         }
         catch (Exception e) {
@@ -196,7 +198,7 @@ public class JSSCVideoIO implements VCRVideoIO {
     }
 
     @Override
-    public Subject<VideoCommand, VideoCommand> getCommandSubject() {
+    public Subject<VideoCommand> getCommandSubject() {
         return commandSubject;
     }
 

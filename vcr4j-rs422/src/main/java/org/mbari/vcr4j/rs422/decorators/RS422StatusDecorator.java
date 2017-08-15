@@ -1,5 +1,7 @@
 package org.mbari.vcr4j.rs422.decorators;
 
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
 import org.mbari.vcr4j.commands.SeekTimecodeCmd;
 import org.mbari.vcr4j.commands.ShuttleCmd;
 import org.mbari.vcr4j.VideoCommand;
@@ -7,7 +9,6 @@ import org.mbari.vcr4j.commands.VideoCommands;
 import org.mbari.vcr4j.decorators.Decorator;
 import org.mbari.vcr4j.rs422.VCRVideoIO;
 import org.mbari.vcr4j.rs422.commands.RS422VideoCommands;
-import rx.Subscriber;
 
 
 /**
@@ -28,13 +29,15 @@ import rx.Subscriber;
  */
 public class RS422StatusDecorator implements Decorator {
 
-    private final Subscriber<VideoCommand> commandSubscriber;
+    private final Observer<VideoCommand> commandSubscriber;
+
+    private Disposable disposable;
 
     public RS422StatusDecorator(VCRVideoIO io) {
 
-        commandSubscriber = new Subscriber<VideoCommand>() {
+        commandSubscriber = new Observer<VideoCommand>() {
             @Override
-            public void onCompleted() { }
+            public void onComplete() { }
 
             @Override
             public void onError(Throwable throwable) { }
@@ -55,12 +58,17 @@ public class RS422StatusDecorator implements Decorator {
 
                 }
             }
+
+            @Override
+            public void onSubscribe(Disposable disposable) {
+                RS422StatusDecorator.this.disposable = disposable;
+            }
         };
     }
 
 
     @Override
     public void unsubscribe() {
-        commandSubscriber.unsubscribe();
+        disposable.dispose();
     }
 }

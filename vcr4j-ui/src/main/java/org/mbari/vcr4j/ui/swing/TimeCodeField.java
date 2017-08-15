@@ -27,15 +27,14 @@ import javax.swing.BorderFactory;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
 import javafx.beans.property.ObjectProperty;
-import org.mbari.util.IObserver;
-import org.mbari.vcr4j.IVCRTimecode;
 import org.mbari.vcr4j.VideoController;
 import org.mbari.vcr4j.VideoError;
 import org.mbari.vcr4j.VideoIndex;
 import org.mbari.vcr4j.VideoState;
 import org.mbari.vcr4j.time.Timecode;
-import rx.Subscriber;
 
 /**
  * <p>A JTextField object that is prettied up for use in a VCR GUI and can be
@@ -48,7 +47,7 @@ import rx.Subscriber;
  */
 public class TimeCodeField extends JTextField {
 
-    private volatile Subscriber<VideoIndex> subscriber;
+    private volatile Disposable disposable;
 
     private Dimension size = new Dimension(180, 40);
 
@@ -59,19 +58,18 @@ public class TimeCodeField extends JTextField {
         super();
         initComponent();
         videoController.addListener((obs, oldVal, newVal) -> {
-            if (oldVal != null && subscriber != null) {
-                subscriber.unsubscribe();
-                subscriber = null;
+            if (oldVal != null && disposable != null) {
+                disposable.dispose();
+                disposable = null;
             }
 
             if (newVal != null) {
-                subscriber = newSubscriber();
 
                 // Only deal with indices that have timecodes. Otherwise the TextField
                 // does a weird stutter between valid and invalid timecodes
                 newVal.getIndexObservable()
                         .filter(vi -> vi.getTimecode().isPresent())
-                        .subscribe(subscriber);
+                        .subscribe(newSubscriber());
             }
         });
     }
@@ -98,10 +96,10 @@ public class TimeCodeField extends JTextField {
         setAlignmentX(CENTER_ALIGNMENT);
     }
 
-    private Subscriber<VideoIndex> newSubscriber() {
-        return new Subscriber<VideoIndex>() {
+    private Observer<VideoIndex> newSubscriber() {
+        return new Observer<VideoIndex>() {
             @Override
-            public void onCompleted() {}
+            public void onComplete() {}
 
             @Override
             public void onError(Throwable throwable) {}
@@ -112,6 +110,11 @@ public class TimeCodeField extends JTextField {
                         .map(Timecode::toString)
                         .orElse(Timecode.EMPTY_TIMECODE_STRING);
                 setText(txt);
+            }
+
+            @Override
+            public void onSubscribe(Disposable disposable) {
+
             }
         };
     }

@@ -1,7 +1,8 @@
 package org.mbari.vcr4j;
 
-import rx.Observable;
-import rx.subjects.Subject;
+
+import io.reactivex.Observable;
+import io.reactivex.subjects.Subject;
 
 /**
  * Sometimes you need a VideoIO object that is an amalgam of observables from different sources.
@@ -13,13 +14,13 @@ import rx.subjects.Subject;
 public class SimpleVideoIO<S extends VideoState, E extends VideoError> implements VideoIO<S, E> {
 
     private final String connectionID;
-    private final Subject<VideoCommand, VideoCommand> commandSubject;
+    private final Subject<VideoCommand> commandSubject;
     private final Observable<E> errorObservable;
     private final Observable<S> stateObservable;
     private final Observable<VideoIndex> indexObservable;
 
     public SimpleVideoIO(String connectionID,
-            Subject<VideoCommand, VideoCommand> commandSubject,
+            Subject<VideoCommand> commandSubject,
             Observable<S> stateObservable,
             Observable<E> errorObservable,
             Observable<VideoIndex> indexObservable) {
@@ -31,7 +32,7 @@ public class SimpleVideoIO<S extends VideoState, E extends VideoError> implement
     }
 
     @Override
-    public Subject<VideoCommand, VideoCommand> getCommandSubject() {
+    public Subject<VideoCommand> getCommandSubject() {
         return commandSubject;
     }
 
@@ -52,7 +53,7 @@ public class SimpleVideoIO<S extends VideoState, E extends VideoError> implement
 
     @Override
     public void close() {
-        commandSubject.onCompleted();
+        commandSubject.onComplete();
     }
 
     @Override

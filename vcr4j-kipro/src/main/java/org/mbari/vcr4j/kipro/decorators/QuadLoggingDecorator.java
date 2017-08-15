@@ -1,14 +1,12 @@
 package org.mbari.vcr4j.kipro.decorators;
 
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
 import org.mbari.vcr4j.VideoIO;
 import org.mbari.vcr4j.decorators.LoggingDecorator;
-import org.mbari.vcr4j.decorators.VideoErrorAsString;
 import org.mbari.vcr4j.kipro.QuadError;
 import org.mbari.vcr4j.kipro.QuadState;
-import org.mbari.vcr4j.kipro.QuadVideoIO;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import rx.Subscriber;
+
 
 /**
  * @author Brian Schlining
@@ -16,9 +14,11 @@ import rx.Subscriber;
  */
 public class QuadLoggingDecorator extends LoggingDecorator<QuadState, QuadError> {
 
-    protected final Subscriber<QuadError> quadErrorSubscriber = new Subscriber<QuadError>() {
+    private Disposable disposable;
+
+    protected final Observer<QuadError> quadErrorSubscriber = new Observer<QuadError>() {
         @Override
-        public void onCompleted() {
+        public void onComplete() {
             log.debug("Error observable is closed");
         }
 
@@ -33,18 +33,22 @@ public class QuadLoggingDecorator extends LoggingDecorator<QuadState, QuadError>
                 log.debug("Received: " + new QuadErrorAsString(error).toString());
             }
         }
+
+        @Override
+        public void onSubscribe(Disposable disposable) {
+            QuadLoggingDecorator.this.disposable = disposable;
+        }
     };
 
     public QuadLoggingDecorator(VideoIO<QuadState, QuadError> io) {
         super(io);
-        errorSubscriber.unsubscribe();
         io.getErrorObservable().subscribe(quadErrorSubscriber);
     }
 
     @Override
     public void unsubscribe() {
         super.unsubscribe();
-        quadErrorSubscriber.unsubscribe();
+        disposable.dispose();
     }
 
 

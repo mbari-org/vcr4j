@@ -1,6 +1,9 @@
 package org.mbari.vcr4j.jogl;
 
 import com.jogamp.opengl.util.av.GLMediaPlayer;
+import io.reactivex.Observable;
+import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subjects.Subject;
 import org.mbari.vcr4j.SimpleVideoError;
 import org.mbari.vcr4j.VideoCommand;
 import org.mbari.vcr4j.VideoIO;
@@ -8,10 +11,6 @@ import org.mbari.vcr4j.VideoIndex;
 import org.mbari.vcr4j.commands.SeekElapsedTimeCmd;
 import org.mbari.vcr4j.commands.ShuttleCmd;
 import org.mbari.vcr4j.commands.VideoCommands;
-import rx.Observable;
-import rx.subjects.PublishSubject;
-import rx.subjects.SerializedSubject;
-import rx.subjects.Subject;
 
 import java.time.Duration;
 
@@ -25,22 +24,27 @@ public class GLMediaPlayerVideoIO implements VideoIO<GLMediaPlayerState, SimpleV
     private static final double eps = 0.01;
     public static final float FAST_FORWARD_RATE = 3F;
 
-    private final Subject<VideoCommand, VideoCommand> commandSubject =
-            new SerializedSubject<>(PublishSubject.create());
+    private final Subject<VideoCommand> commandSubject;
 
-    private final Subject<SimpleVideoError, SimpleVideoError> errorObservable =
-            new SerializedSubject<>(PublishSubject.create());
+    private final Subject<SimpleVideoError> errorObservable;
 
-    private final Subject<VideoIndex, VideoIndex> indexObservable =
-            new SerializedSubject<>(PublishSubject.create());
+    private final Subject<VideoIndex> indexObservable;
 
-    private final Subject<GLMediaPlayerState, GLMediaPlayerState> stateObservable =
-            new SerializedSubject<>(PublishSubject.create());
+    private final Subject<GLMediaPlayerState> stateObservable;
 
     private final GLMediaPlayer mediaPlayer;
 
     public GLMediaPlayerVideoIO(GLMediaPlayer mediaPlayer) {
         this.mediaPlayer = mediaPlayer;
+
+        PublishSubject<VideoCommand> s1 = PublishSubject.create();
+        commandSubject = s1.toSerialized();
+        PublishSubject<SimpleVideoError> s2 = PublishSubject.create();
+        errorObservable = s2.toSerialized();
+        PublishSubject<VideoIndex> s3 = PublishSubject.create();
+        indexObservable = s3.toSerialized();
+        PublishSubject<GLMediaPlayerState> s4 = PublishSubject.create();
+        stateObservable = s4.toSerialized();
 
         commandSubject.filter(vc -> vc.equals(VideoCommands.REQUEST_INDEX)
                 || vc.equals(VideoCommands.REQUEST_ELAPSED_TIME))
@@ -78,7 +82,7 @@ public class GLMediaPlayerVideoIO implements VideoIO<GLMediaPlayerState, SimpleV
     }
 
     @Override
-    public Subject<VideoCommand, VideoCommand> getCommandSubject() {
+    public Subject<VideoCommand> getCommandSubject() {
         return commandSubject;
     }
 

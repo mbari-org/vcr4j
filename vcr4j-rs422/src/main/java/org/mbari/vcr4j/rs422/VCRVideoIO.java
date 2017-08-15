@@ -1,7 +1,7 @@
 package org.mbari.vcr4j.rs422;
 
+import io.reactivex.Observable;
 import org.mbari.vcr4j.VideoIO;
-import rx.Observable;
 
 /**
  *

@@ -13,23 +13,35 @@
 package org.mbari.vcr4j.rs422;
 
 import java.util.Arrays;
-import java.util.Optional;
+
+import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subjects.Subject;
 import org.mbari.util.NumberUtilities;
 import org.mbari.vcr4j.VideoCommand;
-import rx.subjects.PublishSubject;
-import rx.subjects.SerializedSubject;
-import rx.subjects.Subject;
+
 
 public class RS422ResponseParser {
 
     public static final byte[] ACK = { 0x10, 0x01 };
     public static final byte[] NACK = { 0x11, 0x12 };
-    private final Subject<RS422Error, RS422Error> errorObservable = new SerializedSubject<>(PublishSubject.create());
-    private final Subject<RS422State, RS422State> statusObservable = new SerializedSubject<>(PublishSubject.create());
-    private final Subject<RS422Timecode, RS422Timecode> timecodeObservable =
-        new SerializedSubject<>(PublishSubject.create());
-    private final Subject<RS422Userbits, RS422Userbits> userbitsObservable =
-        new SerializedSubject<>(PublishSubject.create());
+    private final Subject<RS422Error> errorObservable;
+    private final Subject<RS422State> statusObservable;
+    private final Subject<RS422Timecode> timecodeObservable;
+    private final Subject<RS422Userbits> userbitsObservable;
+
+    public RS422ResponseParser() {
+        PublishSubject<RS422Error> s1 = PublishSubject.create();
+        errorObservable = s1.toSerialized();
+
+        PublishSubject<RS422State> s2 = PublishSubject.create();
+        statusObservable = s2.toSerialized();
+
+        PublishSubject<RS422Timecode> s3 = PublishSubject.create();
+        timecodeObservable = s3.toSerialized();
+
+        PublishSubject<RS422Userbits> s4 = PublishSubject.create();
+        userbitsObservable = s4.toSerialized();
+    }
 
     /**
      * The last byte in a command block is the checksum, i.e. the lower eight
@@ -149,19 +161,19 @@ public class RS422ResponseParser {
         return (Arrays.equals(cmd, NACK));
     }
 
-    public Subject<RS422Error, RS422Error> getErrorObservable() {
+    public Subject<RS422Error> getErrorObservable() {
         return errorObservable;
     }
 
-    public Subject<RS422State, RS422State> getStatusObservable() {
+    public Subject<RS422State> getStatusObservable() {
         return statusObservable;
     }
 
-    public Subject<RS422Timecode, RS422Timecode> getTimecodeObservable() {
+    public Subject<RS422Timecode> getTimecodeObservable() {
         return timecodeObservable;
     }
 
-    public Subject<RS422Userbits, RS422Userbits> getUserbitsObservable() {
+    public Subject<RS422Userbits> getUserbitsObservable() {
         return userbitsObservable;
     }
 }

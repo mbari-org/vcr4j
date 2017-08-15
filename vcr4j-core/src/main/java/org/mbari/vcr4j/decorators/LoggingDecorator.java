@@ -1,13 +1,20 @@
 package org.mbari.vcr4j.decorators;
 
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
 import org.mbari.vcr4j.VideoError;
 import org.mbari.vcr4j.VideoIO;
 import org.mbari.vcr4j.VideoIndex;
 import org.mbari.vcr4j.VideoState;
 import org.mbari.vcr4j.VideoCommand;
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rx.Subscriber;
+
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * Logs the errors, indices, state, and commands for a VideoIO
@@ -18,9 +25,11 @@ public class LoggingDecorator<S extends VideoState, E extends VideoError> implem
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
-    protected final Subscriber<E> errorSubscriber = new Subscriber<E>() {
+    List<Disposable> disposables = new ArrayList<>();
+
+    protected final Observer<E> errorSubscriber = new Observer<E>() {
         @Override
-        public void onCompleted() {
+        public void onComplete() {
             log.debug("Error observable is closed");
         }
 
@@ -35,11 +44,16 @@ public class LoggingDecorator<S extends VideoState, E extends VideoError> implem
                 log.debug("Received: " + new VideoErrorAsString(error).toString());
             }
         }
+
+        @Override
+        public void onSubscribe(Disposable disposable) {
+            disposables.add(disposable);
+        }
     };
 
-    protected final Subscriber<VideoIndex> indexSubscriber = new Subscriber<VideoIndex>() {
+    protected final Observer<VideoIndex> indexSubscriber = new Observer<VideoIndex>() {
         @Override
-        public void onCompleted() {
+        public void onComplete() {
             log.debug("Index observable is closed");
         }
 
@@ -54,11 +68,16 @@ public class LoggingDecorator<S extends VideoState, E extends VideoError> implem
                 log.debug("Received: " + new VideoIndexAsString(index).toString());
             }
         }
+
+        @Override
+        public void onSubscribe(Disposable disposable) {
+            disposables.add(disposable);
+        }
     };
 
-    protected final Subscriber<S> stateSubscriber = new Subscriber<S>() {
+    protected final Observer<S> stateSubscriber = new Observer<S>() {
         @Override
-        public void onCompleted() {
+        public void onComplete() {
             log.debug("State observable is closed");
         }
 
@@ -73,11 +92,16 @@ public class LoggingDecorator<S extends VideoState, E extends VideoError> implem
                 log.debug("Received: " + new VideoStateAsString(state).toString());
             }
         }
+
+        @Override
+        public void onSubscribe(Disposable disposable) {
+            disposables.add(disposable);
+        }
     };
 
-    protected final Subscriber<VideoCommand> commandSubscriber = new Subscriber<VideoCommand>() {
+    protected final Observer<VideoCommand> commandSubscriber = new Observer<VideoCommand>() {
         @Override
-        public void onCompleted() {
+        public void onComplete() {
             log.debug("State observable is closed");
         }
 
@@ -92,6 +116,11 @@ public class LoggingDecorator<S extends VideoState, E extends VideoError> implem
                 log.debug("Sending: " + new VideoCommandAsString(command).toString());
             }
         }
+
+        @Override
+        public void onSubscribe(Disposable disposable) {
+            disposables.add(disposable);
+        }
     };
 
 
@@ -104,9 +133,6 @@ public class LoggingDecorator<S extends VideoState, E extends VideoError> implem
 
     @Override
     public void unsubscribe() {
-        errorSubscriber.unsubscribe();
-        stateSubscriber.unsubscribe();
-        indexSubscriber.unsubscribe();
-        commandSubscriber.unsubscribe();
+        disposables.forEach(Disposable::dispose);
     }
 }

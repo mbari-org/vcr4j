@@ -1,5 +1,9 @@
 package org.mbari.vcr4j.rs422.decorators;
 
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.subjects.Subject;
 import org.mbari.util.NumberUtilities;
 import org.mbari.vcr4j.VideoCommand;
 import org.mbari.vcr4j.VideoIndex;
@@ -8,9 +12,6 @@ import org.mbari.vcr4j.decorators.Decorator;
 import org.mbari.vcr4j.rs422.VCRVideoIO;
 import org.mbari.vcr4j.rs422.commands.RS422VideoCommands;
 import org.mbari.vcr4j.rs422.commands.RequestUserbitsAsTimeCmd;
-import rx.Observable;
-import rx.Subscriber;
-import rx.subjects.Subject;
 
 import java.time.Instant;
 import java.util.Optional;
@@ -34,15 +35,17 @@ public class UserbitsAsTimeDecorator implements Decorator {
 
     private final Observable<VideoIndex> indexObservable;
 
-    private final Subscriber<VideoCommand> commandSubscriber;
+    private final Observer<VideoCommand> commandObserver;
+
+    private Disposable disposable;
 
     public UserbitsAsTimeDecorator(VCRVideoIO io) {
 
-        final Subject<VideoCommand, VideoCommand> commandSubject = io.getCommandSubject();
+        final Subject<VideoCommand> commandSubject = io.getCommandSubject();
 
-        commandSubscriber = new Subscriber<VideoCommand>() {
+        commandObserver = new Observer<VideoCommand>() {
             @Override
-            public void onCompleted() {}
+            public void onComplete() {}
 
             @Override
             public void onError(Throwable throwable) {}
@@ -52,6 +55,11 @@ public class UserbitsAsTimeDecorator implements Decorator {
                 commandSubject.onNext(VideoCommands.REQUEST_TIMECODE);
                 commandSubject.onNext(RS422VideoCommands.REQUEST_USERBITS);
             }
+
+            @Override
+            public void onSubscribe(Disposable disposable) {
+                UserbitsAsTimeDecorator.this.disposable = disposable;
+            }
         };
 
 
@@ -59,7 +67,7 @@ public class UserbitsAsTimeDecorator implements Decorator {
         // Timestamp request are currently ignored by RS422VideoIO
         commandSubject.filter(vc -> vc == RequestUserbitsAsTimeCmd.COMMAND
                                  || vc == VideoCommands.REQUEST_TIMESTAMP)
-                .subscribe(commandSubscriber);
+                .subscribe(commandObserver);
 
 
         this.indexObservable = Observable.combineLatest(io.getIndexObservable(),
@@ -87,6 +95,6 @@ public class UserbitsAsTimeDecorator implements Decorator {
 
     @Override
     public void unsubscribe() {
-        commandSubscriber.unsubscribe();
+        disposable.dispose();
     }
 }

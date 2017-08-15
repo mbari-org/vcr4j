@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -51,16 +50,16 @@ public class SerialCommVideoIO extends RS422VideoIO  {
         log.info("Closing serial port:" + serialPort.getSystemPortName());
 
         try {
-            getCommandSubject().onCompleted();
+            getCommandSubject().onComplete();
             getOutputStream().close();
             getInputStream().close();
             serialPort.closePort();
             RS422ResponseParser responseParser = getResponseParser();
             responseParser.getStatusObservable().onNext(RS422State.STOPPED);
-            responseParser.getStatusObservable().onCompleted();
-            responseParser.getTimecodeObservable().onCompleted();
-            responseParser.getErrorObservable().onCompleted();
-            responseParser.getUserbitsObservable().onCompleted();
+            responseParser.getStatusObservable().onComplete();
+            responseParser.getTimecodeObservable().onComplete();
+            responseParser.getErrorObservable().onComplete();
+            responseParser.getUserbitsObservable().onComplete();
             serialPort = null;
         }
         catch (Exception e) {

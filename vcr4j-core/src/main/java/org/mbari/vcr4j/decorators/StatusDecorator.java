@@ -1,5 +1,7 @@
 package org.mbari.vcr4j.decorators;
 
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
 import org.mbari.vcr4j.VideoCommand;
 import org.mbari.vcr4j.VideoError;
 import org.mbari.vcr4j.VideoIO;
@@ -7,7 +9,6 @@ import org.mbari.vcr4j.VideoState;
 import org.mbari.vcr4j.commands.SeekTimecodeCmd;
 import org.mbari.vcr4j.commands.ShuttleCmd;
 import org.mbari.vcr4j.commands.VideoCommands;
-import rx.Subscriber;
 
 /**
  * The VideoIO simply executes the commands send. For many applications, the desired behavior
@@ -26,12 +27,14 @@ import rx.Subscriber;
  */
 public class StatusDecorator<S extends VideoState, E extends VideoError> implements Decorator {
 
-    private final Subscriber<VideoCommand> commandSubscriber;
+    private final Observer<VideoCommand> commandSubscriber;
+
+    private Disposable disposable;
 
     public StatusDecorator(VideoIO<S, E> io) {
-        commandSubscriber = new Subscriber<VideoCommand>() {
+        commandSubscriber = new Observer<VideoCommand>() {
             @Override
-            public void onCompleted() { }
+            public void onComplete() { }
 
             @Override
             public void onError(Throwable throwable) { }
@@ -49,11 +52,17 @@ public class StatusDecorator<S extends VideoState, E extends VideoError> impleme
 
                 }
             }
+
+            @Override
+            public void onSubscribe(Disposable disposable) {
+                StatusDecorator.this.disposable = disposable;
+            }
         };
+
     }
 
     @Override
     public void unsubscribe() {
-        commandSubscriber.unsubscribe();
+        disposable.dispose();
     }
 }

@@ -1,7 +1,9 @@
 package org.mbari.vcr4j;
 
-import rx.Observable;
-import rx.subjects.Subject;
+
+
+import io.reactivex.Observable;
+import io.reactivex.subjects.Subject;
 
 import java.io.Closeable;
 
@@ -19,7 +21,7 @@ public interface VideoIO<S extends VideoState, E extends VideoError> extends Clo
      * for each frame.
      * @return A Subject that is the pipeline for all commands sent to the VideoIO provider
      */
-    Subject<VideoCommand, VideoCommand> getCommandSubject();
+    Subject<VideoCommand> getCommandSubject();
 
 
     String getConnectionID();

@@ -1,13 +1,13 @@
 package org.mbari.vcr4j.udp;
 
+import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subjects.Subject;
 import org.mbari.vcr4j.VideoCommand;
 import org.mbari.vcr4j.commands.VideoCommands;
 import org.mbari.vcr4j.time.Timecode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rx.subjects.PublishSubject;
-import rx.subjects.SerializedSubject;
-import rx.subjects.Subject;
+
 
 import java.io.UnsupportedEncodingException;
 import java.util.Optional;
@@ -20,13 +20,19 @@ import java.util.regex.Pattern;
  */
 public class UDPResponseParser {
 
-    private final Subject<UDPError, UDPError> errorObservable = new SerializedSubject<>(PublishSubject.create());
-    private final Subject<Timecode, Timecode> timecodeObservable =
-            new SerializedSubject<>(PublishSubject.create());
+    private final Subject<UDPError> errorObservable;
+    private final Subject<Timecode> timecodeObservable;
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     private static final Pattern pattern = Pattern.compile("[0-2][0-9]:[0-5][0-9]:[0-5][0-9]:[0-2][0-9]");
 
+    public UDPResponseParser() {
+        PublishSubject<Timecode> s1 = PublishSubject.create();
+        timecodeObservable = s1.toSerialized();
+
+        PublishSubject<UDPError> s2 = PublishSubject.create();
+        errorObservable = s2.toSerialized();
+    }
 
     public void update(byte[] response, Optional<VideoCommand> videoCommand) {
         videoCommand.ifPresent(vc -> {
@@ -37,11 +43,11 @@ public class UDPResponseParser {
         });
     }
 
-    public Subject<UDPError, UDPError> getErrorObservable() {
+    public Subject<UDPError> getErrorObservable() {
         return errorObservable;
     }
 
-    public Subject<Timecode, Timecode> getTimecodeObservable() {
+    public Subject<Timecode> getTimecodeObservable() {
         return timecodeObservable;
     }
 

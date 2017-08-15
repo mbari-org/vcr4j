@@ -1,5 +1,8 @@
 package org.mbari.vcr4j.javafx;
 
+import io.reactivex.Observable;
+import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subjects.Subject;
 import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
 import org.mbari.vcr4j.SimpleVideoError;
@@ -9,10 +12,7 @@ import org.mbari.vcr4j.VideoIndex;
 import org.mbari.vcr4j.commands.SeekElapsedTimeCmd;
 import org.mbari.vcr4j.commands.ShuttleCmd;
 import org.mbari.vcr4j.commands.VideoCommands;
-import rx.Observable;
-import rx.subjects.PublishSubject;
-import rx.subjects.SerializedSubject;
-import rx.subjects.Subject;
+
 
 /**
  * @author Brian Schlining
@@ -24,23 +24,27 @@ public class JFXVideoIO implements VideoIO<JFXVideoState, SimpleVideoError> {
     private static final double eps = 0.1;
     public static final double FAST_FORWARD_RATE = 3D;
 
-    private final Subject<VideoCommand, VideoCommand> commandSubject =
-            new SerializedSubject<>(PublishSubject.create());
+    private final Subject<VideoCommand> commandSubject;
 
-    private final Subject<SimpleVideoError, SimpleVideoError> errorObservable =
-            new SerializedSubject<>(PublishSubject.create());
+    private final Subject<SimpleVideoError> errorObservable;
 
-    private final Subject<VideoIndex, VideoIndex> indexObservable =
-            new SerializedSubject<>(PublishSubject.create());
+    private final Subject<VideoIndex> indexObservable;
 
-    private final Subject<JFXVideoState, JFXVideoState> stateObservable =
-            new SerializedSubject<>(PublishSubject.create());
+    private final Subject<JFXVideoState> stateObservable;
 
     private final MediaPlayer mediaPlayer;
 
-
     public JFXVideoIO(MediaPlayer mediaPlayer) {
         this.mediaPlayer = mediaPlayer;
+
+        PublishSubject<VideoCommand> s1 = PublishSubject.create();
+        commandSubject = s1.toSerialized();
+        PublishSubject<SimpleVideoError> s2 = PublishSubject.create();
+        errorObservable = s2.toSerialized();
+        PublishSubject<VideoIndex> s3 = PublishSubject.create();
+        indexObservable = s3.toSerialized();
+        PublishSubject<JFXVideoState> s4 = PublishSubject.create();
+        stateObservable = s4.toSerialized();
 
         commandSubject.filter(vc -> vc.equals(VideoCommands.REQUEST_INDEX)
                 || vc.equals(VideoCommands.REQUEST_ELAPSED_TIME))
@@ -69,10 +73,10 @@ public class JFXVideoIO implements VideoIO<JFXVideoState, SimpleVideoError> {
 
     @Override
     public void close() {
-        commandSubject.onCompleted();
-        errorObservable.onCompleted();
-        indexObservable.onCompleted();
-        stateObservable.onCompleted();
+        commandSubject.onComplete();
+        errorObservable.onComplete();
+        indexObservable.onComplete();
+        stateObservable.onComplete();
     }
 
     @Override
@@ -81,7 +85,7 @@ public class JFXVideoIO implements VideoIO<JFXVideoState, SimpleVideoError> {
     }
 
     @Override
-    public Subject<VideoCommand, VideoCommand> getCommandSubject() {
+    public Subject<VideoCommand> getCommandSubject() {
         return commandSubject;
     }
 
@@ -105,7 +109,7 @@ public class JFXVideoIO implements VideoIO<JFXVideoState, SimpleVideoError> {
         return indexObservable;
     }
 
-    public Subject<VideoIndex, VideoIndex> getIndexSubject() {
+    public Subject<VideoIndex> getIndexSubject() {
         return indexObservable;
     }
 

@@ -1,5 +1,6 @@
 package org.mbari.vcr4j.sharktopoda;
 
+import io.reactivex.subjects.Subject;
 import org.mbari.vcr4j.VideoCommand;
 import org.mbari.vcr4j.VideoIndex;
 import org.mbari.vcr4j.commands.VideoCommands;
@@ -14,7 +15,6 @@ import org.mbari.vcr4j.sharktopoda.model.response.RequestStatusResponse;
 import org.mbari.vcr4j.sharktopoda.model.response.RequestVideoInfoResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rx.subjects.Subject;
 
 import java.time.Duration;
 import java.util.Collections;
@@ -31,18 +31,18 @@ import java.util.stream.Collectors;
 public class SharktopodaResponseParser {
 
     private final UUID uuid;
-    private final Subject<SharktopodaState, SharktopodaState> stateSubject;
-    private final Subject<SharktopodaError, SharktopodaError> errorSubject;
-    private final Subject<VideoIndex, VideoIndex> indexSubject;
-    private final Subject<VideoInformation, VideoInformation> videoInfoSubject;
+    private final Subject<SharktopodaState> stateSubject;
+    private final Subject<SharktopodaError> errorSubject;
+    private final Subject<VideoIndex> indexSubject;
+    private final Subject<VideoInformation> videoInfoSubject;
     private final Logger log = LoggerFactory.getLogger(getClass());
 
 
     public SharktopodaResponseParser(UUID uuid,
-            Subject<SharktopodaState, SharktopodaState> stateSubject,
-            Subject<SharktopodaError, SharktopodaError> errorSubject,
-            Subject<VideoIndex, VideoIndex> indexSubject,
-            Subject<VideoInformation, VideoInformation> videoInfoSubject) {
+            Subject<SharktopodaState> stateSubject,
+            Subject<SharktopodaError> errorSubject,
+            Subject<VideoIndex> indexSubject,
+            Subject<VideoInformation> videoInfoSubject) {
 
         this.uuid = uuid;
         this.stateSubject = stateSubject;

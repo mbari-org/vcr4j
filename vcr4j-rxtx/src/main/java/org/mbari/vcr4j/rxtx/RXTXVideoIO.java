@@ -22,7 +22,6 @@ import java.io.OutputStream;
 import org.mbari.vcr4j.rs422.RS422Exception;
 import org.mbari.vcr4j.rs422.RS422ResponseParser;
 import org.mbari.vcr4j.rs422.RS422State;
-import org.mbari.vcr4j.rs422.RS422Timecode;
 import org.mbari.vcr4j.rs422.RS422VideoIO;
 import org.mbari.vcr4j.util.Preconditions;
 import org.slf4j.Logger;
@@ -69,16 +68,16 @@ public class RXTXVideoIO extends RS422VideoIO {
         }
 
         try {
-            getCommandSubject().onCompleted();
+            getCommandSubject().onComplete();
             getOutputStream().close();
             getInputStream().close();
             serialPort.close();
             RS422ResponseParser responseParser = getResponseParser();
             responseParser.getStatusObservable().onNext(RS422State.STOPPED);
-            responseParser.getStatusObservable().onCompleted();
-            responseParser.getTimecodeObservable().onCompleted();
-            responseParser.getErrorObservable().onCompleted();
-            responseParser.getUserbitsObservable().onCompleted();
+            responseParser.getStatusObservable().onComplete();
+            responseParser.getTimecodeObservable().onComplete();
+            responseParser.getErrorObservable().onComplete();
+            responseParser.getUserbitsObservable().onComplete();
             serialPort = null;
         }
         catch (Exception e) {

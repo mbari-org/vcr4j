@@ -1,12 +1,13 @@
 package org.mbari.vcr4j.kipro.decorators;
 
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
 import org.mbari.vcr4j.VideoIO;
 import org.mbari.vcr4j.VideoState;
 import org.mbari.vcr4j.decorators.Decorator;
 import org.mbari.vcr4j.kipro.QuadError;
 import org.mbari.vcr4j.kipro.commands.QuadVideoCommands;
-import rx.Observable;
-import rx.Subscriber;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -21,11 +22,11 @@ public class ConnectionPollingDecorator implements Decorator {
 
     private AtomicBoolean isConnected = new AtomicBoolean(false);
 
-    protected final Subscriber<QuadError> errorSubscriber = new Subscriber<QuadError>() {
-        @Override
-        public void onCompleted() {
+    private Disposable disposable;
 
-        }
+    protected final Observer<QuadError> errorSubscriber = new Observer<QuadError>() {
+        @Override
+        public void onComplete() {}
 
         @Override
         public void onError(Throwable throwable) {
@@ -35,6 +36,11 @@ public class ConnectionPollingDecorator implements Decorator {
         @Override
         public void onNext(QuadError quadError) {
             isConnected.set(!quadError.hasConnectionError());
+        }
+
+        @Override
+        public void onSubscribe(Disposable disposable) {
+            ConnectionPollingDecorator.this.disposable = disposable;
         }
     };
 
@@ -63,6 +69,6 @@ public class ConnectionPollingDecorator implements Decorator {
 
     @Override
     public void unsubscribe() {
-        errorSubscriber.unsubscribe();
+        disposable.dispose();
     }
 }

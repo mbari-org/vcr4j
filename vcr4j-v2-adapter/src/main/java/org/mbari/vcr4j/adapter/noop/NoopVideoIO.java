@@ -1,14 +1,13 @@
 package org.mbari.vcr4j.adapter.noop;
 
 
+import io.reactivex.Observable;
+import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subjects.Subject;
 import org.mbari.vcr4j.VideoCommand;
 import org.mbari.vcr4j.VideoIO;
 import org.mbari.vcr4j.VideoIndex;
 import org.mbari.vcr4j.commands.VideoCommands;
-import rx.Observable;
-import rx.subjects.PublishSubject;
-import rx.subjects.SerializedSubject;
-import rx.subjects.Subject;
 
 import java.util.Optional;
 
@@ -19,10 +18,11 @@ import java.util.Optional;
  */
 public class NoopVideoIO implements VideoIO<NoopVideoState, NoopVideoError> {
 
-    private final Subject<VideoCommand, VideoCommand> commandSubject = new SerializedSubject<>(PublishSubject.create());
-    private final Subject<VideoIndex, VideoIndex> indexObservable = new SerializedSubject<>(PublishSubject.create());
-    private final Subject<NoopVideoState, NoopVideoState> stateObservable = new SerializedSubject<>(PublishSubject.create());
-    private final Subject<NoopVideoError, NoopVideoError> errorObservable = new SerializedSubject<>(PublishSubject.create());
+    private final Subject<VideoCommand> commandSubject;
+    private final Subject<VideoIndex> indexObservable;
+    private final Subject<NoopVideoState> stateObservable;
+    private final Subject<NoopVideoError> errorObservable;
+
 
     public static final NoopVideoState STATE = new NoopVideoState();
     public static final NoopVideoError ERROR = new NoopVideoError();
@@ -30,6 +30,16 @@ public class NoopVideoIO implements VideoIO<NoopVideoState, NoopVideoError> {
 
 
     public NoopVideoIO() {
+
+        PublishSubject<VideoCommand> s1 = PublishSubject.create();
+        commandSubject = s1.toSerialized();
+        PublishSubject<VideoIndex> s2 = PublishSubject.create();
+        indexObservable = s2.toSerialized();
+        PublishSubject<NoopVideoState> s3 = PublishSubject.create();
+        stateObservable = s3.toSerialized();
+        PublishSubject<NoopVideoError> s4 = PublishSubject.create();
+        errorObservable = s4.toSerialized();
+
         commandSubject.filter(vc -> vc.equals(VideoCommands.REQUEST_STATUS))
                 .forEach(vc -> stateObservable.onNext(STATE));
 
@@ -44,10 +54,10 @@ public class NoopVideoIO implements VideoIO<NoopVideoState, NoopVideoError> {
 
     @Override
     public void close() {
-        commandSubject.onCompleted();
-        indexObservable.onCompleted();
-        stateObservable.onCompleted();
-        errorObservable.onCompleted();
+        commandSubject.onComplete();
+        indexObservable.onComplete();
+        stateObservable.onComplete();
+        errorObservable.onComplete();
     }
 
     @Override
@@ -56,7 +66,7 @@ public class NoopVideoIO implements VideoIO<NoopVideoState, NoopVideoError> {
     }
 
     @Override
-    public Subject<VideoCommand, VideoCommand> getCommandSubject() {
+    public Subject<VideoCommand> getCommandSubject() {
         return commandSubject;
     }
 
