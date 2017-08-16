@@ -58,6 +58,7 @@ public class StatusDecorator<S extends VideoState, E extends VideoError> impleme
                 StatusDecorator.this.disposable = disposable;
             }
         };
+        io.getCommandSubject().subscribe(commandSubscriber);
 
     }
 
