@@ -47,7 +47,10 @@ public class VideoSyncDecorator<S extends VideoState, E extends VideoError> impl
     };
 
     public VideoSyncDecorator(VideoIO<S, E> io) {
+        this(io, 1000, 333);
+    }
 
+    public VideoSyncDecorator(VideoIO<S, E> io, long statusInterval, long indexInterval) {
         io.getCommandSubject().subscribe(observer);
 
         TimerTask statusTask = new TimerTask() {
@@ -56,7 +59,7 @@ public class VideoSyncDecorator<S extends VideoState, E extends VideoError> impl
                 io.send(VideoCommands.REQUEST_STATUS);
             }
         };
-        timer.schedule(statusTask, 0, 1000);
+        timer.schedule(statusTask, 0, statusInterval);
 
         TimerTask timecodeTask = new TimerTask() {
             @Override
@@ -64,9 +67,7 @@ public class VideoSyncDecorator<S extends VideoState, E extends VideoError> impl
                 io.send(VideoCommands.REQUEST_INDEX);
             }
         };
-        timer.schedule(timecodeTask, 0, 333);
-
-
+        timer.schedule(timecodeTask, 0, indexInterval);
     }
 
     protected Timer getTimer() {
