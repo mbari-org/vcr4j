@@ -31,6 +31,10 @@ public class VideoIndex {
     public VideoIndex(Duration elapsedTime) {
         this(Optional.empty(), Optional.ofNullable(elapsedTime), Optional.empty());
     }
+
+    public VideoIndex(Duration elapsedTime, Instant timestamp) {
+        this(Optional.ofNullable(timestamp), Optional.ofNullable(elapsedTime), Optional.empty());
+    }
     
     public VideoIndex(Timecode timecode) {
         this(Optional.empty(), Optional.empty(), Optional.ofNullable(timecode));
