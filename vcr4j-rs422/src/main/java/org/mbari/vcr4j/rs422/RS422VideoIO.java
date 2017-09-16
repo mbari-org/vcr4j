@@ -84,8 +84,8 @@ public abstract class RS422VideoIO implements VCRVideoIO {
         commandSubject.subscribe(vc -> {
                 if (vc.equals(RS422VideoCommands.REQUEST_USERBITS)) {
 
-                    // LUB and VUB access if very state dependant. We get around that by
-                    // requesting for both.
+                    // LUB and VUB access is very state dependant. We get around that by
+                    // requesting both.
                     send(RS422VideoCommands.REQUEST_LUSERBITS);
                     send(RS422VideoCommands.REQUEST_VUSERBITS);
                 }
