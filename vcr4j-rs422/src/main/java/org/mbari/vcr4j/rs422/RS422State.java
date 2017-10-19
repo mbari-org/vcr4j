@@ -17,7 +17,7 @@ public class RS422State implements VideoState {
     /**
      * bit representing bad communications. 1 = bad comuunications, 0 =
      * communications are OK. IMplementations should not depend on this bit but should watch for BadPortExceptions instead.
-     *  @see <{org.mbari.comm.BadPortException}>
+     *  @see org.mbari.comm.BadPortException
      */
     public final static long STS_BAD_COMM = 0x0000080L;
 
@@ -78,7 +78,7 @@ public class RS422State implements VideoState {
     /**
      * Bit representing shuttle mode, 1 = vcr is shuttiling, 0= is not shuttiling.
      * Use in combintation with STS_DIRECTION to determine if the VCR is shuttiling forward or in reverse<br><br>
-     * <b>Note: Sony documentation says: STS_SHUTTLE      = 0x0200000L. However we found it to be STS_SHUTTLE      = 0x0000020
+     * <b>Note: Sony documentation says: STS_SHUTTLE      = 0x0200000L. However we found it to be STS_SHUTTLE      = 0x0000020</b>
      */
     public final static long STS_SHUTTLE = 0x0000020L;
 
@@ -131,7 +131,7 @@ public class RS422State implements VideoState {
     /**
      * TODO 20031001 brian: What does this mean? Not defined in the 9-pin protocol
      *
-     * @return
+     * @return not really sure what this is.
      */
     public boolean isBadCommunication() {
         return ((status & STS_BAD_COMM) > 0);

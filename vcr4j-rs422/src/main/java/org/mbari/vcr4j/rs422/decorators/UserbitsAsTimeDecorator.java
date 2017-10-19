@@ -21,7 +21,7 @@ import java.util.Optional;
  * <pre>
  * VideoIO&lt;RS422State, RS422Error&gt; io = // ...
  * UserbitsAsTimeDecorator decorator = new UserbitsAsTimeDecorator(io);
- * decorator.getIndexObservable().subscribe(index -> doSomething());
+ * decorator.getIndexObservable().subscribe(index -&gt; doSomething());
  *
  * io.send(RequestUserbitsAsTimeCmd.COMMAND);
  * </pre>
