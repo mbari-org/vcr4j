@@ -26,9 +26,9 @@
             <version>${mbarix4j.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.sparetimelabs</groupId>
+            <groupId>com.github.purejavacomm</groupId>
             <artifactId>purejavacomm</artifactId>
-            <version>1.0.1</version>
+            <version>1.0.2.RELEASE</version>
         </dependency>
     </dependencies>
 
