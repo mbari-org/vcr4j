@@ -10,7 +10,7 @@ import org.mbari.vcr4j.util.Preconditions;
 public class ShuttleCmd extends SimpleVideoCommand<Double> {
 
     /**
-     * @param rate -1 <= rate <= 1. 1 represents the maximum shuttle rate for the device. Your
+     * @param rate -1 &lt;= rate &lt;= 1. 1 represents the maximum shuttle rate for the device. Your
      *             VideoIO implementation should convert this representation to the appropriate
      *             value.
      */

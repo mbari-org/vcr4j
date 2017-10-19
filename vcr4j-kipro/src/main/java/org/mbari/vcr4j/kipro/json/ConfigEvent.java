@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
  * The KiPro web interface uses AJAX to poll for status events. We can use that like so:
  * <pre>
  *
- * `http GET 'http://134.89.11.139/config?action=wait_for_config_events&connectionid=0'`
+ * `http GET 'http://134.89.11.139/config?action=wait_for_config_events&amp;connectionid=0'`
  *
  * This may return various JSON contents. The JSON part we care about has `param_id` of `eParamID_DisplayTimecode` to get the timecode.
  *

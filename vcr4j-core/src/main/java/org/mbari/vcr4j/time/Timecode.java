@@ -71,7 +71,7 @@ public class Timecode {
      * If the timecode is in a valid format then this will be present. Use
      * this to access the hour, minute, second, frame fields.
      *
-     * @return
+     * @return The hmsf object, if present
      */
     public Optional<HMSF> getHMSF() {
         return hmsf;
@@ -105,7 +105,7 @@ public class Timecode {
      * The string represented. This may NOT necessarily be a valid timecode string
      * if you did not provide one. You can use the <code>isValid()</code> method
      * to check if the string is a valid timecode representation.
-     * @return
+     * @return A string representation of HH:MM:SS:F
      */
     @Override
     public String toString() {

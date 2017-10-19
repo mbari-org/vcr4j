@@ -84,7 +84,7 @@ public class VCRErrorAdapter implements IVCRError {
     /**
      * Remove an observer from the notification list
      *
-     * @param observer
+     * @param observer observer to be removed
      */
     public void removeObserver(IObserver observer) {
         oc.remove(observer);

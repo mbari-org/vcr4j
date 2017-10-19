@@ -45,7 +45,7 @@ public class VCRGotoButton extends VCRButton {
     private boolean firstShowing = true;
 
 
-    /** Constructor */
+
     public VCRGotoButton(ObjectProperty<VideoController<? extends VideoState, ? extends VideoError>> videoController) {
         super(videoController);
         setOnIcon("/images/vcr/goto_r.png");

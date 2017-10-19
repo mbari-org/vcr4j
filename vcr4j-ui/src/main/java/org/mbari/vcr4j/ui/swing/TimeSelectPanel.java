@@ -173,7 +173,7 @@ public class TimeSelectPanel extends JPanel {
     /**
      * Generates a document listener that transfers focus to another target
      * when the document reaches 2 characters in length
-     * @param target
+     * @param  target to transfer focus to
      * @return
      */
     public DocumentListener makeDocumentListener(final JComponent target) {

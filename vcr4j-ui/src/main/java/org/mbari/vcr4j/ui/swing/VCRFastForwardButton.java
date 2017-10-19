@@ -29,14 +29,14 @@ import javax.swing.*;
 import java.util.Optional;
 
 /**
- * <p>>Fast forward button used for the VCR UI</p>
+ * <p>Fast forward button used for the VCR UI</p>
  *
  * @author  Brian Schlining
  */
 public class VCRFastForwardButton extends VCRButton {
 
 
-    /** Constructor */
+
     public VCRFastForwardButton(ObjectProperty<VideoController<? extends VideoState, ? extends VideoError>> videoController) {
         super(videoController);
         setOnIcon("/images/vcr/ffwd_r.png");

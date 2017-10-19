@@ -23,8 +23,9 @@ public class MediaTime {
     /**
      * For example to create a MediaTime that's 200 seconds into a video that
      * has 29.97 frame rate use <code>new MediaTime(20000, 2997)</code>
-     * @param value
-     * @param timescale
+     * @param value numerator
+     * @param timescale denominator
+     * @param rounded Indiates if this value is estimated
      */
     public MediaTime(long value, int timescale, boolean rounded) {
         this.timescale = timescale;

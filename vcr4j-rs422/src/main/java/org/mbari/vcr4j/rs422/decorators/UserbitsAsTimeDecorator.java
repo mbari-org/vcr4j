@@ -19,7 +19,7 @@ import java.util.Optional;
 /**
  * Decorator that listens for RequestUserbitsAsTimeCmds. Usage:
  * <pre>
- * VideoIO<RS422State, RS422Error> io = // ...
+ * VideoIO&lt;RS422State, RS422Error&gt; io = // ...
  * UserbitsAsTimeDecorator decorator = new UserbitsAsTimeDecorator(io);
  * decorator.getIndexObservable().subscribe(index -> doSomething());
  *
@@ -87,7 +87,7 @@ public class UserbitsAsTimeDecorator implements Decorator {
     /**
      * When using this decorator, use this indexObservable to get VideoIndexs that
      * containg both timecode and timestamp
-     * @return
+     * @return An observable that contains both timecode and timestamp (calculated from userbits)
      */
     public Observable<VideoIndex> getIndexObservable() {
         return indexObservable;

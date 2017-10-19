@@ -69,7 +69,7 @@ public class RS422ResponseParser {
      * @param cmd The command portion of the VCR's reply
      * @param data The data portion of the VCR's reply
      * @param checksum The checksum of the VCR's reply
-     *
+     * @param videoCommand The video command
      */
     public void update(byte[] command, byte[] cmd, byte[] data, byte[] checksum, VideoCommand videoCommand) {
         byte commandChecksum = calculateChecksum(command);
@@ -101,6 +101,7 @@ public class RS422ResponseParser {
 
     /**
      * Checks to see if the reply is an ack (acknowledgement)
+     * @param cmd byte array of command.
      * @return True if the reply is ACK
      */
     public static boolean isAck(byte[] cmd) {
@@ -110,6 +111,9 @@ public class RS422ResponseParser {
     /**
      * Checks the checksum in the reply with the calculated checksum. Sets
      * the appropriate error status in the vCRStatus object.
+     * @param cmd the command
+     * @param data the data
+     * @param checksum checksum to valided cmd/data against
      *
      * @return
      */
@@ -155,6 +159,7 @@ public class RS422ResponseParser {
 
     /**
      * Checks to see if the reply is a nack (i.e error)
+     * @param cmd the cmd we're checking to see if it's a NACK
      * @return True if the reply is NACK
      */
     public static boolean isNack(byte[] cmd) {

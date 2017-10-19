@@ -53,7 +53,6 @@ public class TimeCodeField extends JTextField {
 
     //private ObjectProperty<VideoController<? extends VideoState, ? extends VideoError>> videoController;
 
-    /** No argument constructor */
     public TimeCodeField(ObjectProperty<VideoController<? extends VideoState, ? extends VideoError>> videoController) {
         super();
         initComponent();

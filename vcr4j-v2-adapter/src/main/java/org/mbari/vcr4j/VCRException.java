@@ -46,7 +46,7 @@ public class VCRException extends Exception {
      * Constructs ...
      *
      *
-     * @param s
+     * @param s THe message
      */
     public VCRException(String s) {
         super(s);

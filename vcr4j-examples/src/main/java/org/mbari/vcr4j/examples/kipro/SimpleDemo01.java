@@ -17,7 +17,7 @@ import java.util.concurrent.Executors;
 /**
  *
  * Example:
- *  1. Configure Network on Quad: 50.1 -> Set to DHCP, 50.1 -> read ip address
+ *  1. Configure Network on Quad: 50.1 -&gt; Set to DHCP, 50.1 -&gt; read ip address
  *  2. Run the following:
  *   mvn exec:java -Dexec.mainClass=org.mbari.vcr4j.examples.kipro.SimpleDemo01 -Dexec.args="http://134.89.11.144"
  *

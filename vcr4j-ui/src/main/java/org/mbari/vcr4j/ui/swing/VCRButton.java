@@ -61,7 +61,6 @@ public abstract class VCRButton extends JFancyButton {
 
     private final ObjectProperty<VideoController<? extends VideoState, ? extends VideoError>> videoController;
 
-    /** No argument constructor. Use setVcr() to associate this button with a IVCR */
     public VCRButton(ObjectProperty<VideoController<? extends VideoState, ? extends VideoError>> videoController) {
         super();
         this.videoController = videoController;

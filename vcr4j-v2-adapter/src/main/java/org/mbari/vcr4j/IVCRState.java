@@ -31,7 +31,7 @@ public interface IVCRState extends IObservable {
     /**
      * TODO 20031001 brian: What does this mean? Not defined in the 9-pin protocol
      *
-     * @return
+     * @return true if bad communication
      */
     boolean isBadCommunication();
 

@@ -48,108 +48,79 @@ public class VCRConsoleFrame_AboutBox extends JDialog implements ActionListener 
     private static final long serialVersionUID = -2463699692322534927L;
 
     /**
-         * @uml.property  name="comments"
          */
     String comments = "Brian Schlining - MBARI";
 
     /**
-         * @uml.property  name="copyright"
          */
     String copyright = "Copyright (c) 2004";
 
     /**
-         * @uml.property  name="panel1"
-         * @uml.associationEnd  multiplicity="(1 1)"
          */
     JPanel panel1 = new JPanel();
 
     /**
-         * @uml.property  name="panel2"
-         * @uml.associationEnd  multiplicity="(1 1)"
+
          */
     JPanel panel2 = new JPanel();
 
     /**
-         * @uml.property  name="label4"
-         * @uml.associationEnd  multiplicity="(1 1)"
          */
     JLabel label4 = new JLabel();
 
     /**
-         * @uml.property  name="label3"
-         * @uml.associationEnd  multiplicity="(1 1)"
          */
     JLabel label3 = new JLabel();
 
     /**
-         * @uml.property  name="label2"
-         * @uml.associationEnd  multiplicity="(1 1)"
          */
     JLabel label2 = new JLabel();
 
     /**
-         * @uml.property  name="label1"
-         * @uml.associationEnd  multiplicity="(1 1)"
          */
     JLabel label1 = new JLabel();
 
     /**
-         * @uml.property  name="insetsPanel3"
-         * @uml.associationEnd  multiplicity="(1 1)"
          */
     JPanel insetsPanel3 = new JPanel();
 
     /**
-         * @uml.property  name="insetsPanel2"
-         * @uml.associationEnd  multiplicity="(1 1)"
          */
     JPanel insetsPanel2 = new JPanel();
 
     /**
-         * @uml.property  name="insetsPanel1"
-         * @uml.associationEnd  multiplicity="(1 1)"
          */
     JPanel insetsPanel1 = new JPanel();
 
     /**
-         * @uml.property  name="imageLabel"
-         * @uml.associationEnd  multiplicity="(1 1)"
          */
     JLabel imageLabel = new JLabel();
 
     /**
-         * @uml.property  name="gridLayout1"
          */
     GridLayout gridLayout1 = new GridLayout();
 
     /**
-         * @uml.property  name="flowLayout1"
          */
     FlowLayout flowLayout1 = new FlowLayout();
 
     /**
-         * @uml.property  name="button1"
-         * @uml.associationEnd  multiplicity="(1 1)"
          */
     JButton button1 = new JButton();
 
     /**
-         * @uml.property  name="borderLayout2"
          */
     BorderLayout borderLayout2 = new BorderLayout();
 
     /**
-         * @uml.property  name="borderLayout1"
          */
     BorderLayout borderLayout1 = new BorderLayout();
 
     /**
-         * @uml.property  name="product"
          */
     String product = "VARS Project (VCR subproject). VCR component testing console.";
 
     /**
-         * @uml.property  name="version"
          */
     String version = "1.1";
 
@@ -157,7 +128,7 @@ public class VCRConsoleFrame_AboutBox extends JDialog implements ActionListener 
      * Constructs ...
      *
      *
-     * @param parent
+     * @param parent The frame that owns this dialog
      */
     public VCRConsoleFrame_AboutBox(Frame parent) {
         super(parent);
@@ -176,7 +147,7 @@ public class VCRConsoleFrame_AboutBox extends JDialog implements ActionListener 
     /**
      * Close the dialog on a button event
      *
-     * @param e
+     * @param e the ActionEvent
      */
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == button1) {
@@ -230,7 +201,7 @@ public class VCRConsoleFrame_AboutBox extends JDialog implements ActionListener 
     /**
      * Overridden so we can exit when window is closed
      *
-     * @param e
+     * @param e The WindowEvent
      */
     protected void processWindowEvent(WindowEvent e) {
         if (e.getID() == WindowEvent.WINDOW_CLOSING) {

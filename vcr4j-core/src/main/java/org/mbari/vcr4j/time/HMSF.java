@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
  *
  * <code>
  *     HMSF h1 = new HMSF(1, 2, 3, 4);                      // hour, minute,second, frame
- *     Optional<HMSF></HMSF> h2 = HMSF.from("01:02:03:04"); // A timecode string
+ *     Optional&lt;HMSF&gt; h2 = HMSF.from("01:02:03:04"); // A timecode string
  *     HMSF h3 = HMSF.from(200, 29.97)                      // frames, framerate
  * </code>
  * @author Brian Schlining
@@ -41,7 +41,7 @@ public class HMSF {
      * @param hour 0-99
      * @param minute 0-59
      * @param second 0-59
-     * @param frame >= 0
+     * @param frame &gt;= 0
      */
     public HMSF(int hour, int minute, int second, int frame) {
         checkArgs(hour, minute, second, frame);

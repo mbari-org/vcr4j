@@ -92,6 +92,7 @@ public class JSSCVideoIO implements VCRVideoIO {
     /**
      * Sends a command, in the format of a byte[], to the VCR.
      * @param command The command to send to the VCR
+     * @param videoCommand The corresponding videoCommand sent to the vcr
      */
     protected synchronized void sendCommand(byte[] command, VideoCommand videoCommand) {
 
@@ -121,9 +122,12 @@ public class JSSCVideoIO implements VCRVideoIO {
 
     /**
      * Reads the response to a command from the serial port connected to the VCR.
-     * @throws IOException
-     * @throws RS422Exception
-     * @throws InterruptedException
+     * @param mostRecentCommand The bytes representing the last command sent to the VCR
+     * @param videoCommand The command last sent to the vcr
+     * @throws IOException bad exception
+     * @throws RS422Exception ugly exception
+     * @throws InterruptedException rude exception
+     * @throws SerialPortTimeoutException bored exception
      */
     protected synchronized void readResponse(byte[] mostRecentCommand, VideoCommand videoCommand)
             throws SerialPortException, RS422Exception, InterruptedException, SerialPortTimeoutException {
@@ -155,8 +159,8 @@ public class JSSCVideoIO implements VCRVideoIO {
 
     /**
      * Factory method. Use this to open a connection
-     * @param portName
-     * @return
+     * @param portName The port name (e.g. COM1 or /dev/tty6)
+     * @return A VideoIO object
      */
     public static JSSCVideoIO open(String portName) {
         try {

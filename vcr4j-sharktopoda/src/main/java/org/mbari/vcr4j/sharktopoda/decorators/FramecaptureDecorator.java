@@ -43,8 +43,8 @@ public class FramecaptureDecorator implements Decorator {
     private final Thread receiverThread;
 
     /**
-     *
-     * @param io
+     * 
+     * @param io The videoio object used for control
      * @param port The out-of-band port tha should be used by Sharktopoda
      */
     public FramecaptureDecorator(SharktopodaVideoIO io, int port) {

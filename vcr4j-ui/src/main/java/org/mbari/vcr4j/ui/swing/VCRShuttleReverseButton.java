@@ -38,7 +38,9 @@ public class VCRShuttleReverseButton extends VCRShuttleButton {
 
 
 
-    /** Constructor */
+    /** Constructor 
+     * @param videoController The videocontroller
+    */
     public VCRShuttleReverseButton(ObjectProperty<VideoController<? extends VideoState, ? extends VideoError>> videoController) {
         super(videoController);
         setOnIcon("/images/vcr/shuttleback_r.png");

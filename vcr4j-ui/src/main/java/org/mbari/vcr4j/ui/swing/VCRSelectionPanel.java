@@ -57,6 +57,7 @@ public class VCRSelectionPanel extends JPanel {
 
     /**
      * This is the default constructor
+     * @param videoController The VideoController
      */
     public VCRSelectionPanel(ObjectProperty<VideoController<? extends VideoState, ? extends VideoError>> videoController) {
         super();

@@ -61,7 +61,7 @@ public class VCRAdapter implements IVCR {
     }
 
     /**
-     * @return
+     * @return The display name of the connection
      */
     public String getConnectionName() {
         return "Not connected";
@@ -69,14 +69,14 @@ public class VCRAdapter implements IVCR {
 
     /**
      *
-     * @return
+     * @return error
      */
     public IVCRError getVcrError() {
         return getVcrReply().getVcrError();
     }
 
     /**
-     *     @return
+     * @return reply
      */
     public IVCRReply getVcrReply() {
         if (vcrReply == null) {
@@ -87,21 +87,21 @@ public class VCRAdapter implements IVCR {
     }
 
     /**
-     * @return
+     * @return state
      */
     public IVCRState getVcrState() {
         return getVcrReply().getVcrState();
     }
 
     /**
-     * @return
+     * @return timecode
      */
     public IVCRTimecode getVcrTimecode() {
         return getVcrReply().getVcrTimecode();
     }
 
     /**
-     * @return
+     * @return userbits
      */
     public IVCRUserbits getVcrUserbits() {
         return getVcrReply().getVcrUserbits();
@@ -188,7 +188,6 @@ public class VCRAdapter implements IVCR {
     }
 
     /**
-     * <p><!-- Method description --></p>
      *
      */
     public void requestLUserbits() {
@@ -197,7 +196,6 @@ public class VCRAdapter implements IVCR {
     }
 
     /**
-     * <p><!-- Method description --></p>
      *
      */
     public void requestLocalDisable() {
@@ -206,7 +204,6 @@ public class VCRAdapter implements IVCR {
     }
 
     /**
-     * <p><!-- Method description --></p>
      *
      */
     public void requestLocalEnable() {

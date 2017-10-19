@@ -114,8 +114,8 @@ public class RS422Error implements VideoError {
 
     /**
      * RS422Error objects are equal if they have the same error code
-     * @param o
-     * @return
+     * @param o The object to be compared
+     * @return true if equals
      */
     @Override
     public boolean equals(Object o) {

@@ -39,9 +39,6 @@ public abstract class VCRConnectionPanel extends JPanel implements IVCRConnectio
 
     private final ObjectProperty<VideoController<? extends VideoState, ? extends VideoError>> videoController;
 
-    /**
-     * This is the default constructor
-     */
     public VCRConnectionPanel(ObjectProperty<VideoController<? extends VideoState, ? extends VideoError>> videoController) {
         this.videoController = videoController;
         initialize();

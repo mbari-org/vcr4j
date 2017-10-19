@@ -70,10 +70,8 @@ public class VCRTimecodeAdapter implements IVCRTimecode {
     }
 
     /**
-     * Method description
-     *
-     *
-     * @param observer
+     **
+     * @param observer The observer to add
      */
     public void addObserver(IObserver observer) {
         os.add(observer);
@@ -132,7 +130,7 @@ public class VCRTimecodeAdapter implements IVCRTimecode {
      * Method description
      *
      *
-     * @param observer
+     * @param observer THe observer
      */
     public void removeObserver(IObserver observer) {
         os.remove(observer);

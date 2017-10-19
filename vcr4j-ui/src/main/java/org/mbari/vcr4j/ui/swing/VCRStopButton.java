@@ -36,7 +36,9 @@ import java.util.Optional;
 public class VCRStopButton extends VCRButton {
 
 
-    /** Constructor */
+    /** Constructor 
+     * @param videoController THe videoController to use
+    */
     public VCRStopButton(ObjectProperty<VideoController<? extends VideoState, ? extends VideoError>> videoController) {
         super(videoController);
         setOnIcon("/images/vcr/stop_r.png");

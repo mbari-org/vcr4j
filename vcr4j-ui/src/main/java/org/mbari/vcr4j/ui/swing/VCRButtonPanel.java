@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
  *
  * // In addition to a VCR a JSLider is used for setting the shuttle speeds.
  * bp.setSlider(new JSlider());
- * </p>
+ * </pre>
  *
  * @author  : $Author: hohonuuli $
  * @version : $Revision: 332 $
@@ -161,6 +161,8 @@ public class VCRButtonPanel extends JPanel {
     /**
      * The shuttle forward and revers butons depend on getting info from the slider. Use this method to set the
      * slider to use for controlling speed.
+     * 
+     * @param slider The slider we're using for control
      */
     public void setSlider(final JSlider slider) {
         this.slider = slider;

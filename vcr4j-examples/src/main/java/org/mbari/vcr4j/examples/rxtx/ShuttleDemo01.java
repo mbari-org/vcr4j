@@ -60,7 +60,7 @@ public class ShuttleDemo01 {
 
     /**
      * Run a set program for a specified number of iterations.
-     * @param n
+     * @param n Number of loop iterations
      */
     public void apply(int n) {
 

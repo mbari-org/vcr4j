@@ -38,7 +38,6 @@ public class VCRRewindButton extends VCRButton {
 
 
 
-    /** Constructor */
     public VCRRewindButton(ObjectProperty<VideoController<? extends VideoState, ? extends VideoError>> videoController) {
         super(videoController);
         setOnIcon("/images/vcr/rewind_r.png");

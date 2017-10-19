@@ -35,10 +35,7 @@ public class RXTXConnectionPanel extends VCRConnectionPanel {
 
     private JComboBox vcrListCB = null;
 
-    /**
-     * This method initializes
-     *
-     */
+
     public RXTXConnectionPanel(ObjectProperty<VideoController<? extends VideoState, ? extends VideoError>> videoController) {
         super(videoController);
         initialize();

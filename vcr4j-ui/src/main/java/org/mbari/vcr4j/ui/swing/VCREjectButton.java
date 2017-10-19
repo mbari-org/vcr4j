@@ -38,7 +38,6 @@ import java.util.Optional;
 public class VCREjectButton extends VCRButton {
 
 
-    /** Constructror */
     public VCREjectButton(ObjectProperty<VideoController<? extends VideoState, ? extends VideoError>> videoController) {
         super(videoController);
         setOnIcon("/images/vcr/eject_r.png");

@@ -44,7 +44,7 @@ public class SonyVCRException extends VCRException {
      * Constructs ...
      *
      *
-     * @param s
+     * @param s The exception message
      */
     public SonyVCRException(String s) {
         super(s);

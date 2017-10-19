@@ -44,27 +44,27 @@ public interface IVCR {
     String getConnectionName();
 
     /**
-     *  @return
+     *  @return error
      */
     IVCRError getVcrError();
 
     /**
-     *     @return
+     *     @return reply
      */
     IVCRReply getVcrReply();
 
     /**
-     *     @return
+     *     @return state
      */
     IVCRState getVcrState();
 
     /**
-     *     @return
+     *     @return timecode
      */
     IVCRTimecode getVcrTimecode();
 
     /**
-     *     @return
+     *     @return userbits
      */
     IVCRUserbits getVcrUserbits();
 
@@ -75,12 +75,12 @@ public interface IVCR {
     void play();
 
     /**
-     * @param timecode
+     * @param timecode data array used to presest timecode
      */
     void presetTimecode(byte[] timecode);
 
     /**
-     * @param userbits
+     * @param userbits byte array used to preset userbits
      */
     void presetUserbits(byte[] userbits);
 
@@ -163,7 +163,7 @@ public interface IVCR {
 
     /**
      * Seek a specified timecode
-     * @paream timecode The timecode to seek
+     * @param timecode The timecode to seek
      */
     void seekTimecode(Timecode timecode);
 

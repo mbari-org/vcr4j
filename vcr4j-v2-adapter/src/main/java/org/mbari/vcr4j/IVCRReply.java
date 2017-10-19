@@ -46,7 +46,7 @@ public interface IVCRReply extends IObservable {
     IVCRTimecode getVcrTimecode();
 
     /**
-     * @return
+     * @return usersbits
      */
     IVCRUserbits getVcrUserbits();
 
@@ -69,7 +69,7 @@ public interface IVCRReply extends IObservable {
     boolean isTimecodeReply();
 
     /**
-     * @return
+     * @return true if the last reponse was a userbits reply
      */
     boolean isUserbitsReply();
 }

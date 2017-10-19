@@ -19,25 +19,20 @@ public class UDPConnectionPanel extends VCRConnectionPanel {
     private JLabel lblPort;
     private JTextField portTextField;
 
-    /**
-     * Constructs ...
-     */
     public UDPConnectionPanel(ObjectProperty<VideoController<? extends VideoState, ? extends VideoError>> videoController) {
         super(videoController);
         initialize();
     }
 
     /**
-     * @return
+     * @return array o {host: String, port: Integer, framerate: Double}
      */
     public Object[] getConnectionParameters() {
         return new Object[] { getHostTextField().getText(), Integer.valueOf(getPortTextField().getText()),
                 Double.valueOf(29.97) };
     }
 
-    /**
-     * @return
-     */
+
     public JTextField getHostTextField() {
         if (hostTextField == null) {
             hostTextField = new JTextField();
@@ -63,9 +58,7 @@ public class UDPConnectionPanel extends VCRConnectionPanel {
         return lblPort;
     }
 
-    /**
-     * @return
-     */
+
     public JTextField getPortTextField() {
         if (portTextField == null) {
             portTextField = new JTextField();
@@ -114,8 +107,8 @@ public class UDPConnectionPanel extends VCRConnectionPanel {
 
     /**
      *
-     * @param hostname
-     * @param portnumber
+     * @param hostname HostName
+     * @param portnumber port to connect to host
      */
     public void setConnectionParameters(String hostname, String portnumber) {
         getHostTextField().setText(hostname);
@@ -124,7 +117,7 @@ public class UDPConnectionPanel extends VCRConnectionPanel {
 
     /**
      *
-     * @param enabled
+     * @param enabled true enables editable fields
      */
     @Override
     public void setEnabled(boolean enabled) {

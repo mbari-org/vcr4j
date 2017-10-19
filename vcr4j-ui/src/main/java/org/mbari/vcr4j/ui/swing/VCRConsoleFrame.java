@@ -96,7 +96,7 @@ public class VCRConsoleFrame extends JFrame {
     /**
      * Component initialization
      *
-     * @throws Exception
+     * @throws Exception when the bad gets real
      */
     private void initialize() throws Exception {
 
@@ -159,7 +159,7 @@ public class VCRConsoleFrame extends JFrame {
     /**
      * File | Exit action performed
      *
-     * @param e
+     * @param e The ActionEvent
      */
     public void menuFileExitActionPerformed(ActionEvent e) {
         vcrPanel.disconnect();
@@ -169,7 +169,7 @@ public class VCRConsoleFrame extends JFrame {
     /**
      * Help | About action performed
      *
-     * @param e
+     * @param e The ActionEvent
      */
     public void menuHelpAboutActionPerformed(ActionEvent e) {
         VCRConsoleFrame_AboutBox dlg = new VCRConsoleFrame_AboutBox(this);
@@ -185,7 +185,7 @@ public class VCRConsoleFrame extends JFrame {
     /**
      * Overridden so we can exit when window is closed
      *
-     * @param e
+     * @param e The WindowEvent
      */
     protected void processWindowEvent(WindowEvent e) {
         super.processWindowEvent(e);
