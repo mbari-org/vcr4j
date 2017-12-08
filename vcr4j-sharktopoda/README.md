@@ -1,6 +1,6 @@
 # vcr4j-sharktopoda
 
-A `VideoIO` implementation for the [Sharktopoda video player](https://github.com/underwatervideo/Sharktopoda)
+A `VideoIO` implementation for the [Sharktopoda video player](https://github.com/mbari-media-management/Sharktopoda)
 
 ```xml
 dependency>
