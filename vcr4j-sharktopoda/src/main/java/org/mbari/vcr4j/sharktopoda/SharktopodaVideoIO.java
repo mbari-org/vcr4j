@@ -196,7 +196,7 @@ public class SharktopodaVideoIO implements VideoIO<SharktopodaState, Sharktopoda
 
     @Override
     public void close() {
-
+        
     }
 
     @Override

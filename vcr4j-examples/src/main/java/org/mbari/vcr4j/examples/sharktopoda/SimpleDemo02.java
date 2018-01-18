@@ -62,6 +62,7 @@ public class SimpleDemo02 {
         io.send(VideoCommands.REQUEST_STATUS);
         io.send(VideoCommands.REQUEST_ELAPSED_TIME);
         //io.send(VideoCommands.REQUEST_STATUS);
+        io.send(VideoCommands.PLAY);
 
     }
 }

@@ -68,21 +68,21 @@ public class FramecaptureTest {
         io.send(new OpenCmd(url));
 
         while(wait.get()) {
-            Thread.sleep(100);
+            Thread.sleep(1000);
         }
 
         //io.send(new ConnectCmd(localPort));
         io.send(new FramecaptureCmd(UUID.randomUUID(), new File(file, "trashme-0.png")));
 
-        for (int i = 0; i < 10; i++) {
-            io.send(new SeekElapsedTimeCmd(Duration.ofSeconds(i)));
-            Thread.sleep(500);
+        for (int i = 0; i < 5; i++) {
+            io.send(new SeekElapsedTimeCmd(Duration.ofSeconds(i * 3)));
+            Thread.sleep(1000);
             io.send(new FramecaptureCmd(UUID.randomUUID(), new File(file, "trashme-seek-" + i + ".png")));
         }
 
         io.send(VideoCommands.PLAY);
-        for (int i = 0; i < 10; i++) {
-            Thread.sleep(500);
+        for (int i = 0; i < 5; i++) {
+            Thread.sleep(1000);
             io.send(new FramecaptureCmd(UUID.randomUUID(), new File(file, "trashme-play-" + i + ".png")));
         }
         io.send(SharkCommands.CLOSE);
