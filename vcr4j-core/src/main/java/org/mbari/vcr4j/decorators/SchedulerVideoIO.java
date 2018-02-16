@@ -108,6 +108,7 @@ public class SchedulerVideoIO<S extends VideoState, E extends VideoError> implem
 
     @Override
     public void close() {
+        unsubscribe();
         io.close();
     }
 
@@ -144,7 +145,8 @@ public class SchedulerVideoIO<S extends VideoState, E extends VideoError> implem
                     // TODO ?
                 }
                 if (videoCommand != null) {
-                    io.getCommandSubject().onNext(videoCommand);
+                    io.getCommandSubject()
+                            .onNext(videoCommand);
                 }
             }
         };
