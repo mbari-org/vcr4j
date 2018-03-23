@@ -7,7 +7,6 @@
     <artifactId>vcr4j</artifactId>
     <version>4.0.2-SNAPSHOT</version>
   </parent>
-  <groupId>org.mbari.vcr4j</groupId>
   <artifactId>vcr4j-rs422</artifactId>
   <name>vcr4j-rs422</name>
   <url>http://maven.apache.org</url>
