@@ -10,6 +10,7 @@ import de.jensd.fx.glyphs.GlyphsFactory;
 import de.jensd.fx.glyphs.materialicons.MaterialIcon;
 import de.jensd.fx.glyphs.materialicons.utils.MaterialIconFactory;
 import io.reactivex.disposables.Disposable;
+import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
@@ -84,7 +85,8 @@ public class VcrControlPaneController {
             if (videoController != null) {
                 indexDisposable = newv.getIndexObservable()
                         .subscribe(vi ->  vi.getTimecode()
-                                .ifPresent(tc -> timecodeLabel.setText(tc.toString())));
+                                .ifPresent(tc -> Platform.runLater(() ->
+                                    timecodeLabel.setText(tc.toString()))));
                 disable = false;
             }
             shuttleReverseButton.setDisable(disable);
