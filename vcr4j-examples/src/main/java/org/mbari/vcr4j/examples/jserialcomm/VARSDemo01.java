@@ -5,7 +5,6 @@ import org.mbari.vcr4j.commands.VideoCommands;
 import org.mbari.vcr4j.decorators.Decorator;
 import org.mbari.vcr4j.decorators.VCRSyncDecorator;
 import org.mbari.vcr4j.decorators.VideoIndexAsString;
-import org.mbari.vcr4j.examples.rxtx.SimpleDemo02;
 import org.mbari.vcr4j.jserialcomm.SerialCommVideoIO;
 import org.mbari.vcr4j.rs422.RS422State;
 import org.mbari.vcr4j.rs422.decorators.RS422StatusDecorator;

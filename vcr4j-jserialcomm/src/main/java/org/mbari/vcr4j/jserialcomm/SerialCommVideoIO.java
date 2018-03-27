@@ -11,8 +11,11 @@ import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Created by brian on 3/26/16.
@@ -104,5 +107,12 @@ public class SerialCommVideoIO extends RS422VideoIO  {
             }
         }
         return portNames;
+    }
+
+    public static List<String> getSerialPorts() {
+        return Arrays.stream(SerialPort.getCommPorts())
+            .map(SerialPort::getDescriptivePortName)
+            .sorted()
+            .collect(Collectors.toList());
     }
 }
