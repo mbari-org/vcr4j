@@ -100,7 +100,7 @@ public class SerialCommVideoIO extends RS422VideoIO  {
             try {
                 port.openPort();
                 port.closePort();
-                portNames.add(port.getDescriptivePortName());
+                portNames.add(port.getSystemPortName());
             }
             catch (Exception e) {
                 // Port is not available
@@ -111,7 +111,7 @@ public class SerialCommVideoIO extends RS422VideoIO  {
 
     public static List<String> getSerialPorts() {
         return Arrays.stream(SerialPort.getCommPorts())
-            .map(SerialPort::getDescriptivePortName)
+            .map(SerialPort::getSystemPortName)
             .sorted()
             .collect(Collectors.toList());
     }
