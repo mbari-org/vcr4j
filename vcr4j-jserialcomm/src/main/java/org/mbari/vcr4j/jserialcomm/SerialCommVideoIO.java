@@ -50,33 +50,42 @@ public class SerialCommVideoIO extends RS422VideoIO  {
 
     @Override
     public void close() {
-        log.info("Closing serial port:" + serialPort.getSystemPortName());
+        // serial port will be null if we've already close it
+        if (serialPort != null) {
+            log.info("Closing serial port:" + serialPort.getSystemPortName());
 
-        try {
-            getCommandSubject().onComplete();
-            getOutputStream().close();
-            getInputStream().close();
-            serialPort.closePort();
-            RS422ResponseParser responseParser = getResponseParser();
-            responseParser.getStatusObservable().onNext(RS422State.STOPPED);
-            responseParser.getStatusObservable().onComplete();
-            responseParser.getTimecodeObservable().onComplete();
-            responseParser.getErrorObservable().onComplete();
-            responseParser.getUserbitsObservable().onComplete();
-            //serialPort = null;
-        }
-        catch (Exception e) {
-            if (log.isErrorEnabled()
-                    && (serialPort != null)) {
-                log.error("Problem occured when closing serial port communications on " + serialPort.getSystemPortName());
+            try {
+                getCommandSubject().onComplete();
+                getOutputStream().close();
+                getInputStream().close();
+                if (serialPort.isOpen()) {
+                    serialPort.closePort();
+                }
+                RS422ResponseParser responseParser = getResponseParser();
+                responseParser.getStatusObservable().onNext(RS422State.STOPPED);
+                responseParser.getStatusObservable().onComplete();
+                responseParser.getTimecodeObservable().onComplete();
+                responseParser.getErrorObservable().onComplete();
+                responseParser.getUserbitsObservable().onComplete();
+                serialPort = null;
+            } catch (Exception e) {
+                if (log.isErrorEnabled()
+                        && (serialPort != null)) {
+                    log.error("Problem occured when closing serial port communications on " + serialPort.getSystemPortName());
+                }
             }
         }
     }
 
     public static SerialCommVideoIO open(String portName) {
+        Logger slog = LoggerFactory.getLogger(SerialCommVideoIO.class);
+        slog.info("Opening serial port: " + portName);
+        SerialPort serialPort = null;
         try {
-            SerialPort serialPort = SerialPort.getCommPort(portName);
-            serialPort.openPort();
+            serialPort = SerialPort.getCommPort(portName);
+            if (!serialPort.isOpen()) {
+                serialPort.openPort();
+            }
             serialPort.setBaudRate(38400);
             serialPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_SEMI_BLOCKING | SerialPort.TIMEOUT_WRITE_BLOCKING, 100, 0);
             serialPort.setNumDataBits(8);
@@ -89,6 +98,10 @@ public class SerialCommVideoIO extends RS422VideoIO  {
             return new SerialCommVideoIO(serialPort, inputStream, outputStream);
         }
         catch (Exception e) {
+            slog.warn("Failed to open " + portName, e);
+            if (serialPort != null && serialPort.isOpen()) {
+                serialPort.closePort();
+            }
             throw new RS422Exception("Failed to open " + portName, e);
         }
     }
