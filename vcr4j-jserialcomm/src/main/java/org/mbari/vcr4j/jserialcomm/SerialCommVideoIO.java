@@ -45,7 +45,7 @@ public class SerialCommVideoIO extends RS422VideoIO  {
 
     @Override
     public String getConnectionID() {
-        return serialPort.getDescriptivePortName();
+        return serialPort.getSystemPortName();
     }
 
     @Override
@@ -63,7 +63,7 @@ public class SerialCommVideoIO extends RS422VideoIO  {
             responseParser.getTimecodeObservable().onComplete();
             responseParser.getErrorObservable().onComplete();
             responseParser.getUserbitsObservable().onComplete();
-            serialPort = null;
+            //serialPort = null;
         }
         catch (Exception e) {
             if (log.isErrorEnabled()

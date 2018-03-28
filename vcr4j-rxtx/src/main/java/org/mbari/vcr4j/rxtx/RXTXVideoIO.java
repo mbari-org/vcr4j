@@ -19,6 +19,9 @@ import gnu.io.SerialPort;
 import gnu.io.UnsupportedCommOperationException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.mbari.vcr4j.rs422.RS422Exception;
 import org.mbari.vcr4j.rs422.RS422ResponseParser;
 import org.mbari.vcr4j.rs422.RS422State;
@@ -126,5 +129,13 @@ public class RXTXVideoIO extends RS422VideoIO {
     @Override
     public String getConnectionID() {
         return serialPort.getName();
+    }
+
+    public static List<String> getSerialPorts() {
+        return RXTXUtilities.getParallelPorts()
+            .stream()
+            .map(cp -> cp.getName())
+            .sorted()
+            .collect(Collectors.toList());
     }
 }
