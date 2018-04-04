@@ -21,6 +21,7 @@ import javafx.scene.text.Text;
 import org.mbari.vcr4j.VideoController;
 import org.mbari.vcr4j.VideoError;
 import org.mbari.vcr4j.VideoState;
+import org.mbari.vcr4j.rs422.RS422State;
 import org.mbari.vcr4j.rs422.commands.RS422VideoCommands;
 
 /**
@@ -72,6 +73,10 @@ public class VcrControlPaneController {
     @FXML
     private JFXSlider speedSlider;
 
+
+    private Disposable stateDisposable;
+    private VideoState lastState;
+
     @FXML
     void initialize() {
 
@@ -81,12 +86,21 @@ public class VcrControlPaneController {
                 indexDisposable = null;
             }
 
+            if (stateDisposable != null) {
+                stateDisposable.dispose();
+                stateDisposable = null;
+            }
+
             boolean disable = true;
             if (videoController != null) {
                 indexDisposable = newv.getIndexObservable()
                         .subscribe(vi ->  vi.getTimecode()
                                 .ifPresent(tc -> Platform.runLater(() ->
                                     timecodeLabel.setText(tc.toString()))));
+
+                stateDisposable = newv.getStateObservable()
+                        .subscribe(state -> lastState = state);
+
                 disable = false;
             }
             shuttleReverseButton.setDisable(disable);
@@ -141,21 +155,38 @@ public class VcrControlPaneController {
         ejectButton.setDisable(true);
         setVideoController(null);
 
+        speedSlider.valueProperty().addListener((obs, oldv, newv) -> {
+            VideoController<? extends VideoState, ? extends VideoError> vc = this.videoController.get();
+            VideoState state = lastState;
+            if (state != null) {
+                boolean shuttling = state.isShuttling();
+                if (shuttling) {
+                    boolean isReverse = state.isReverseDirection();
+                    double rate = asShuttleRate(newv.doubleValue(), isReverse);
+                    vc.shuttle(rate);
+                }
+            }
+        });
+    }
+
+    private double asShuttleRate(Double sliderValue, boolean isReverse) {
+        int direction = isReverse ? -1 : 1;
+        return sliderValue / 255D * direction;
     }
 
     private void doShuttleForward() {
         Optional.ofNullable(videoController.get())
                 .ifPresent(vc -> {
-                    double value = speedSlider.getValue();
-                    vc.shuttle(value / 255D);
+                    double rate = asShuttleRate(speedSlider.getValue(), false);
+                    vc.shuttle(rate);
                 });
     }
 
     private void doShuttleReverse() {
         Optional.ofNullable(videoController.get())
                 .ifPresent(vc -> {
-                    double value = -1 * speedSlider.getValue();
-                    vc.shuttle(value / 255D);
+                    double rate = asShuttleRate(speedSlider.getValue(), true);
+                    vc.shuttle(rate);
                 });
     }
 
