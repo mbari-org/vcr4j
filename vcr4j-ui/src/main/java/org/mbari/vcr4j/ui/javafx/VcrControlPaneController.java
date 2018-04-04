@@ -155,14 +155,14 @@ public class VcrControlPaneController {
         ejectButton.setDisable(true);
         setVideoController(null);
 
-        speedSlider.valueProperty().addListener((obs, oldv, newv) -> {
+        speedSlider.valueProperty().addListener(obs -> {
             VideoController<? extends VideoState, ? extends VideoError> vc = this.videoController.get();
             VideoState state = lastState;
-            if (state != null) {
+            if (state != null && !speedSlider.isValueChanging()) {
                 boolean shuttling = state.isShuttling();
                 if (shuttling) {
                     boolean isReverse = state.isReverseDirection();
-                    double rate = asShuttleRate(newv.doubleValue(), isReverse);
+                    double rate = asShuttleRate(speedSlider.getValue(), isReverse);
                     vc.shuttle(rate);
                 }
             }
