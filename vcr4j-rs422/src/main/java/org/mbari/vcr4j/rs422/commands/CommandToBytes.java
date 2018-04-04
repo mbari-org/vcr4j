@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
  * @author Brian Schlining
  * @since 2016-01-28T14:25:00
  */
-public class CommandToBytes {
+public class  CommandToBytes {
 
     private static final Logger log = LoggerFactory.getLogger(CommandToBytes.class);
     private static final HMSF HMSF_ZERO = new HMSF(0, 0, 0, 0);
@@ -150,6 +150,7 @@ public class CommandToBytes {
             bytes = RS422ByteCommands.SHUTTLE_FWD.getBytes();
         }
         else {
+            speed = -1 * speed; // Speed has to be positive direction
             bytes = RS422ByteCommands.SHUTTLE_REV.getBytes();
         }
 
