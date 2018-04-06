@@ -75,7 +75,7 @@ public class UserbitsAsTimeDecorator implements Decorator {
                 (videoIndex, userbits) ->
                         new VideoIndex(Optional.of(userbitsAsInstant(userbits.getUserbits())),
                                 videoIndex.getElapsedTime(), videoIndex.getTimecode())
-                ).distinctUntilChanged();
+                );
 
     }
 
