@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project 
-    xmlns="http://maven.apache.org/POM/4.0.0" 
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.mbari.vcr4j</groupId>
     <artifactId>vcr4j</artifactId>
-    <version>4.0.2-SNAPSHOT</version>
+    <version>4.0.3-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>vcr4j</name>
     <url>https://github.com/hohonuuli/vcr4j</url>
@@ -82,7 +80,7 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>3.0.0-M1</version>
                 <configuration>
-                <!-- Default configuration for all reports -->
+                    <!-- Default configuration for all reports -->
                 </configuration>
                 <executions>
                     <execution>
@@ -93,8 +91,9 @@
                         <phase>site</phase>
                         <configuration>
                             <!-- Specific configuration for the aggregate report -->              ...            
+                        
                         </configuration>
-                    </execution>                 
+                    </execution>
                 </executions>
             </plugin>
             <!-- Use Java 8.0 -->
