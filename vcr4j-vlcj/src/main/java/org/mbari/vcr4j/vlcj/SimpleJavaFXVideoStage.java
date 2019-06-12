@@ -17,11 +17,11 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.mbari.vcr4j.util.Preconditions;
-import uk.co.caprica.vlcj.component.DirectMediaPlayerComponent;
-import uk.co.caprica.vlcj.player.direct.BufferFormat;
-import uk.co.caprica.vlcj.player.direct.BufferFormatCallback;
-import uk.co.caprica.vlcj.player.direct.DirectMediaPlayer;
-import uk.co.caprica.vlcj.player.direct.format.RV32BufferFormat;
+//import uk.co.caprica.vlcj.component.DirectMediaPlayerComponent;
+//import uk.co.caprica.vlcj.player.direct.BufferFormat;
+//import uk.co.caprica.vlcj.player.direct.BufferFormatCallback;
+//import uk.co.caprica.vlcj.player.direct.DirectMediaPlayer;
+//import uk.co.caprica.vlcj.player.direct.format.RV32BufferFormat;
 
 import java.nio.ByteBuffer;
 
@@ -69,8 +69,8 @@ public class SimpleJavaFXVideoStage extends Stage {
         Scene scene = new Scene(new BorderPane(playerHolder));
         scene.setFill(Color.BLACK);
         setScene(scene);
-        mediaPlayerComponent.getMediaPlayer().prepareMedia(pathToVideo);
-        mediaPlayerComponent.getMediaPlayer().start();
+//        mediaPlayerComponent.getMediaPlayer().prepareMedia(pathToVideo);
+//        mediaPlayerComponent.getMediaPlayer().start();
         //primaryStage.show();
     }
 
