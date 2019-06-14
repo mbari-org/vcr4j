@@ -5,15 +5,15 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.mbari.vcr4j</groupId>
     <artifactId>vcr4j</artifactId>
-    <version>4.0.2-SNAPSHOT</version>
+    <version>4.0.3-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>vcr4j</name>
     <url>https://github.com/hohonuuli/vcr4j</url>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <junit.version>4.12</junit.version>
-        <rx.version>2.1.13</rx.version>
-        <slf4j.version>1.7.25</slf4j.version>
+        <rx.version>2.2.9</rx.version>
+        <slf4j.version>1.7.26</slf4j.version>
         <logback.version>1.2.3</logback.version>
         <mbarix4j.version>1.10.0</mbarix4j.version>
     </properties>
