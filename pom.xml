@@ -57,7 +57,7 @@
         <module>vcr4j-sharktopoda</module>
         <module>vcr4j-examples</module>
         <module>vcr4j-vlcj</module>
-    <module>vcr4j-vlc-http</module>
+        <module>vcr4j-vlc-http</module>
   </modules>
     <build>
         <plugins>
