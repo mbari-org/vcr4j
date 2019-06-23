@@ -1,4 +1,4 @@
-package org.mbari.vcr4j.vlc.http;
+package org.mbari.vcr4j.vlc.http.commands;
 
 import org.mbari.vcr4j.VideoCommand;
 
@@ -8,6 +8,7 @@ import org.mbari.vcr4j.VideoCommand;
  */
 public enum VlcHttpCommands implements VideoCommand<Void> {
 
+    REQUEST_PLAYLIST("request playlist"),
     SHOW("show"),
     CLOSE("close");
 

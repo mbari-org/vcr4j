@@ -35,7 +35,7 @@ public class SimpleJavaFXVideoStage extends Stage {
 
     private ImageView imageView;
 
-    private DirectMediaPlayerComponent mediaPlayerComponent;
+    //private DirectMediaPlayerComponent mediaPlayerComponent;
 
     private WritableImage writableImage;
 
