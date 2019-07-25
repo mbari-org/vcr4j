@@ -14,20 +14,32 @@ import org.mbari.vcr4j.commands.SeekElapsedTimeCmd;
 import org.mbari.vcr4j.commands.VideoCommands;
 import org.mbari.vcr4j.vlc.http.commands.EndPoints;
 import org.mbari.vcr4j.vlc.http.commands.OpenCmd;
+import org.mbari.vcr4j.vlc.http.commands.VlcHttpCommands;
+import org.mbari.vcr4j.vlc.http.model.PlayList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.Duration;
+import java.util.Base64;
 import java.util.UUID;
 
 public class VlcHttpVideoIO implements VideoIO<VlcState, VlcError> {
 
+    private final OkHttpClient client = new OkHttpClient.Builder()
+            .connectTimeout(Duration.ofSeconds(10))
+            .writeTimeout(Duration.ofSeconds(10))
+            .readTimeout(Duration.ofSeconds(10))
+            .build();
 
-    private final OkHttpClient client = new OkHttpClient();
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
-    private final int port;
+    private final String basicAuth;
+
     private final UUID uuid; // One VideoIO per video
 
+    private final Subject<PlayList> playListSubject;
     private final Subject<VlcState> stateSubject;
     private final Subject<VlcError> errorSubject;
     private final Subject<VideoIndex> indexSubject;
@@ -35,11 +47,17 @@ public class VlcHttpVideoIO implements VideoIO<VlcState, VlcError> {
     private final ResponseParser responseParser;
     private final EndPoints endPoints;
 
-    public VlcHttpVideoIO(int port, UUID uuid) {
-        this.port = port;
+    public VlcHttpVideoIO(String username, String password, int port, UUID uuid) {
+
         this.uuid = uuid;
         endPoints = new EndPoints(port);
 
+        Base64.Encoder encoder = Base64.getEncoder();
+        String auth = username + ":" + password;
+        basicAuth = "Basic " + encoder.encodeToString(auth.getBytes());
+
+        PublishSubject<PlayList> s1 = PublishSubject.create();
+        playListSubject = s1.toSerialized();
         PublishSubject<VlcState> s2 = PublishSubject.create();
         stateSubject = s2.toSerialized();
         PublishSubject<VlcError> s3 = PublishSubject.create();
@@ -49,7 +67,8 @@ public class VlcHttpVideoIO implements VideoIO<VlcState, VlcError> {
         PublishSubject<VideoCommand> s5 = PublishSubject.create();
         commandSubject = s5.toSerialized();
 
-        responseParser = new ResponseParser(stateSubject, errorSubject, indexSubject);
+        responseParser = new ResponseParser(stateSubject, errorSubject,
+                indexSubject, playListSubject);
 
         commandSubject.ofType(OpenCmd.class)
                 .forEach(this::doOpen);
@@ -73,8 +92,6 @@ public class VlcHttpVideoIO implements VideoIO<VlcState, VlcError> {
         commandSubject.ofType(SeekElapsedTimeCmd.class)
                 .forEach(this::doSeekElapsedTime);
 
-
-
     }
 
     @Override
@@ -83,12 +100,17 @@ public class VlcHttpVideoIO implements VideoIO<VlcState, VlcError> {
     }
 
     private void doOpen(OpenCmd cmd) {
-
+        URL url = endPoints.openAndPlay(cmd.getValue());
+        executeCommand(url, cmd);
+        url = endPoints.pauseIfPlaying();
+        executeCommand(url, VideoCommands.PAUSE);
+        url = endPoints.seekTo("0");
+        executeCommand(url, VideoCommands.);
     }
+
     private void doShow() {}
     private void doClose() {}
-    private void doRequestAllVideoInfos() {}
-    private void doRequestVideoInfo() {}
+    private void doRequestPlaylist() {}
     private void doPlay() {}
     private void doPause() {}
     private void doRequestStatus() {}
@@ -116,35 +138,56 @@ public class VlcHttpVideoIO implements VideoIO<VlcState, VlcError> {
 
     }
 
+    public Observable<PlayList> getPlayListObservable() {
+        return playListSubject;
+    }
+
     @Override
     public Observable<VlcError> getErrorObservable() {
-        return null;
+        return errorSubject;
     }
 
     @Override
     public Observable<VlcState> getStateObservable() {
-        return null;
+        return stateSubject;
     }
 
     @Override
     public Observable<VideoIndex> getIndexObservable() {
-        return null;
+        return indexSubject;
     }
 
-    private String sendCommandAndListenForResponse(URL url, VideoCommand command) {
-        Request request = new Request.Builder().url(url).get().build();
+    private void executeCommand(URL url, VideoCommand command) {
+        String responseBody = sendCommand(url, command);
+        responseParser.parseAndHandle(command, responseBody);
+    }
+
+    private String sendCommand(URL url, VideoCommand command) {
+        log.debug(">>> " + command.getName() + " : " + command.getValue());
+
+        Request request = new Request.Builder()
+                .url(url)
+                .addHeader("Authorization", basicAuth)
+                .get()
+                .build();
         try (Response response = client.newCall(request).execute()) {
             ResponseBody body = response.body();
             if (body != null) {
-                return body.string();
+                String b = body.string();
+                log.debug("<<< " + b);
+
+                return b;
             }
             else {
+                log.error("HTTP GET request to " + url + " did not return a response");
                 throw new RuntimeException("No content was returned from " + url);
             }
         }
         catch (IOException e) {
-            // TODO set error state
-            return "[]";
+            log.error("HTTP GET request to " + url + " failed", e);
+            VlcError error = new VlcError(e, command);
+            errorSubject.onNext(error);
+            return "";
         }
     }
 }

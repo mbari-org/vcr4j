@@ -17,45 +17,45 @@ public class EndPoints {
 
     // http://127.0.0.1:8080/requests/status.json?command=
 
-    URL openAndPlay(URL videoUrl) {
+    public URL openAndPlay(String mrl) {
         String url = null;
         try {
-            url = URLEncoder.encode(videoUrl.toExternalForm(), "UTF-8");
+            url = URLEncoder.encode(mrl, "UTF-8");
         }
         catch (Exception e) {
             throw new RuntimeException(e);
         }
 
-        String s = baseUrl() + "in_enqueue&input=" + url;
+        String s = baseUrl() + "in_play&input=" + url;
         return toUrl(s);
     }
 
-    URL playById(String id) {
+    public URL playById(String id) {
         String s = baseUrl() + "pl_play&id=" + id;
         return toUrl(s);
     }
 
-    URL togglePause(String id) {
+    public URL togglePause(String id) {
         String s= baseUrl() + "pl_pause=" + id;
         return toUrl(s);
     }
 
-    URL resumeIfPaused() {
+    public URL resumeIfPaused() {
         String s= baseUrl() + "pl_forceresume";
         return toUrl(s);
     }
 
-    URL pauseIfPlaying() {
+    public URL pauseIfPlaying() {
         String s= baseUrl() + "pl_forcepause";
         return toUrl(s);
     }
 
-    URL stop() {
+    public URL stop() {
         String s = baseUrl() + "pl_stop";
         return toUrl(s);
     }
 
-    URL emptyPlaylist() {
+    public URL emptyPlaylist() {
         String s= baseUrl() + "pl_empty";
         return toUrl(s);
     }
@@ -64,17 +64,17 @@ public class EndPoints {
      * @param rate Must be > 0
      * @return
      */
-    URL requestPlaybackRate(int rate) {
+    public URL playbackRate(int rate) {
         String s = baseUrl() + "rate&val=" + rate;
         return toUrl(s);
     }
 
-    URL seekTo(String val) {
+    public URL seekTo(String val) {
         String s = baseUrl() + "seek&val=" + val;
         return toUrl(s);
     }
 
-    URL playlist() {
+    public URL playlist() {
         String s =  "http://localhost:" + port + "/requests/playlist.json";
         return toUrl(s);
     }

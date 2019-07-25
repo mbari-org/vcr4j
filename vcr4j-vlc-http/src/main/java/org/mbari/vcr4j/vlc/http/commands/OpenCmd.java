@@ -4,9 +4,9 @@ import org.mbari.vcr4j.commands.SimpleVideoCommand;
 
 import java.net.URL;
 
-public class OpenCmd extends SimpleVideoCommand<URL> {
+public class OpenCmd extends SimpleVideoCommand<String> {
 
-    public OpenCmd(URL value) {
-        super("open", value);
+    public OpenCmd(String mrl) {
+        super("open", mrl);
     }
 }
