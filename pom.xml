@@ -1,17 +1,17 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.mbari.vcr4j</groupId>
     <artifactId>vcr4j</artifactId>
-    <version>4.0.3-SNAPSHOT</version>
+    <version>4.1.0</version>
     <packaging>pom</packaging>
     <name>vcr4j</name>
     <url>https://github.com/hohonuuli/vcr4j</url>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <junit.version>4.12</junit.version>
-        <rx.version>2.2.9</rx.version>
-        <slf4j.version>1.7.26</slf4j.version>
+        <rx.version>2.2.15</rx.version>
+        <slf4j.version>1.7.29</slf4j.version>
         <logback.version>1.2.3</logback.version>
         <mbarix4j.version>1.10.0</mbarix4j.version>
     </properties>
@@ -55,10 +55,11 @@
         <module>vcr4j-ui</module>
         <module>vcr4j-jogl</module>
         <module>vcr4j-sharktopoda</module>
+        <module>vcr4j-sharktopoda-client</module>
         <module>vcr4j-examples</module>
-<!--        <module>vcr4j-vlcj</module>-->
+        <!--        <module>vcr4j-vlcj</module>-->
         <module>vcr4j-vlc-http</module>
-  </modules>
+    </modules>
     <build>
         <plugins>
             <!-- Filter resources using UTF-8 -->
@@ -93,7 +94,7 @@
                         <phase>site</phase>
                         <configuration>
                             <!-- Specific configuration for the aggregate report -->
-                            ...
+                            <!-- ... -->
                         </configuration>
                     </execution>
                 </executions>
@@ -155,7 +156,7 @@
     <distributionManagement>
         <repository>
             <id>bintray</id>
-            <url>https://api.bintray.com/maven/hohonuuli/maven/vcr4j/;publish=1</url>
+            <url>https://api.bintray.com/maven/org-mbari/maven/vcr4j/;publish=1</url>
         </repository>
     </distributionManagement>
     <repositories>
@@ -165,7 +166,7 @@
             </snapshots>
             <id>bintray-hohonuuli-maven</id>
             <name>bintray</name>
-            <url>http://dl.bintray.com/hohonuuli/maven</url>
+            <url>http://dl.bintray.com/org-mbari/maven</url>
         </repository>
     </repositories>
 </project>

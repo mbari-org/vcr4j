@@ -105,7 +105,7 @@ public class VlcHttpVideoIO implements VideoIO<VlcState, VlcError> {
         url = endPoints.pauseIfPlaying();
         executeCommand(url, VideoCommands.PAUSE);
         url = endPoints.seekTo("0");
-        executeCommand(url, VideoCommands.);
+//        executeCommand(url, VideoCommands.);
     }
 
     private void doShow() {}
