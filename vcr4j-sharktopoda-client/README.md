@@ -27,7 +27,7 @@ Add the client to your project:
 </dependencies>
 ```
 
-Applications need to implement the ClientController interface.
+Applications need to implement the [ClientController](lob/master/vcr4j-sharktopoda-client/src/main/java/org/mbari/vcr4j/sharktopoda/client/ClientController.java) interface.
 
 ```java
 // Setup
