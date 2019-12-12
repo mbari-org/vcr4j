@@ -1,8 +1,6 @@
 package org.mbari.vcr4j.examples.rxtx;
 
-import com.sun.javafx.binding.Logging;
 import org.docopt.Docopt;
-import org.mbari.util.SystemUtilities;
 import org.mbari.vcr4j.VideoController;
 import org.mbari.vcr4j.decorators.LoggingDecorator;
 import org.mbari.vcr4j.rs422.decorators.RS422LoggingDecorator;

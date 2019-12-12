@@ -21,7 +21,7 @@
 package org.mbari.vcr4j;
 
 import javafx.beans.property.ObjectProperty;
-import org.mbari.util.IObservable;
+import mbarix4j.util.IObservable;
 import org.mbari.vcr4j.time.Timecode;
 
 /**

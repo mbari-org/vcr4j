@@ -20,7 +20,8 @@
 
 package org.mbari.vcr4j;
 
-import org.mbari.util.IObservable;
+
+import mbarix4j.util.IObservable;
 
 /**
  *

@@ -1,7 +1,8 @@
 package org.mbari.vcr4j.adapter;
 
-import org.mbari.util.IObserver;
-import org.mbari.util.ObservableSupport;
+
+import mbarix4j.util.IObserver;
+import mbarix4j.util.ObservableSupport;
 import org.mbari.vcr4j.IVCRError;
 import org.mbari.vcr4j.IVCRReply;
 import org.mbari.vcr4j.IVCRState;

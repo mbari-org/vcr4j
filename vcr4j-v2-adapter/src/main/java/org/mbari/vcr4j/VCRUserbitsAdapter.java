@@ -20,8 +20,9 @@
 
 package org.mbari.vcr4j;
 
-import org.mbari.util.IObserver;
-import org.mbari.util.ObservableSupport;
+
+import mbarix4j.util.IObserver;
+import mbarix4j.util.ObservableSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

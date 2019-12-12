@@ -35,8 +35,8 @@ import java.util.function.Function;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import org.mbari.util.IObserver;
-import org.mbari.util.ObservableSupport;
+import mbarix4j.util.IObserver;
+import mbarix4j.util.ObservableSupport;
 import org.mbari.vcr4j.time.HMSF;
 import org.mbari.vcr4j.time.Timecode;
 

@@ -1,7 +1,8 @@
 package org.mbari.vcr4j.rxtx;
 
 import java.io.File;
-import org.mbari.nativelib.Native;
+
+import mbarix4j.nativelib.Native;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

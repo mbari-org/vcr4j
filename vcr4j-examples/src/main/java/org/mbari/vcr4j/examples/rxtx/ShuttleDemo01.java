@@ -1,7 +1,7 @@
 package org.mbari.vcr4j.examples.rxtx;
 
+import mbarix4j.util.NumberUtilities;
 import org.docopt.Docopt;
-import org.mbari.util.NumberUtilities;
 import org.mbari.vcr4j.commands.SeekTimecodeCmd;
 import org.mbari.vcr4j.commands.ShuttleCmd;
 import org.mbari.vcr4j.commands.VideoCommands;

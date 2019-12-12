@@ -1,7 +1,6 @@
 package org.mbari.vcr4j.examples.rxtx;
 
 import org.docopt.Docopt;
-import org.mbari.vcr4j.VideoState;
 import org.mbari.vcr4j.commands.VideoCommands;
 import org.mbari.vcr4j.decorators.Decorator;
 import org.mbari.vcr4j.decorators.VCRSyncDecorator;
