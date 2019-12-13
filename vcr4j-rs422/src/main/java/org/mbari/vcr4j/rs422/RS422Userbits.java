@@ -1,6 +1,5 @@
 package org.mbari.vcr4j.rs422;
 
-import org.mbari.util.NumberUtilities;
 import org.mbari.vcr4j.util.Preconditions;
 
 import java.util.Arrays;

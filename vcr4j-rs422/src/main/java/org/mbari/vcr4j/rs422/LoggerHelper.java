@@ -1,6 +1,6 @@
 package org.mbari.vcr4j.rs422;
 
-import org.mbari.util.NumberUtilities;
+import mbarix4j.util.NumberUtilities;
 import org.mbari.vcr4j.VideoCommand;
 import org.slf4j.Logger;
 

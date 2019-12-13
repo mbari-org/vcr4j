@@ -1,6 +1,6 @@
 package org.mbari.vcr4j.rs422.commands;
 
-import org.mbari.util.NumberUtilities;
+import mbarix4j.util.NumberUtilities;
 import org.mbari.vcr4j.commands.SeekElapsedTimeCmd;
 import org.mbari.vcr4j.commands.SeekTimecodeCmd;
 import org.mbari.vcr4j.commands.SeekTimestampCmd;
