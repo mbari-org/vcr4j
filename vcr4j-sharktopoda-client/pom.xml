@@ -3,7 +3,7 @@
   <parent>
     <artifactId>vcr4j</artifactId>
     <groupId>org.mbari.vcr4j</groupId>
-    <version>4.2.1.jre11</version>
+    <version>4.2.2.jre11-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 

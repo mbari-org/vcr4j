@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.mbari.vcr4j</groupId>
         <artifactId>vcr4j</artifactId>
-        <version>4.2.1.jre11</version>
+        <version>4.2.2.jre11-SNAPSHOT</version>
     </parent>
     <artifactId>vcr4j-purejavacomm</artifactId>
     <name>vcr4j-purejavacomm</name>
