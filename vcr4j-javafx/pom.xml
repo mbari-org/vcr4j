@@ -17,7 +17,26 @@
             <artifactId>vcr4j-core</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <version>13</version>
+        </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-maven-plugin</artifactId>
+                <version>0.0.3</version>
+                <configuration>
+<!--                    <mainClass>HelloFX</mainClass>-->
+                </configuration>
+            </plugin>
+        </plugins>
+
+    </build>
 
 
 
