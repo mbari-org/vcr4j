@@ -33,7 +33,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.text.Document;
-import org.mbari.awt.layout.VerticalFlowLayout;
+import mbarix4j.awt.layout.VerticalFlowLayout;
 
 /**
  * @author brian

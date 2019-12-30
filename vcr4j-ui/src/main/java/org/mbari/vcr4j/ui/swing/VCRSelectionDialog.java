@@ -34,7 +34,6 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
 import javafx.beans.property.ObjectProperty;
-import org.mbari.util.Dispatcher;
 import org.mbari.vcr4j.VideoController;
 import org.mbari.vcr4j.VideoError;
 import org.mbari.vcr4j.VideoState;

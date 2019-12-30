@@ -33,7 +33,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import org.mbari.awt.layout.VerticalFlowLayout;
+import mbarix4j.awt.layout.VerticalFlowLayout;
 
 /**
  * <p>

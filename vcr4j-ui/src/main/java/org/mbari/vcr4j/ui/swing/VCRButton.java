@@ -27,7 +27,7 @@ import javax.swing.border.Border;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 import javafx.beans.property.ObjectProperty;
-import org.mbari.swing.JFancyButton;
+import mbarix4j.swing.JFancyButton;
 import org.mbari.vcr4j.VideoController;
 import org.mbari.vcr4j.VideoError;
 import org.mbari.vcr4j.VideoState;
