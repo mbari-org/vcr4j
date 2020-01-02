@@ -17,6 +17,8 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
 import java.time.Duration;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
@@ -32,13 +34,14 @@ class UdpIO {
     private final Subject<GenericResponse> responseSubject;
     private volatile boolean ok = true;
     private final Gson gson = newGson();
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     public UdpIO(int port) {
         this.port = port;
         PublishSubject<GenericCommand> s1 = PublishSubject.create();
         commandSubject = s1.toSerialized();
 
-        Scheduler scheduler = Schedulers.from(Executors.newSingleThreadExecutor());
+        Scheduler scheduler = Schedulers.from(executor);
         PublishSubject<GenericResponse> s2 = PublishSubject.create();
         responseSubject = s2.toSerialized();
         responseSubject.subscribeOn(scheduler)
@@ -50,9 +53,12 @@ class UdpIO {
     }
 
     public void close() {
-        ok = false;
-        commandSubject.onComplete();
-        responseSubject.onComplete();
+        if (ok) {
+            ok = false;
+            executor.shutdown();
+            commandSubject.onComplete();
+            responseSubject.onComplete();
+        }
     }
 
     private void doResponse(GenericResponse response) {
