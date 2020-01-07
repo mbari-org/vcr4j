@@ -136,7 +136,7 @@ public class MockClientController implements ClientController {
     public CompletableFuture<FrameCapture> framecapture(UUID videoUuid, Path saveLocation) {
         log.info("Framecapture on " + videoUuid);
         CompletableFuture<FrameCapture> f = new CompletableFuture<>();
-        f.completeExceptionally(new RuntimeException("Not implemented"));
+        f.complete(new FrameCapture(saveLocation, Duration.ZERO));
         return f;
     }
 }

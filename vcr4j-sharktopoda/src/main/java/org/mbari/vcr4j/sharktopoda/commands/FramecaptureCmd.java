@@ -36,5 +36,18 @@ public class FramecaptureCmd extends SimpleVideoCommand<FramecaptureCmd.Params> 
         public UUID getImageReferenceUuid() {
             return imageReferenceUuid;
         }
+
+        @Override
+        public String toString() {
+            return "Params{" +
+                    "imageLocation='" + imageLocation + '\'' +
+                    ", imageReferenceUuid=" + imageReferenceUuid +
+                    '}';
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "FramecaptureCmd{" + getValue() + "}";
     }
 }
