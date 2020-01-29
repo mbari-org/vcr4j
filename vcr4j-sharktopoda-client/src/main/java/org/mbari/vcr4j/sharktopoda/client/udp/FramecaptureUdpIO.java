@@ -58,6 +58,7 @@ class FramecaptureUdpIO {
                         DatagramSocket socket = new DatagramSocket();
                         Gson gson = commandService.getGson();
                         byte[] data = gson.toJson(response).getBytes();
+                        log.debug("Sending >>> " + new String(data));
                         DatagramPacket packet = new DatagramPacket(data,
                                 data.length,
                                 cmd.getPacketAddress(),

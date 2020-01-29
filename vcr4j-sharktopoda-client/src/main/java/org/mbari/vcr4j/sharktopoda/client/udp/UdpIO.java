@@ -66,7 +66,7 @@ class UdpIO {
             try {
                 DatagramSocket s = getServer();
                 byte[] b = gson.toJson(response).getBytes();
-                log.debug("Sending " + new String(b));
+                log.debug("Sending >>> " + new String(b));
                 DatagramPacket packet = new DatagramPacket(b,
                         b.length,
                         response.getPacketAddress(),
@@ -86,7 +86,7 @@ class UdpIO {
                 try {
                     getServer().receive(packet);
                     String msg = new String(packet.getData(), 0, packet.getLength());
-                    log.debug("GOT MSG: " + msg);
+                    log.debug("Received <<< " + msg);
                     GenericCommand r = gson.fromJson(msg, GenericCommand.class);
                     r.setPacketAddress(packet.getAddress());
                     r.setPacketPort(packet.getPort());

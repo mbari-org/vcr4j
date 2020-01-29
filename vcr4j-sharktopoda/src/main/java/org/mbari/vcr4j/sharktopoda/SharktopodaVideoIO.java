@@ -204,6 +204,10 @@ public class SharktopodaVideoIO implements VideoIO<SharktopodaState, Sharktopoda
         return errorSubject;
     }
 
+    public Subject<SharktopodaError> getErrorSubject() {
+        return errorSubject;
+    }
+
     @Override
     public Observable<SharktopodaState> getStateObservable() {
         return stateSubject;

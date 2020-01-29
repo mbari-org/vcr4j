@@ -7,6 +7,7 @@ import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
 import org.mbari.vcr4j.decorators.Decorator;
 import org.mbari.vcr4j.sharktopoda.Constants;
+import org.mbari.vcr4j.sharktopoda.SharktopodaError;
 import org.mbari.vcr4j.sharktopoda.SharktopodaVideoIO;
 import org.mbari.vcr4j.sharktopoda.commands.ConnectCmd;
 import org.mbari.vcr4j.sharktopoda.commands.FramecaptureCmd;
@@ -23,6 +24,7 @@ import java.net.DatagramSocket;
 import java.net.MalformedURLException;
 import java.net.SocketException;
 import java.net.URL;
+import java.util.Optional;
 
 /**
  * @author Brian Schlining
@@ -60,12 +62,15 @@ public class FramecaptureDecorator implements Decorator {
                 try {
                     getServer().receive(packet);
                     String msg = new String(packet.getData(), 0, packet.getLength());
-                    log.debug("GOT MSG: " + msg);
+                    log.debug("Received <<< " + msg);
                     FramecaptureResponse r = Constants.GSON.fromJson(msg, FramecaptureResponse.class);
                     framecaptureSubject.onNext(r);
                 }
                 catch (Exception e) {
                     log.info("Error while reading UDP datagram", e);
+                    io.getErrorSubject()
+                        .onNext(new SharktopodaError(true, true, false, Optional.empty()));
+
                     if (!server.isClosed()) {
                         server.close();
                     }
