@@ -11,6 +11,8 @@ import org.mbari.vcr4j.sharktopoda.client.model.Video;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
@@ -237,7 +239,17 @@ class CommandService {
             Path path = Paths.get(cmd.getImageLocation());
             clientController.framecapture(cmd.getUuid(), path)
                     .thenAccept(fc -> {
-                        r.setImageLocation(fc.getSaveLocation().toString());
+                        try {
+                            String url = fc.getSaveLocation()
+                                    .toUri()
+                                    .toURL()
+                                    .toExternalForm();
+                            r.setImageLocation(url);
+                        }
+                        catch (MalformedURLException e) {
+                            log.warn("Unable to parse " + fc.getSaveLocation() + " as a URL");
+                            r.setImageLocation(fc.getSaveLocation().toString());
+                        }
                         r.setElapsedTime(fc.getSnapTime());
                         r.setStatus("ok");
                      })

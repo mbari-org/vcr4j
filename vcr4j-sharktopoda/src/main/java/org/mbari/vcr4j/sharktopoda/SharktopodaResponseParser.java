@@ -109,7 +109,7 @@ public class SharktopodaResponseParser {
     private void handlePause(String msg) {
         PlayResponse r = Constants.GSON.fromJson(msg, PlayResponse.class);
         if (r.getStatus().equalsIgnoreCase("ok")) {
-            SharktopodaState state = new SharktopodaState(SharktopodaState.State.PLAYING);
+            SharktopodaState state = new SharktopodaState(SharktopodaState.State.PAUSED);
             stateSubject.onNext(state);
         }
         else {
