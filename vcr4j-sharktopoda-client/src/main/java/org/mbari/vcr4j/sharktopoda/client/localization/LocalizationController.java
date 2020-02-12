@@ -118,8 +118,12 @@ public class LocalizationController extends IOBus {
             }
         }
         if (!exists) {
-            log.debug("A localization with UUID of " + localizationUuid + " was not found. Unable to remove it.");
+            log.debug("A localization with UUID of " + localizationUuid + " was not found. ");
         }
+    }
+
+    public void clearLocalizations() {
+        localizations.clear();
     }
 
 
