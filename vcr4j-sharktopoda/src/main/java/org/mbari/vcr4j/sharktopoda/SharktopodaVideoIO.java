@@ -141,7 +141,7 @@ public class SharktopodaVideoIO implements VideoIO<SharktopodaState, Sharktopoda
             s.send(packet);
 
             if (log.isDebugEnabled()) {
-                log.debug(command.toString() + " -> " + new String(packet.getData()));
+                log.debug(command.toString() + " >>> " + new String(packet.getData()));
             }
 
             s.receive(incomingPacket);    // blocks until returned on timeout

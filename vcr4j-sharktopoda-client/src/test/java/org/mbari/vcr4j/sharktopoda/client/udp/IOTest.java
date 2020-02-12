@@ -39,6 +39,7 @@ public class IOTest {
         videoIO.send(VideoCommands.REQUEST_ELAPSED_TIME);
         videoIO.send(new SeekElapsedTimeCmd(Duration.ofSeconds(10)));
         videoIO.send(SharkCommands.FRAMEADVANCE);
+        videoIO.send(SharkCommands.REQUEST_VIDEO_INFO);
         videoIO.send(SharkCommands.CLOSE);
         videoIO.close();
         io.close();
@@ -46,7 +47,7 @@ public class IOTest {
 
     @Test
     public void testFramecapture() throws Exception {
-        int port = 5005;
+        int port = 5006;
         int framecapturePort = 8123;
         UUID uuid = UUID.randomUUID();
         IO io = new IO(clientController, port);
@@ -59,6 +60,18 @@ public class IOTest {
         videoIO.send(new ConnectCmd(framecapturePort));
         videoIO.send(new FramecaptureCmd(UUID.randomUUID(), new File("/Foo")));
         videoIO.send(SharkCommands.CLOSE);
+        videoIO.close();
+        io.close();
+    }
+
+    @Test
+    public void testNoVideoFocused() throws Exception {
+        ClientController controller = new BadMockClientController();
+        int port = 5007;
+        UUID uuid = UUID.randomUUID();
+        IO io = new IO(clientController, port);
+        SharktopodaVideoIO videoIO = new SharktopodaVideoIO(uuid, "localhost", port);
+        videoIO.send(SharkCommands.REQUEST_VIDEO_INFO);
         videoIO.close();
         io.close();
     }

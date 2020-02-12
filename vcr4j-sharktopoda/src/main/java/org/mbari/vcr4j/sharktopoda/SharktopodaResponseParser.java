@@ -53,7 +53,7 @@ public class SharktopodaResponseParser {
 
     public void parse(VideoCommand command, byte[] response) {
         String msg = new String(response);
-        log.debug(command + " <-  " + msg);
+        log.debug("Parsing " + command + " <<< " + msg);
         // --- route to correct subject
         try {
             if (command instanceof OpenCmd) handleOpen(msg);

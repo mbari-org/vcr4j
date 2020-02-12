@@ -129,8 +129,9 @@ class CommandService {
         opt.ifPresent(e -> {
             r.setUuid(e.getUuid());
             r.setUrl(e.getUrl());
-            responseSubject.onNext(r);
         });
+
+        responseSubject.onNext(r);
     }
 
     private void doRequestAllVideoInfos(GenericCommand cmd) {
@@ -174,7 +175,7 @@ class CommandService {
                 if (rate < 0.001 && rate > -0.001) {
                     msg = "paused";
                 }
-                else if (rate - 1.0 < 0.01) {
+                else if (Math.abs(rate - 1.0) < 0.01) {
                     msg = "playing";
                 } else if (rate > 0) {
                     msg = "shuttling forward";

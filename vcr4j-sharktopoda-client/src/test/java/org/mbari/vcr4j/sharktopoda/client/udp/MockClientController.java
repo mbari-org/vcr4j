@@ -91,6 +91,7 @@ public class MockClientController implements ClientController {
         return Optional.ofNullable(focusedVideo);
     }
 
+
     @Override
     public List<Video> requestAllVideoInfos() {
         return new ArrayList<>(videoUuids);
