@@ -6,19 +6,24 @@ package org.mbari.vcr4j.sharktopoda.client.localization;
  */
 public class IO {
 
-    private final int port;
+    private final int incomingPort;
+    private final int outgoingPort;
     private LocalizationController controller = new LocalizationController();
 
-    public IO(int port) {
-        this.port = port;
+    public IO(int incomingPort, int outgoingPort) {
+        this.incomingPort = incomingPort;
+        this.outgoingPort = outgoingPort;
         controller.getOutgoing()
                 .ofType(Localization.class)
                 .subscribe(this::send);
-        listen();
     }
 
-    public int getPort() {
-        return port;
+    public int getIncomingPort() {
+        return incomingPort;
+    }
+
+    public int getOutgoingPort() {
+        return outgoingPort;
     }
 
     public LocalizationController getController() {
@@ -29,9 +34,7 @@ public class IO {
 
     }
 
-    private void listen() {
 
-    }
 
 
 }
