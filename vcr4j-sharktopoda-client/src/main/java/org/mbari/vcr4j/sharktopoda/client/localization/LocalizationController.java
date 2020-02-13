@@ -1,6 +1,7 @@
 package org.mbari.vcr4j.sharktopoda.client.localization;
 
 
+import io.reactivex.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
@@ -9,7 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Comparator;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * @author Brian Schlining
@@ -17,60 +20,47 @@ import java.util.UUID;
  */
 public class LocalizationController extends IOBus {
 
-
     private final ObservableList<Localization> localizations =
-            new SortedList<>(FXCollections.observableArrayList(),
-                    Comparator.comparing(Localization::getElapsedTime));
+            FXCollections.observableArrayList();
     private final ObservableList<Localization> readonlyLocalizations =
-            FXCollections.unmodifiableObservableList(localizations);
+            new SortedList<>(FXCollections.unmodifiableObservableList(localizations),
+                    Comparator.comparing(Localization::getElapsedTime));
     private final Logger log = LoggerFactory.getLogger(getClass());
 
 
     public LocalizationController() {
 
-        incoming.ofType(Localization.class)
-                .subscribe(this::addOrReplaceLocalization,
+        Observable<Message> msgObservable = incoming.ofType(Message.class);
+
+        msgObservable
+                .filter(msg -> Message.ACTION_ADD.equalsIgnoreCase(msg.getAction()))
+                .map(Message::getLocalization)
+                .subscribe(localization -> {
+                    try {
+                        addOrReplaceLocalizationInternal(localization);
+                    }
+                    catch (IllegalArgumentException e) {
+                        log.warn("Failed to add a localization that was missing required values.", e);
+                    }
+                }, e -> log.warn("An error occurred on the incoming localization bus", e));
+
+        msgObservable
+                .filter(msg -> Message.ACTION_DELETE.equalsIgnoreCase(msg.getAction()))
+                .map(Message::getLocalization)
+                .subscribe(localization -> deleteLocalizationInternal(localization.getLocalizationUuid()),
                         e -> log.warn("An error occurred on the incoming localization bus", e));
-
-        incoming.ofType(RemoveLocalizationMsg.class)
-                .filter(msg -> msg.getLocalizationUuid() != null)
-                .subscribe(msg -> removeLocalization(msg.getLocalizationUuid()),
-                        e -> log.warn("An error occurred on the incoming RemoveLocalizationMsg bus", e));
-
     }
-
-    /**
-     * DO NOT CALL DIRECTLY. Updates the localizations collection when a new
-     * localization is received on the incoming bus.
-     * @param a
-     */
-    private void addOrReplaceLocalization(Localization a) {
-        boolean exists = false;
-        for (int i = 0; i< localizations.size(); i++) {
-            Localization b = localizations.get(i);
-            if (b.getLocalizationUuid().equals(a.getLocalizationUuid())) {
-                localizations.set(i, a);
-                exists = true;
-                break;
-            }
-        }
-        if (!exists) {
-            localizations.add(a);
-        }
-    }
-
 
     public ObservableList<Localization> getLocalizations() {
         return readonlyLocalizations;
     }
-
 
     /**
      * Any new or modified localizations should be passed to this method. They
      * will be propagated as needed.
      * @param localization
      */
-    public void publishLocalization(Localization localization) {
+    public void addLocalization(Localization localization) {
         Preconditions.require(localization.getLocalizationUuid() != null,
                 "Localization requires a localizationUuid. Null was found.");
         Preconditions.require(localization.getConcept() != null,
@@ -98,21 +88,56 @@ public class LocalizationController extends IOBus {
                 "A localization can not have a height less than 1 pixel. " +
                         localization.getHeight() + " + was found.");
 
-        // Publish to internal buss so it's drawn immediatly
-        incoming.onNext(localization);
+        // Publish to internal buss so it's drawn immediately
+        Message msg = new Message(Message.ACTION_ADD, localization);
+        incoming.onNext(msg);
 
         // Publish to external bus to be published to remote app. After app does
         // something to it, it will be returned to the incoming bus where it
         // will update the existing one.
-        outgoing.onNext(localization);
+        outgoing.onNext(msg);
     }
 
-    public void removeLocalization(UUID localizationUuid) {
+    /**
+     * DO NOT CALL DIRECTLY. Updates the localizations collection when a new
+     * localization is received on the incoming bus.
+     * @param a
+     */
+    private void addOrReplaceLocalizationInternal(Localization a) {
         boolean exists = false;
+        for (int i = 0; i< localizations.size(); i++) {
+            Localization b = localizations.get(i);
+            if (b.getLocalizationUuid().equals(a.getLocalizationUuid())) {
+                localizations.set(i, a);
+                exists = true;
+                break;
+            }
+        }
+        if (!exists) {
+            localizations.add(a);
+        }
+    }
+
+    public void deleteLocalization(UUID localizationUuid) {
+        Localization a = new Localization();
+        a.setLocalizationUuid(localizationUuid);
+        Message msg = new Message(Message.ACTION_DELETE, a);
+        incoming.onNext(msg);
+        outgoing.onNext(msg);
+    }
+
+    /**
+     * DO NOT CALL DIRECTLY.
+     * @param localizationUuid
+     */
+    private void deleteLocalizationInternal(UUID localizationUuid) {
+        boolean exists = false;
+        Message msg = null;
         for (int i = 0; i< localizations.size(); i++) {
             Localization b = localizations.get(i);
             if (b.getLocalizationUuid().equals(localizationUuid)) {
                 localizations.remove(i);
+                msg = new Message(Message.ACTION_DELETE, b);
                 exists = true;
                 break;
             }
@@ -120,10 +145,24 @@ public class LocalizationController extends IOBus {
         if (!exists) {
             log.debug("A localization with UUID of " + localizationUuid + " was not found. ");
         }
+        if (msg != null) {
+            outgoing.onNext(msg);
+        }
     }
 
-    public void clearLocalizations() {
+    /**
+     * Clears the internal cache of localizations. Does not delete them from remote
+     * apps. Use this when switching media.
+     */
+    public void clearAllLocalizations() {
         localizations.clear();
+    }
+
+    public void clearLocalizationsForVideo(UUID videoReferenceUuid) {
+        List<Localization> toBeCleared = localizations.stream()
+                .filter(m -> videoReferenceUuid.equals(m.getVideoReferenceUuid()))
+                .collect(Collectors.toList());
+        localizations.removeAll(toBeCleared);
     }
 
 

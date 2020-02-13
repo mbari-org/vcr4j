@@ -1,5 +1,7 @@
 package org.mbari.vcr4j.sharktopoda.client.localization;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.time.Duration;
 import java.util.UUID;
 
@@ -15,6 +17,7 @@ public class Localization {
      * This is the `frame` that the annotation is associated with. It MUST always
      * be present
      */
+    @SerializedName("elapsedTimeMillis")
     private Duration elapsedTime;
 
     /**
@@ -23,7 +26,13 @@ public class Localization {
      * minimum the bounding box should be drawn from `elapsedTime` to
      * `elapsedTime + duration`
      * */
+    @SerializedName("durationMillis")
     private Duration duration;
+
+    /**
+     * this is the UUID for the video that the localization applies to.
+     */
+    private UUID videoReferenceUuid;
 
     /**
      * This is the UUID for the annotation that the bounding box is associated
@@ -221,5 +230,13 @@ public class Localization {
 
     public void setHeight(Integer height) {
         this.height = height;
+    }
+
+    public UUID getVideoReferenceUuid() {
+        return videoReferenceUuid;
+    }
+
+    public void setVideoReferenceUuid(UUID videoReferenceUuid) {
+        this.videoReferenceUuid = videoReferenceUuid;
     }
 }
