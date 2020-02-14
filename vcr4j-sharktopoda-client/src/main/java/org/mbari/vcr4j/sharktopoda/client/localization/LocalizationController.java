@@ -9,6 +9,7 @@ import org.mbari.vcr4j.sharktopoda.client.IOBus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
@@ -34,25 +35,29 @@ public class LocalizationController extends IOBus {
 
         msgObservable
                 .filter(msg -> Message.ACTION_ADD.equalsIgnoreCase(msg.getAction()))
-                .map(Message::getLocalization)
-                .subscribe(localization -> {
-                    try {
-                        addOrReplaceLocalizationInternal(localization);
-                    }
-                    catch (IllegalArgumentException e) {
-                        log.warn("Failed to add a localization that was missing required values.", e);
-                    }
-                }, e -> log.warn("An error occurred on the incoming localization bus", e));
+                .map(Message::getLocalizations)
+                .subscribe(this::addOrReplaceLocalizationsInternal,
+                    e -> log.warn("An error occurred on the incoming localization bus", e));
 
         msgObservable
                 .filter(msg -> Message.ACTION_DELETE.equalsIgnoreCase(msg.getAction()))
-                .map(Message::getLocalization)
-                .subscribe(localization -> deleteLocalizationInternal(localization.getLocalizationUuid()),
+                .map(Message::getLocalizations)
+                .subscribe(this::deleteLocalizationsInternal,
                         e -> log.warn("An error occurred on the incoming localization bus", e));
+
+        msgObservable
+                .filter(msg -> Message.ACTION_SET.equalsIgnoreCase(msg.getAction()))
+                .map(Message::getLocalizations)
+                .subscribe(this::setLocalizations);
     }
 
     public ObservableList<Localization> getLocalizations() {
         return readonlyLocalizations;
+    }
+
+    public void setLocalizations(Collection<Localization> xs) {
+        localizations.clear();
+        localizations.addAll(xs);
     }
 
     /**
@@ -104,6 +109,7 @@ public class LocalizationController extends IOBus {
      * @param a
      */
     private void addOrReplaceLocalizationInternal(Localization a) {
+        log.debug("Adding localization (uuid = " + a.getLocalizationUuid() + ")");
         boolean exists = false;
         for (int i = 0; i< localizations.size(); i++) {
             Localization b = localizations.get(i);
@@ -118,7 +124,25 @@ public class LocalizationController extends IOBus {
         }
     }
 
+    private void addOrReplaceLocalizationsInternal(Collection<Localization> xs) {
+        for (var x : xs) {
+            try {
+                addOrReplaceLocalizationInternal(x);
+            } catch (IllegalArgumentException e) {
+                log.warn("Failed to add a localization that was missing required values.", e);
+            }
+        }
+    }
+
+    public void deleteLocalization(Localization localization) {
+        Preconditions.require(localization.getLocalizationUuid() != null,
+                "Can not delete a localization without a localizationUuid");
+        deleteLocalization(localization.getLocalizationUuid());
+    }
+
     public void deleteLocalization(UUID localizationUuid) {
+        Preconditions.require(localizationUuid != null,
+                "deleteLocalization(null) is not allowed");
         Localization a = new Localization();
         a.setLocalizationUuid(localizationUuid);
         Message msg = new Message(Message.ACTION_DELETE, a);
@@ -143,11 +167,16 @@ public class LocalizationController extends IOBus {
             }
         }
         if (!exists) {
-            log.debug("A localization with UUID of " + localizationUuid + " was not found. ");
+            log.debug("A localization with UUID of " + localizationUuid + " was not found. Unable to delete.");
         }
         if (msg != null) {
+            log.debug("Deleting localization (uuid = " + localizationUuid + ")");
             outgoing.onNext(msg);
         }
+    }
+
+    private void deleteLocalizationsInternal(Collection<Localization> localizations) {
+        localizations.forEach(a -> deleteLocalizationInternal(a.getLocalizationUuid()));
     }
 
     /**

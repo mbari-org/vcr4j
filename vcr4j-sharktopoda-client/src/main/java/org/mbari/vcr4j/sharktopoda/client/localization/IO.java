@@ -24,7 +24,7 @@ public class IO {
     private ZContext context = new ZContext();
     private final int incomingPort;
     private final int outgoingPort;
-    private LocalizationController controller = new LocalizationController();
+    private final LocalizationController controller;
     private final Thread outgoingThread;
     private final Thread incomingThread;
     private volatile boolean ok = true;
@@ -34,14 +34,16 @@ public class IO {
             .registerTypeAdapter(Duration .class, new DurationConverter())
             .create();
 
-
     public IO(int incomingPort,
               int outgoingPort,
               String incomingTopic,
-              String outgoingTopic) {
+              String outgoingTopic,
+              LocalizationController controller) {
+
         this.incomingPort = incomingPort;
         this.outgoingPort = outgoingPort;
-        controller.getOutgoing()
+        this.controller = controller;
+        this.controller.getOutgoing()
                 .ofType(Message.class)
                 .subscribe(lcl -> queue.offer(lcl));
 
@@ -87,6 +89,13 @@ public class IO {
         });
         incomingThread.setDaemon(true);
         incomingThread.start();
+    }
+
+    public IO(int incomingPort,
+              int outgoingPort,
+              String incomingTopic,
+              String outgoingTopic) {
+        this(incomingPort, outgoingPort, incomingTopic, outgoingTopic, new LocalizationController());
     }
 
 

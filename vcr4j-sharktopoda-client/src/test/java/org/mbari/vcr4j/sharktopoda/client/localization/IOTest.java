@@ -27,12 +27,7 @@ public class IOTest {
         var outgoingTopic = "bar";
         var io = new IO(incomingPort, outgoingPort, incomingTopic, outgoingTopic);
         var controller = io.getController();
-        var localizationUuid = UUID.randomUUID();
-        var localization0 = new Localization("Nanomia",
-                Duration.ofSeconds(3),
-                localizationUuid,
-                10, 11, 12, 13,
-                Duration.ofMillis(1234));
+        var localization0 = DataGenerator.newLocalization();
         var context = new ZContext();
         var thread = new Thread(() -> {
            var socket = context.createSocket(SocketType.SUB);
@@ -44,7 +39,7 @@ public class IOTest {
                var msg = io.getGson().fromJson(contents, Message.class);
                log.info("Got: " + msg);
                assertEquals(msg.getAction(), Message.ACTION_ADD);
-               var localization1 = msg.getLocalization();
+               var localization1 = msg.getLocalizations().get(0);
                assertEquals(localization0.getLocalizationUuid(), localization1.getLocalizationUuid());
                assertEquals(localization0.getConcept(), localization1.getConcept());
                assertEquals(localization0.getElapsedTime(), localization1.getElapsedTime());
