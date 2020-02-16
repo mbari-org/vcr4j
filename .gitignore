@@ -21,3 +21,5 @@ target/
 .project
 .manager
 .scala_dependencies
+
+.vscode/
