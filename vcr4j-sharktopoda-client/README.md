@@ -133,8 +133,8 @@ messaging with the following JSON message format:
     {
       "concept": "Bathybembix bairdii",
       "elapsedTimeMillis": 49211,
-      "durationMillis": 25,  // optional
-      "annotationUuid": "3041757a-92d6-4933-a78f-32c8de3f4b15", // optional
+      "durationMillis": 25,  //optional
+      "annotationUuid": "3041757a-92d6-4933-a78f-32c8de3f4b15", //optional
       "localizationUuid": "1f29e05c-181a-427c-8d60-41db59eb47b9",
       "videoReferenceUuid": "f573dd9e-382c-4169-8517-42560bf9036d", //optional
       "x": 1076,
