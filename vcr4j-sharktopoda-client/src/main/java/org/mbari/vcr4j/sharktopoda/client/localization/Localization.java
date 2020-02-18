@@ -77,6 +77,16 @@ public class Localization {
     public Localization() {
     }
 
+    /**
+     * Copy constructor
+     *
+     * @param n
+     */
+    public Localization(Localization n) {
+        this(n.concept, n.elapsedTime, n.localizationUuid, n.x, n.y, n.width, n.height, n.duration, n.annotationUuid);
+        this.videoReferenceUuid = n.videoReferenceUuid;
+    }
+
     public Localization(String concept,
                         Duration elapsedTime,
                         UUID localizationUuid,

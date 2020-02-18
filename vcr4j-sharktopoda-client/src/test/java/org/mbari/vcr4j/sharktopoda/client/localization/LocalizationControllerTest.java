@@ -46,7 +46,6 @@ public class LocalizationControllerTest {
         controller.addLocalization(DataGenerator.newLocalization());
         assertEquals(controller.getLocalizations().size(),1);
         compare(1, in , out);
-        controller.clearAllLocalizations();
     }
 
     @Test
@@ -57,12 +56,34 @@ public class LocalizationControllerTest {
         compare(10, in, out);
     }
 
+    @Test
     public void testUpdate() {
-
+        reset();
+        var localization = DataGenerator.newLocalization();
+        controller.addLocalization(localization);
+        compare(1, in, out);
+        var newLocalization = new Localization(localization);
+        newLocalization.setX(25);
+        newLocalization.setY(50);
+        controller.addLocalization(newLocalization);
+        compare(2, in , out);
+        var xs = controller.getLocalizations();
+        assertEquals(1, xs.size());
+        var head = xs.get(0);
+        assertEquals(newLocalization.getX(), head.getX());
+        assertEquals(newLocalization.getY(), head.getY());
     }
 
+    @Test
     public void testRemove() {
-
+        reset();
+        var localization = DataGenerator.newLocalization();
+        controller.addLocalization(localization);
+        compare(1, in, out);
+        controller.deleteLocalization(localization.getLocalizationUuid());
+        assertEquals(2, in.size());
+        assertEquals(2, out.size());
+        assertEquals(0, controller.getLocalizations().size());
     }
 
     private void compare(int expectedSize, List<Message> in, List<Message> out) {

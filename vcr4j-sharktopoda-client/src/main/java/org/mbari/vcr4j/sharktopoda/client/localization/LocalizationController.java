@@ -109,17 +109,19 @@ public class LocalizationController extends IOBus {
      * @param a
      */
     private void addOrReplaceLocalizationInternal(Localization a) {
-        log.debug("Adding localization (uuid = " + a.getLocalizationUuid() + ")");
+
         boolean exists = false;
         for (int i = 0; i< localizations.size(); i++) {
             Localization b = localizations.get(i);
             if (b.getLocalizationUuid().equals(a.getLocalizationUuid())) {
+                log.debug("Replacing localization (uuid = " + a.getLocalizationUuid() + ")");
                 localizations.set(i, a);
                 exists = true;
                 break;
             }
         }
         if (!exists) {
+            log.debug("Adding localization (uuid = " + a.getLocalizationUuid() + ")");
             localizations.add(a);
         }
     }
@@ -147,7 +149,6 @@ public class LocalizationController extends IOBus {
         a.setLocalizationUuid(localizationUuid);
         Message msg = new Message(Message.ACTION_DELETE, a);
         incoming.onNext(msg);
-        outgoing.onNext(msg);
     }
 
     /**
@@ -193,6 +194,5 @@ public class LocalizationController extends IOBus {
                 .collect(Collectors.toList());
         localizations.removeAll(toBeCleared);
     }
-
 
 }
