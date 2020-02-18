@@ -20,7 +20,7 @@ public class Message {
      * Removes localizations from the existing set. Remote apps
      * should remove them from persistent storage
      */
-    public static String ACTION_DELETE = "remove";
+    public static String ACTION_REMOVE = "remove";
 
     /**
      * Clear the localizations and set new ones.
@@ -41,6 +41,10 @@ public class Message {
     List<Localization> localizations;
 
     public Message() {
+    }
+
+    public Message(String action) {
+        this(action, Collections.emptyList());
     }
 
     public Message(String action, Localization localization) {

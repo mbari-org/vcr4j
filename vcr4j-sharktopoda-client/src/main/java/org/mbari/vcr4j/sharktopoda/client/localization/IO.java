@@ -55,6 +55,14 @@ public class IO {
             log.info("ZeroMQ Publishing to {} using topic '{}'", address, outgoingTopic);
             Socket publisher = context.createSocket(SocketType.PUB);
             publisher.bind(address);
+            // This sleep is critical to give ZMQ time to bind and setup
+            // Otherwise messages will not be sent.
+            try {
+                Thread.sleep(1000);
+            }
+            catch (InterruptedException e) {
+                log.warn("ZeroMQ publisher thread was interrupted", e);
+            }
             while (ok && !Thread.currentThread().isInterrupted()) {
                 try {
                     Message msg = queue.poll(5L, TimeUnit.SECONDS);
@@ -63,7 +71,6 @@ public class IO {
                         log.debug("Publishing to '{}': \n{}", outgoingTopic, json);
                         publisher.sendMore(outgoingTopic);
                         publisher.send(json);
-//                        Thread.sleep(50);
                     }
                 }
                 catch (InterruptedException e) {
@@ -91,7 +98,7 @@ public class IO {
                 try {
                     String topicAddress = socket.recvStr();
                     String contents = socket.recvStr();
-                    log.debug("Received {}", contents);
+                    log.debug("Received on '{}': {}",incomingTopic, contents);
                     Message message = gson.fromJson(contents, Message.class);
                     controller.getIncoming().onNext(message);
                 }
@@ -123,6 +130,10 @@ public class IO {
 
     public LocalizationController getController() {
         return controller;
+    }
+
+    public void publish(Message msg) {
+
     }
 
     public void close() {

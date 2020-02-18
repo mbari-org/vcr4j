@@ -1,16 +1,12 @@
 package org.mbari.vcr4j.sharktopoda.client.localization;
 
-import io.reactivex.schedulers.Schedulers;
-import io.reactivex.subscribers.TestSubscriber;
 import static org.junit.Assert.*;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @author Brian Schlining
@@ -81,7 +77,7 @@ public class LocalizationControllerTest {
         var localization = DataGenerator.newLocalization();
         controller.addLocalization(localization);
         compare(1, in, out);
-        controller.deleteLocalization(localization.getLocalizationUuid());
+        controller.removeLocalization(localization.getLocalizationUuid());
         assertEquals(2, in.size());
         assertEquals(2, out.size());
         assertEquals(0, controller.getLocalizations().size());

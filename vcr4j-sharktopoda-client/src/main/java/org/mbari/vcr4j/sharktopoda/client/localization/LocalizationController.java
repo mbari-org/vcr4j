@@ -40,7 +40,7 @@ public class LocalizationController extends IOBus {
                     e -> log.warn("An error occurred on the incoming localization bus", e));
 
         msgObservable
-                .filter(msg -> Message.ACTION_DELETE.equalsIgnoreCase(msg.getAction()))
+                .filter(msg -> Message.ACTION_REMOVE.equalsIgnoreCase(msg.getAction()))
                 .map(Message::getLocalizations)
                 .subscribe(this::deleteLocalizationsInternal,
                         e -> log.warn("An error occurred on the incoming localization bus", e));
@@ -149,18 +149,18 @@ public class LocalizationController extends IOBus {
         }
     }
 
-    public void deleteLocalization(Localization localization) {
+    public void removeLocalization(Localization localization) {
         Preconditions.require(localization.getLocalizationUuid() != null,
-                "Can not delete a localization without a localizationUuid");
-        deleteLocalization(localization.getLocalizationUuid());
+                "Can not remove a localization without a localizationUuid");
+        removeLocalization(localization.getLocalizationUuid());
     }
 
-    public void deleteLocalization(UUID localizationUuid) {
+    public void removeLocalization(UUID localizationUuid) {
         Preconditions.require(localizationUuid != null,
-                "deleteLocalization(null) is not allowed");
+                "removeLocalization(null) is not allowed");
         Localization a = new Localization();
         a.setLocalizationUuid(localizationUuid);
-        Message msg = new Message(Message.ACTION_DELETE, a);
+        Message msg = new Message(Message.ACTION_REMOVE, a);
         incoming.onNext(msg);
     }
 
@@ -168,29 +168,29 @@ public class LocalizationController extends IOBus {
      * DO NOT CALL DIRECTLY.
      * @param localizationUuid
      */
-    private void deleteLocalizationInternal(UUID localizationUuid) {
+    private void removeLocalizationInternal(UUID localizationUuid) {
         boolean exists = false;
         Message msg = null;
         for (int i = 0; i< localizations.size(); i++) {
             Localization b = localizations.get(i);
             if (b.getLocalizationUuid().equals(localizationUuid)) {
                 localizations.remove(i);
-                msg = new Message(Message.ACTION_DELETE, b);
+                msg = new Message(Message.ACTION_REMOVE, b);
                 exists = true;
                 break;
             }
         }
         if (!exists) {
-            log.debug("A localization with UUID of " + localizationUuid + " was not found. Unable to delete.");
+            log.debug("A localization with UUID of " + localizationUuid + " was not found. Unable to remove.");
         }
         if (msg != null) {
-            log.debug("Deleting localization (uuid = " + localizationUuid + ")");
+            log.debug("Removing localization (uuid = " + localizationUuid + ")");
             outgoing.onNext(msg);
         }
     }
 
     private void deleteLocalizationsInternal(Collection<Localization> localizations) {
-        localizations.forEach(a -> deleteLocalizationInternal(a.getLocalizationUuid()));
+        localizations.forEach(a -> removeLocalizationInternal(a.getLocalizationUuid()));
     }
 
     /**
