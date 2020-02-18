@@ -4,7 +4,7 @@
   <parent>
     <artifactId>vcr4j</artifactId>
     <groupId>org.mbari.vcr4j</groupId>
-    <version>4.2.3.jre11</version>
+    <version>4.3.0.jre11</version>
   </parent>
   <artifactId>vcr4j-vlc-http</artifactId>
   <name>vcr4j-vlc-http</name>

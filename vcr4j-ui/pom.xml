@@ -5,7 +5,7 @@
     <parent>
         <artifactId>vcr4j</artifactId>
         <groupId>org.mbari.vcr4j</groupId>
-        <version>4.2.3.jre11</version>
+        <version>4.3.0.jre11</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
