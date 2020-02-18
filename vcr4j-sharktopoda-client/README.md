@@ -4,6 +4,8 @@ API to simplify the creation of remote Java video players that support support c
 
 ## Usage:
 
+### Video Control
+
 Add the client to your project:
 
 ```xml
@@ -67,3 +69,55 @@ videoIO.send(VideoCommands.PLAY);
 // videoIO.send(SharkCommands.CLOSE);
 videoIO.close();
 ```
+
+### Localization control
+
+This package can also support syncing of bounding box localizations on a video with players that support it.
+
+#### Example Usage
+```java
+
+// -- Client Setup
+import org.mbari.vcr4j.sharktopoda.client.localization.IO;
+int incomingPort = 5561;   // ZeroMQ subscriber port
+int outgoingPort = 5562;   // ZeroMQ publisher port
+String incomingTopic = "foo";
+String outgoingTopic = "bar";
+IO io = new IO(incomingPort, outgoingPort, incomingTopic, outgoingTopic);
+LocalizationController controller = io.getController();
+
+// -- Usage
+// Listen here for changes. This is a READ-ONLY list
+ObservableList<Localization> xs = controller.getLocalizations();
+
+// Add to local collection AND notify remote clients
+controller.addLocalizations(new Localization(...));
+
+// Remove from local collection AND notify remote clients
+controller.removeLocalizations(aLocalization);
+
+// Clear local collection. No notification is published.
+controller.clearLocalizations();
+```
+
+#### Test Usage
+
+Two IO objects can be used to synchronize localizations between different applications
+
+```java
+import org.mbari.vcr4j.sharktopoda.client.localization.IO;
+int incomingPort = 5561;   // ZeroMQ subscriber port
+int outgoingPort = 5562;   // ZeroMQ publisher port
+String incomingTopic = "foo";
+String outgoingTopic = "bar";
+
+# Client A
+IO local = new IO(incomingPort, outgoingPort, incomingTopic, outgoingTopic);
+LocalizationController controller = local.getController();
+
+# Client B
+IO remote = new IO(outgoingPort, incomingPort, outgoingTopic, incomingTopic);
+
+// Add or removes to either client will be propgated to the other.
+```
+
