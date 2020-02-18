@@ -151,4 +151,4 @@ The following actions are allowed:
 - `add` - Adds one or more localizations
 - `remove` - Removes one or more localizations. The only required field in the localizations for this is `localizationUuid`
 - `set` - Clears the existing set of localizations and adds replaces them with the ones in this message.
-- `clear all` - Clears the existing set of localizations.
+- `clear all` - Clears the existing set of localizations. The localizations field is ignored.
