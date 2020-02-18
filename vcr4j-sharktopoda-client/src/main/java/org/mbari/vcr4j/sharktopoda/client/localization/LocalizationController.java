@@ -49,6 +49,19 @@ public class LocalizationController extends IOBus {
                 .filter(msg -> Message.ACTION_SET.equalsIgnoreCase(msg.getAction()))
                 .map(Message::getLocalizations)
                 .subscribe(this::setLocalizations);
+
+        msgObservable
+                .filter(msg -> Message.ACTION_CLEAR_ALL.equalsIgnoreCase(msg.getAction()))
+                .subscribe(msg -> clearAllLocalizations());
+
+        msgObservable
+                .filter(msg -> Message.ACTION_CLEAR_VIDEO.equalsIgnoreCase(msg.getAction()))
+                .subscribe(msg -> {
+                     msg.getLocalizations()
+                          .stream()
+                          .map(Localization::getVideoReferenceUuid)
+                          .forEach(this::clearLocalizationsForVideo);
+                });
     }
 
     public ObservableList<Localization> getLocalizations() {

@@ -9,6 +9,7 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -85,6 +86,44 @@ public class LocalizationControllerTest {
         assertEquals(2, out.size());
         assertEquals(0, controller.getLocalizations().size());
     }
+
+    @Test
+    public void testClear() {
+        var localizations0 = DataGenerator.newLocalizations(100);
+        controller.setLocalizations(localizations0);
+        assertEquals(localizations0.size(), controller.getLocalizations().size());
+    }
+
+
+    @Test
+    public void testSetAll() {
+        var localizations0 = DataGenerator.newLocalizations(100);
+        controller.setLocalizations(localizations0);
+        assertEquals(localizations0.size(), controller.getLocalizations().size());
+        var localizations1 = DataGenerator.newLocalizations(200);
+        controller.setLocalizations(localizations1);
+        assertEquals(localizations1.size(), controller.getLocalizations().size());
+    }
+
+    @Test
+    public void testClearVideo() {
+        var n = 100;
+        var uuid0 = UUID.randomUUID();
+        var localizations0 = DataGenerator.newLocalizations(n);
+        localizations0.forEach(x -> x.setVideoReferenceUuid(uuid0));
+        var uuid1 = UUID.randomUUID();
+        var localizations1 = DataGenerator.newLocalizations(n);
+        localizations1.forEach(x -> x.setVideoReferenceUuid(uuid1));
+        var xs = new ArrayList<>(localizations0);
+        xs.addAll(localizations1);
+        assertEquals(n * 2, xs.size());
+        controller.setLocalizations(xs);
+        assertEquals(xs.size(), controller.getLocalizations().size());
+        controller.clearLocalizationsForVideo(uuid0);
+        assertEquals(n, controller.getLocalizations().size());
+    }
+
+
 
     private void compare(int expectedSize, List<Message> in, List<Message> out) {
         assertEquals(expectedSize, in.size());

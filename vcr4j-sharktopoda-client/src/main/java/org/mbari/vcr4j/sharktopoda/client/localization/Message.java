@@ -28,6 +28,13 @@ public class Message {
     public static String ACTION_SET = "set";
 
     /**
+     * Clear all localizations from the controller
+     */
+    public static String ACTION_CLEAR_VIDEO = "clear";
+
+    public static String ACTION_CLEAR_ALL = "clear all";
+
+    /**
      * add, delete
      */
     String action;

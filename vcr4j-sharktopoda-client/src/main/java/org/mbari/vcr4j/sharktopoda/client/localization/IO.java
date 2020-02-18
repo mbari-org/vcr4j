@@ -2,6 +2,8 @@ package org.mbari.vcr4j.sharktopoda.client.localization;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import io.reactivex.Scheduler;
+import io.reactivex.schedulers.Schedulers;
 import org.mbari.vcr4j.sharktopoda.client.gson.DurationConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,15 +49,21 @@ public class IO {
                 .ofType(Message.class)
                 .subscribe(lcl -> queue.offer(lcl));
 
+        // publisher
         outgoingThread = new Thread(() -> {
+            String address = "tcp://*:" + outgoingPort;
+            log.info("ZeroMQ Publishing to {} using topic '{}'", address, outgoingTopic);
             Socket publisher = context.createSocket(SocketType.PUB);
-            publisher.bind("tcp://*:" + outgoingPort);
+            publisher.bind(address);
             while (ok && !Thread.currentThread().isInterrupted()) {
                 try {
                     Message msg = queue.poll(5L, TimeUnit.SECONDS);
                     if (msg != null) {
-                        publisher.send(outgoingTopic);
-                        publisher.send(gson.toJson(msg));
+                        String json = gson.toJson(msg);
+                        log.debug("Publishing to '{}': \n{}", outgoingTopic, json);
+                        publisher.sendMore(outgoingTopic);
+                        publisher.send(json);
+//                        Thread.sleep(50);
                     }
                 }
                 catch (InterruptedException e) {
@@ -66,19 +74,24 @@ public class IO {
                     log.warn("An exception was thrown will attempting to publish a localization", e);
                 }
             }
+            log.info("Shutting down ZeroMQ publisher at {}", address);
             publisher.close();
         });
         outgoingThread.setDaemon(true);
         outgoingThread.start();
 
+        // subscriber
         incomingThread = new Thread(() -> {
+            String address = "tcp://localhost:" + incomingPort;
+            log.info("ZeroMQ Subscribing to {} using topic '{}'", address, incomingTopic);
             Socket socket = context.createSocket(SocketType.SUB);
-            socket.connect("tcp://localhost:" + incomingPort);
+            socket.connect(address);
             socket.subscribe(incomingTopic.getBytes(ZMQ.CHARSET));
             while (ok && !Thread.currentThread().isInterrupted()) {
                 try {
-                    String address = socket.recvStr();
+                    String topicAddress = socket.recvStr();
                     String contents = socket.recvStr();
+                    log.debug("Received {}", contents);
                     Message message = gson.fromJson(contents, Message.class);
                     controller.getIncoming().onNext(message);
                 }
