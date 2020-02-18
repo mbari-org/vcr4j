@@ -121,6 +121,8 @@ IO remote = new IO(outgoingPort, incomingPort, outgoingTopic, incomingTopic);
 // Add or removes to either client will be propgated to the other.
 ```
 
+See [IOTest.java](https://github.com/mbari-media-management/vcr4j/blob/master/vcr4j-sharktopoda-client/src/test/java/org/mbari/vcr4j/sharktopoda/client/localization/IOTest.java) for a working example.
+
 #### ZeroMQ
 
 You can use any zeromq app to connect to an `IO` instance. Use `pub-sub` style
