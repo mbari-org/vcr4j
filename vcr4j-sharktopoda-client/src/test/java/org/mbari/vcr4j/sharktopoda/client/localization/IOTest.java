@@ -22,8 +22,8 @@ public class IOTest {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
     private static final ZContext context = new ZContext();
-    private static int port0 = 5561;
-    private static int port1 = 5562;
+    private static int port0 = 5567;
+    private static int port1 = 5568;
     private static String topic0 = "foo";
     private static String topic1 = "bar";
     private static IO io0 = new IO(port0, port1, topic0, topic1);
