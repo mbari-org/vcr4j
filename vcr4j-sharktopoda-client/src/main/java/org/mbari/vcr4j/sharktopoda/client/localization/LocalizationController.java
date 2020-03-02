@@ -87,17 +87,17 @@ public class LocalizationController extends IOBus {
                 "A localization requires an elapsedtime. Null was found");
         Preconditions.require(localization.getX() != null,
                 "A localization requires an x value. Null was found");
-        Preconditions.require(localization.getX() > 0,
+        Preconditions.require(localization.getX() >= 0,
                 "A localization can not have a negative x coordinate. " +
                 localization.getX() + " + was found.");
         Preconditions.require(localization.getY() != null,
                 "A localization requires an y value. Null was found");
-        Preconditions.require(localization.getY() > 0,
+        Preconditions.require(localization.getY() >= 0,
                 "A localization can not have a negative y coordinate. " +
                         localization.getX() + " + was found.");
         Preconditions.require(localization.getWidth() != null,
                 "A localization requires a width value. Null was found");
-        Preconditions.require(localization.getWidth() > 1,
+        Preconditions.require(localization.getWidth() > 0,
                 "A localization can not have a width less than 1 pixel." +
                         localization.getWidth() + " + was found.");
         Preconditions.require(localization.getHeight() != null,
