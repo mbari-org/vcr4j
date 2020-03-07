@@ -98,7 +98,7 @@ public class IO {
                 try {
                     String topicAddress = socket.recvStr();
                     String contents = socket.recvStr();
-                    log.debug("Received on '{}': {}",incomingTopic, contents);
+                    log.debug("Received on '{}': {}", topicAddress, contents);
                     Message message = gson.fromJson(contents, Message.class);
                     controller.getIncoming().onNext(message);
                 }
@@ -133,7 +133,7 @@ public class IO {
     }
 
     public void publish(Message msg) {
-
+        controller.getOutgoing().onNext(msg);
     }
 
     public void close() {

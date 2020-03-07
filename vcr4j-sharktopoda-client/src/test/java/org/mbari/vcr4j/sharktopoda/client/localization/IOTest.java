@@ -2,6 +2,7 @@ package org.mbari.vcr4j.sharktopoda.client.localization;
 
 import static org.junit.Assert.*;
 
+import javafx.collections.ListChangeListener;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -12,6 +13,7 @@ import org.zeromq.SocketType;
 import org.zeromq.ZContext;
 import zmq.ZMQ;
 
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -28,11 +30,26 @@ public class IOTest {
     private static String topic1 = "bar";
     private static IO io0 = new IO(port0, port1, topic0, topic1);
     private static IO io1 = new IO(port1, port0, topic1, topic0);
+    ChangeCount c0 = new ChangeCount();
+    ChangeCount c1 = new ChangeCount();
+
+    {
+        io0.getController()
+                .getLocalizations()
+                .addListener(c0.newListener());
+        io1.getController()
+                .getLocalizations()
+                .addListener(c1.newListener());
+    }
+
+
 
     @Before
     public void reset() {
-        io0.getController().clearAllLocalizations();
-        io1.getController().clearAllLocalizations();
+        io0.getController().clearAllLocalLocalizations();
+        io1.getController().clearAllLocalLocalizations();
+        c0.resetCount();
+        c1.resetCount();
     }
 
     @Test
@@ -56,6 +73,8 @@ public class IOTest {
         Thread.sleep(1000); // allow message time to propagate
         assertEquals(2, io0.getController().getLocalizations().size());
         assertEquals(2, io1.getController().getLocalizations().size());
+        c0.assertCount(0, 2, 0, 0, 0);
+        c1.assertCount(0, 2, 0, 0, 0);
     }
 
     @Test
@@ -68,6 +87,8 @@ public class IOTest {
         Thread.sleep(1000); // allow message time to propagate
         assertEquals(0, io0.getController().getLocalizations().size());
         assertEquals(0, io1.getController().getLocalizations().size());
+        c0.assertCount(0, 1, 0, 0, 1);
+        c1.assertCount(0, 1, 0, 0, 1);
     }
 
     @Test
@@ -75,16 +96,18 @@ public class IOTest {
         reset();
         var n = 5;
         var xs = DataGenerator.newLocalizations(n);
-        io0.getController()
-                .getIncoming()
-                .onNext(new Message(Message.ACTION_ADD, xs));
-        Thread.sleep(1000); // allow message time to propagate
+
+        io0.getController().addLocalizations(xs);
+        Thread.sleep(4000); // allow message time to propagate
         assertEquals(n, io0.getController().getLocalizations().size());
-        io1.getController()
-                .getOutgoing()
-                .onNext(new Message(Message.ACTION_CLEAR_ALL));
+        assertEquals(n, io1.getController().getLocalizations().size());
+        c0.assertCount(0, 1, 0, 0, 0);
+        c1.assertCount(0, 1, 0, 0, 0);
+        io1.getController().clearAllLocalizations();
         Thread.sleep(1000); // allow message time to propagate
         assertEquals(0, io0.getController().getLocalizations().size());
+        c0.assertCount(0, n, 0, 0, n);
+        c1.assertCount(0, n, 0, 0, n);
     }
 
     @Test
@@ -102,6 +125,33 @@ public class IOTest {
         Thread.sleep(1000); // allow message time to propagate
         assertEquals(0, io0.getController().getLocalizations().size());
         assertEquals(1, io1.getController().getLocalizations().size());
+    }
+
+    /**
+     * Controller 0 creates an annotation. Controller 1 modifies it and
+     * replaces it.
+     * @throws Exception
+     */
+    @Test
+    public void testPingPong() throws Exception {
+        reset();
+
+
+        // Ping
+        var x = DataGenerator.newLocalization();
+        io1.getController().addLocalization(x);
+        Thread.sleep(3000);
+        c0.assertCount(0, 1, 0, 0, 0);
+        c1.assertCount(0, 1, 0, 0, 0);
+
+        // Pong
+        var y = new Localization(x);
+        y.setConcept("FOO");
+        io0.getController().addLocalization(y);
+        Thread.sleep(1000);
+        c0.assertCount(0, 2, 0, 0, 1);
+        c1.assertCount(0, 2, 0, 0, 1);
+
     }
 
 

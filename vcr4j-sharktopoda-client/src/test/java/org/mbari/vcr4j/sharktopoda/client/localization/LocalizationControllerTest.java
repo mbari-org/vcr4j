@@ -2,11 +2,14 @@ package org.mbari.vcr4j.sharktopoda.client.localization;
 
 import static org.junit.Assert.*;
 
+import javafx.collections.ListChangeListener;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @author Brian Schlining
@@ -41,7 +44,7 @@ public class LocalizationControllerTest {
     public void testAddSingle() {
         reset();
         controller.addLocalization(DataGenerator.newLocalization());
-        assertEquals(controller.getLocalizations().size(),1);
+        assertEquals(1, controller.getLocalizations().size());
         compare(1, in , out);
     }
 
@@ -117,6 +120,18 @@ public class LocalizationControllerTest {
         assertEquals(xs.size(), controller.getLocalizations().size());
         controller.clearLocalizationsForVideo(uuid0);
         assertEquals(n, controller.getLocalizations().size());
+    }
+
+    @Test
+    public void testListOfLocalizations() {
+        var c = new ChangeCount();
+        controller.getLocalizations()
+            .addListener(c.newListener());
+        var localization = DataGenerator.newLocalization();
+        controller.addLocalization(localization);
+        localization.setConcept("FOO");
+        controller.addLocalization(localization);
+        c.assertCount(0, 2, 0, 0, 1);
     }
 
 

@@ -9,18 +9,6 @@ import io.reactivex.subjects.Subject;
  */
 public class IOBus {
 
-    public static class ByteMessage {
-        private final byte[] content;
-
-        public ByteMessage(byte[] content) {
-            this.content = content;
-        }
-
-        public byte[] getContent() {
-            return content;
-        }
-    }
-
     /**
      * Messages to the bus are on this subject
      */

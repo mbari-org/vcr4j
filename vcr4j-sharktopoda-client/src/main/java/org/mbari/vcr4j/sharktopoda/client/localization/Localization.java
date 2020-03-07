@@ -74,7 +74,12 @@ public class Localization {
      */
     private Integer height;
 
+    /**
+     * Default constructor. Will automatically set a localization UUID as this is required in the
+     * hashcode, equals method.
+     */
     public Localization() {
+        localizationUuid = UUID.randomUUID();
     }
 
     /**
@@ -96,6 +101,7 @@ public class Localization {
                         Integer height,
                         Duration duration,
                         UUID annotationUuid) {
+        Preconditions.require(localizationUuid != null, "The localizationUuid can not be null");
         this.concept = concept;
         this.elapsedTime = elapsedTime;
         this.duration = duration;
@@ -115,15 +121,7 @@ public class Localization {
                         Integer width,
                         Integer height,
                         UUID annotationUuid) {
-        this.concept = concept;
-        this.elapsedTime = elapsedTime;
-        this.duration = Duration.ZERO;
-        this.annotationUuid = annotationUuid;
-        this.localizationUuid = localizationUuid;
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
+        this(concept, elapsedTime, localizationUuid, x, y, width, height, Duration.ZERO, annotationUuid);
     }
 
     public Localization(String concept,
@@ -133,14 +131,7 @@ public class Localization {
                         Integer y,
                         Integer width,
                         Integer height) {
-        this.concept = concept;
-        this.elapsedTime = elapsedTime;
-        this.duration = Duration.ZERO;
-        this.localizationUuid = localizationUuid;
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
+        this(concept, elapsedTime, localizationUuid, x, y, width, height, Duration.ZERO, null);
     }
 
     public Localization(String concept,
@@ -151,14 +142,7 @@ public class Localization {
                         Integer width,
                         Integer height,
                         Duration duration) {
-        this.concept = concept;
-        this.elapsedTime = elapsedTime;
-        this.duration = duration;
-        this.localizationUuid = localizationUuid;
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
+        this(concept, elapsedTime, localizationUuid, x, y, width, height, duration, null);
     }
 
     public String getConcept() {
@@ -207,6 +191,7 @@ public class Localization {
     }
 
     public void setLocalizationUuid(UUID localizationUuid) {
+        Preconditions.require(localizationUuid != null, "The localizationUuid can not be null");
         this.localizationUuid = localizationUuid;
     }
 
@@ -248,5 +233,20 @@ public class Localization {
 
     public void setVideoReferenceUuid(UUID videoReferenceUuid) {
         this.videoReferenceUuid = videoReferenceUuid;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Localization that = (Localization) o;
+
+        return localizationUuid.equals(that.localizationUuid);
+    }
+
+    @Override
+    public int hashCode() {
+        return localizationUuid.hashCode();
     }
 }
