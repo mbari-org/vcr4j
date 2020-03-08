@@ -20,13 +20,24 @@ public class LocalizationController extends IOBus {
 
     private final Comparator<Localization> uuidComparator = Comparator.comparing(Localization::getLocalizationUuid);
 
+    /**
+     * This is the mutable internal collection of localizations
+     */
     private final ObservableList<Localization> localizations = FXCollections.observableArrayList();
 
+    /**
+     * Immutable collection sorted by localizationUuid to allow for
+     * fast binary searches
+     */
     private final ObservableList<Localization> uuidLocalizations =
             new SortedList<>(localizations, uuidComparator);
 
     private final Comparator<Localization> elapsedTimeComparator = Comparator.comparing(Localization::getElapsedTime);
 
+    /**
+     * Immutable collection sorted by elapsedTime. THis is the collection
+     * that is externally exposed.
+     */
     private final ObservableList<Localization> elapsedTimeLocalizations =
             new SortedList<>(localizations, elapsedTimeComparator);
 

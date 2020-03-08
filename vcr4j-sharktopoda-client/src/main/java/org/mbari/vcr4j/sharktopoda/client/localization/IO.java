@@ -65,7 +65,7 @@ public class IO {
             }
             while (ok && !Thread.currentThread().isInterrupted()) {
                 try {
-                    Message msg = queue.poll(5L, TimeUnit.SECONDS);
+                    Message msg = queue.poll(1L, TimeUnit.SECONDS);
                     if (msg != null) {
                         String json = gson.toJson(msg);
                         log.debug("Publishing to '{}': \n{}", outgoingTopic, json);

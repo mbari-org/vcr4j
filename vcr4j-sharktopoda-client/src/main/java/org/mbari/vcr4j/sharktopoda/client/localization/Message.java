@@ -34,6 +34,10 @@ public class Message {
 
     public static String ACTION_CLEAR_ALL = "clear all";
 
+    public static String ACTION_SELECT = "select";
+
+    public static String ACTION_DESELECT = "deselect";
+
     /**
      * add, delete
      */
