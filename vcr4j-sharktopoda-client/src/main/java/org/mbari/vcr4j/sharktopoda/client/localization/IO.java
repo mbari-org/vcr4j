@@ -11,6 +11,7 @@ import org.zeromq.SocketType;
 import org.zeromq.ZContext;
 import org.zeromq.ZMQ;
 import org.zeromq.ZMQ.Socket;
+import org.zeromq.ZMQException;
 
 import java.time.Duration;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -27,6 +28,7 @@ public class IO {
     private final int incomingPort;
     private final int outgoingPort;
     private final LocalizationController controller;
+    private final SelectionController selectionController;
     private final Thread outgoingThread;
     private final Thread incomingThread;
     private volatile boolean ok = true;
@@ -48,6 +50,7 @@ public class IO {
         this.controller.getOutgoing()
                 .ofType(Message.class)
                 .subscribe(lcl -> queue.offer(lcl));
+        this.selectionController = new SelectionController(controller);
 
         // publisher
         outgoingThread = new Thread(() -> {
@@ -102,6 +105,14 @@ public class IO {
                     Message message = gson.fromJson(contents, Message.class);
                     controller.getIncoming().onNext(message);
                 }
+                catch (ZMQException e) {
+                    if (e.getErrorCode() == 156384765) {
+                        // do nothing
+                    }
+                    else {
+                        log.warn("An exception occurred while reading from remote app", e);
+                    }
+                }
                 catch (Exception e) {
                     log.warn("An exception occurred while reading from remote app", e);
                 }
@@ -130,6 +141,10 @@ public class IO {
 
     public LocalizationController getController() {
         return controller;
+    }
+
+    public SelectionController getSelectionController() {
+        return selectionController;
     }
 
     public void publish(Message msg) {

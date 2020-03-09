@@ -88,13 +88,15 @@ public class Localization {
      * @param n
      */
     public Localization(Localization n) {
-        this(n.concept, n.elapsedTime, n.localizationUuid, n.x, n.y, n.width, n.height, n.duration, n.annotationUuid);
+        this(n.concept, n.elapsedTime, n.localizationUuid, n.videoReferenceUuid,
+                 n.x, n.y, n.width, n.height, n.duration, n.annotationUuid);
         this.videoReferenceUuid = n.videoReferenceUuid;
     }
 
     public Localization(String concept,
                         Duration elapsedTime,
                         UUID localizationUuid,
+                        UUID videoReferenceUuid,
                         Integer x,
                         Integer y,
                         Integer width,
@@ -107,6 +109,7 @@ public class Localization {
         this.duration = duration;
         this.annotationUuid = annotationUuid;
         this.localizationUuid = localizationUuid;
+        this.videoReferenceUuid = videoReferenceUuid;
         this.x = x;
         this.y = y;
         this.width = width;
@@ -116,33 +119,36 @@ public class Localization {
     public Localization(String concept,
                         Duration elapsedTime,
                         UUID localizationUuid,
+                        UUID videoReferenceUuid,
                         Integer x,
                         Integer y,
                         Integer width,
                         Integer height,
                         UUID annotationUuid) {
-        this(concept, elapsedTime, localizationUuid, x, y, width, height, Duration.ZERO, annotationUuid);
+        this(concept, elapsedTime, localizationUuid, videoReferenceUuid, x, y, width, height, Duration.ZERO, annotationUuid);
     }
 
     public Localization(String concept,
                         Duration elapsedTime,
                         UUID localizationUuid,
+                        UUID videoReferenceUuid,
                         Integer x,
                         Integer y,
                         Integer width,
                         Integer height) {
-        this(concept, elapsedTime, localizationUuid, x, y, width, height, Duration.ZERO, null);
+        this(concept, elapsedTime, localizationUuid, videoReferenceUuid, x, y, width, height, Duration.ZERO, null);
     }
 
     public Localization(String concept,
                         Duration elapsedTime,
                         UUID localizationUuid,
+                        UUID videoReferenceUuid,
                         Integer x,
                         Integer y,
                         Integer width,
                         Integer height,
                         Duration duration) {
-        this(concept, elapsedTime, localizationUuid, x, y, width, height, duration, null);
+        this(concept, elapsedTime, localizationUuid, videoReferenceUuid, x, y, width, height, duration, null);
     }
 
     public String getConcept() {
@@ -248,5 +254,14 @@ public class Localization {
     @Override
     public int hashCode() {
         return localizationUuid.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "Localization{" +
+                "concept='" + concept + '\'' +
+                ", elapsedTime=" + elapsedTime +
+                ", localizationUuid=" + localizationUuid +
+                '}';
     }
 }

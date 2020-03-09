@@ -46,16 +46,22 @@ public class IOTest {
 
     @Before
     public void reset() {
-        io0.getController().clearAllLocalLocalizations();
-        io1.getController().clearAllLocalLocalizations();
+        io0.getController().clear();
+//        io1.getController().clear();
         c0.resetCount();
         c1.resetCount();
+        try {
+            Thread.sleep(1000);
+        }
+        catch (InterruptedException e) {
+            fail("Reset was interrupted");
+        }
     }
 
     @Test
     public void testMessagePassing() throws Exception {
         reset();
-        var msg = new Message(Message.ACTION_CLEAR_ALL);
+        var msg = new Message(Message.ACTION_CLEAR);
         io0.getController().getOutgoing().onNext(msg);
         Thread.sleep(1000); // allow message time to propagate
         io1.getController().getOutgoing().onNext(msg);
@@ -67,10 +73,9 @@ public class IOTest {
         reset();
         var x = DataGenerator.newLocalization();
         io0.getController().addLocalization(x);
-        Thread.sleep(1000); // allow message time to propagate
         var y = DataGenerator.newLocalization();
         io0.getController().addLocalization(y);
-        Thread.sleep(1000); // allow message time to propagate
+        Thread.sleep(2000); // allow message time to propagate
         assertEquals(2, io0.getController().getLocalizations().size());
         assertEquals(2, io1.getController().getLocalizations().size());
         c0.assertCount(0, 2, 0, 0, 0);
@@ -101,9 +106,9 @@ public class IOTest {
         Thread.sleep(4000); // allow message time to propagate
         assertEquals(n, io0.getController().getLocalizations().size());
         assertEquals(n, io1.getController().getLocalizations().size());
-        c0.assertCount(0, 1, 0, 0, 0);
-        c1.assertCount(0, 1, 0, 0, 0);
-        io1.getController().clearAllLocalizations();
+        c0.assertCount(0, n, 0, 0, 0);
+        c1.assertCount(0, n, 0, 0, 0);
+        io1.getController().clear();
         Thread.sleep(1000); // allow message time to propagate
         assertEquals(0, io0.getController().getLocalizations().size());
         c0.assertCount(0, n, 0, 0, n);
@@ -119,12 +124,10 @@ public class IOTest {
         Thread.sleep(2000); // allow message time to propagate
         assertEquals(1, io0.getController().getLocalizations().size());
         assertEquals(1, io1.getController().getLocalizations().size());
-        io1.getController()
-                .getOutgoing()
-                .onNext(new Message(Message.ACTION_CLEAR_ALL));
+        io1.getController().clear();
         Thread.sleep(1000); // allow message time to propagate
         assertEquals(0, io0.getController().getLocalizations().size());
-        assertEquals(1, io1.getController().getLocalizations().size());
+        assertEquals(0, io1.getController().getLocalizations().size());
     }
 
     /**
@@ -149,8 +152,8 @@ public class IOTest {
         y.setConcept("FOO");
         io0.getController().addLocalization(y);
         Thread.sleep(1000);
-        c0.assertCount(0, 2, 0, 0, 1);
-        c1.assertCount(0, 2, 0, 0, 1);
+        c0.assertCount(0, 2, 0, 1, 1);
+        c1.assertCount(0, 2, 0, 1, 1);
 
     }
 

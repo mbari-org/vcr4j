@@ -36,11 +36,21 @@ public class ChangeCount {
     ListChangeListener<? super Localization> newListener() {
         return (ListChangeListener<Localization>) change -> {
             while (change.next()) {
-                if (change.wasAdded()) addedCount.incrementAndGet();
-                if (change.wasPermutated()) permutationCount.incrementAndGet();
-                if (change.wasUpdated()) updatedCount.incrementAndGet();
-                if (change.wasReplaced()) replacedCount.incrementAndGet();
-                if (change.wasRemoved()) removedCount.incrementAndGet();
+                if (change.wasAdded()) {
+                    addedCount.addAndGet(change.getAddedSize());
+                }
+                if (change.wasPermutated()) {
+                    permutationCount.incrementAndGet();
+                }
+                if (change.wasUpdated()) {
+                    updatedCount.incrementAndGet();
+                }
+                if (change.wasReplaced()) {
+                    replacedCount.incrementAndGet();
+                }
+                if (change.wasRemoved()) {
+                    removedCount.addAndGet(change.getRemovedSize());
+                }
             }
         };
     }

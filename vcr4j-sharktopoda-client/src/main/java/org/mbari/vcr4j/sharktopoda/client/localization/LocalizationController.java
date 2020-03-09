@@ -18,31 +18,17 @@ import java.util.stream.Collectors;
  */
 public class LocalizationController extends IOBus {
 
-    private final Comparator<Localization> uuidComparator = Comparator.comparing(Localization::getLocalizationUuid);
-
     /**
      * This is the mutable internal collection of localizations
      */
     private final ObservableList<Localization> localizations = FXCollections.observableArrayList();
 
-    /**
-     * Immutable collection sorted by localizationUuid to allow for
-     * fast binary searches
-     */
-    private final ObservableList<Localization> uuidLocalizations =
-            new SortedList<>(localizations, uuidComparator);
+    private final ObservableList<Localization> readOnlyLocalizations =
+            new SortedList<>(FXCollections.unmodifiableObservableList(localizations),
+                    Comparator.comparing(Localization::getElapsedTime));
 
-    private final Comparator<Localization> elapsedTimeComparator = Comparator.comparing(Localization::getElapsedTime);
-
-    /**
-     * Immutable collection sorted by elapsedTime. THis is the collection
-     * that is externally exposed.
-     */
-    private final ObservableList<Localization> elapsedTimeLocalizations =
-            new SortedList<>(localizations, elapsedTimeComparator);
 
     private final Logger log = LoggerFactory.getLogger(getClass());
-
 
     public LocalizationController() {
 
@@ -51,7 +37,7 @@ public class LocalizationController extends IOBus {
         msgObservable
                 .filter(msg -> Message.ACTION_ADD.equalsIgnoreCase(msg.getAction()))
                 .map(Message::getLocalizations)
-                .subscribe(this::addLocalizations,
+                .subscribe(this::addOrReplaceLocalizationsInternal,
                     e -> log.warn("An error occurred on the incoming localization bus", e));
 
         msgObservable
@@ -61,22 +47,17 @@ public class LocalizationController extends IOBus {
                         e -> log.warn("An error occurred on the incoming localization bus", e));
 
         msgObservable
-                .filter(msg -> Message.ACTION_SET.equalsIgnoreCase(msg.getAction()))
-                .map(Message::getLocalizations)
-                .subscribe(this::setLocalizations);
+                .filter(msg -> Message.ACTION_CLEAR.equalsIgnoreCase(msg.getAction()))
+                .forEach(msg -> localizations.clear());
 
-        msgObservable
-                .filter(msg -> Message.ACTION_CLEAR_ALL.equalsIgnoreCase(msg.getAction()))
-                .subscribe(msg -> clearAllLocalLocalizations());
-
-        msgObservable
-                .filter(msg -> Message.ACTION_CLEAR_VIDEO.equalsIgnoreCase(msg.getAction()))
-                .subscribe(msg ->
-                     msg.getLocalizations()
-                          .stream()
-                          .map(Localization::getVideoReferenceUuid)
-                          .forEach(this::clearLocalLocalizationsForVideo));
     }
+
+    public void clear() {
+        var msg = new Message(Message.ACTION_CLEAR);
+        incoming.onNext(msg);
+        outgoing.onNext(msg);
+    }
+
 
     /**
      * This is the internal cache of localizations. You can observe this list for changes, both
@@ -85,60 +66,50 @@ public class LocalizationController extends IOBus {
      * @return A read-only list of localizations
      */
     public ObservableList<Localization> getLocalizations() {
-        return elapsedTimeLocalizations;
+        return readOnlyLocalizations;
     }
 
-    /**
-     * Set the internal cache of localizations. The collection you provide is copied into the internal
-     * cache
-     * @param xs
-     */
-    public synchronized void setLocalizations(Collection<Localization> xs) {
-        localizations.clear();
-        localizations.addAll(xs);
-    }
 
     /**
-     * Sets the local and remote cache of localizations. Very useful when you want to sync the
-     * localizations in both clients
+     * DO NOT CALL DIRECTLY. Updates the localizations collection when a new
+     * localization is received on the incoming bus.
      * @param xs
      */
-    public void setAllLocalizations(Collection<Localization> xs) {
-        setLocalizations(xs);
-        setRemoteLocalizations(xs);
-    }
-
-    /**
-     * Sets the cache of localizations used by any remote clients listening to this controller.
-     * @param xs
-     */
-    public void setRemoteLocalizations(Collection<Localization> xs) {
-        outgoing.onNext(new Message(Message.ACTION_SET, new ArrayList<>(xs)));
-    }
-
-    /**
-     * Adds localizations to both local and remote caches.
-     * @param xs
-     */
-    public synchronized void addLocalizations(Iterable<Localization> xs) {
-        var toBeAdded = new ArrayList<Localization>();
-        var toBeRemoved = new ArrayList<Localization>();
+    private void addOrReplaceLocalizationsInternal(Collection<Localization> xs) {
         for (var x : xs) {
-            var i = Collections.binarySearch(uuidLocalizations, x, uuidComparator);
-            if (i >= 0) {
-                log.debug("Replacing localization (uuid = " + x.getLocalizationUuid() +
-                        ", elapsedTime = " + x.getElapsedTime().toMillis() + "ms)");
-                toBeRemoved.add(uuidLocalizations.get(i));
+            try {
+                addOrReplaceLocalizationInternal(x);
+            } catch (IllegalArgumentException e) {
+                log.warn("Failed to add a localization that was missing required values.", e);
             }
-            else {
-                log.debug("Adding localization (uuid = " + x.getLocalizationUuid() +
-                        ", elapsedTime = " + x.getElapsedTime().toMillis() + "ms)");
-            }
-            toBeAdded.add(x);
         }
-        localizations.removeAll(toBeRemoved);
-        localizations.addAll(toBeAdded);
     }
+
+    /**
+     * DO NOT CALL DIRECTLY. Updates the localizations collection when a new
+     * localization is received on the incoming bus.
+     * @param a
+     */
+    private void addOrReplaceLocalizationInternal(Localization a) {
+
+        boolean exists = false;
+        // Slow linear scan :-(
+        for (int i = 0; i< localizations.size(); i++) {
+            Localization b = localizations.get(i);
+            if (b.getLocalizationUuid().equals(a.getLocalizationUuid())) {
+                log.debug("Replacing localization (uuid = " + a.getLocalizationUuid() + ")");
+                localizations.set(i, a);
+                exists = true;
+                break;
+            }
+        }
+        if (!exists) {
+            log.debug("Adding localization (uuid = " + a.getLocalizationUuid() + ")");
+            localizations.add(a);
+        }
+    }
+
+
 
     /**
      * Any new or modified localizations should be passed to this method. They
@@ -146,6 +117,19 @@ public class LocalizationController extends IOBus {
      * @param localization
      */
     public void addLocalization(Localization localization) {
+        addLocalizations(List.of(localization));
+    }
+
+    public void addLocalizations(Collection<Localization> localizations) {
+        localizations.forEach(this::validateLocalizationForAdd);
+        if (!localizations.isEmpty()) {
+            Message msg = new Message(Message.ACTION_ADD, new ArrayList<>(localizations));
+            incoming.onNext(msg);
+            outgoing.onNext(msg);
+        }
+    }
+
+    private void validateLocalizationForAdd(Localization localization) {
         Preconditions.require(localization.getLocalizationUuid() != null,
                 "Localization requires a localizationUuid. Null was found.");
         Preconditions.require(localization.getConcept() != null,
@@ -156,7 +140,7 @@ public class LocalizationController extends IOBus {
                 "A localization requires an x value. Null was found");
         Preconditions.require(localization.getX() >= 0,
                 "A localization can not have a negative x coordinate. " +
-                localization.getX() + " + was found.");
+                        localization.getX() + " + was found.");
         Preconditions.require(localization.getY() != null,
                 "A localization requires an y value. Null was found");
         Preconditions.require(localization.getY() >= 0,
@@ -172,15 +156,6 @@ public class LocalizationController extends IOBus {
         Preconditions.require(localization.getHeight() > 0,
                 "A localization can not have a height less than 1 pixel. " +
                         localization.getHeight() + " + was found.");
-
-        // Publish to internal buss so it's drawn immediately
-        Message msg = new Message(Message.ACTION_ADD, localization);
-        incoming.onNext(msg);
-
-        // Publish to external bus to be published to remote app. After app does
-        // something to it, it will be returned to the incoming bus where it
-        // will update the existing one.
-        outgoing.onNext(msg);
     }
 
     /**
@@ -188,9 +163,7 @@ public class LocalizationController extends IOBus {
      * @param localization THe only field read is the localizationUuid
      */
     public void removeLocalization(Localization localization) {
-        Preconditions.require(localization.getLocalizationUuid() != null,
-                "Can not remove a localization without a localizationUuid");
-        removeLocalization(localization.getLocalizationUuid());
+        removeLocalizations(List.of(localization));
     }
 
     /**
@@ -202,93 +175,51 @@ public class LocalizationController extends IOBus {
                 "removeLocalization(null) is not allowed");
         Localization a = new Localization();
         a.setLocalizationUuid(localizationUuid);
-        Message msg = new Message(Message.ACTION_REMOVE, a);
+        removeLocalization(a);
+    }
+
+    public void removeLocalizations(Collection<Localization> localizations) {
+        localizations.forEach(this::validateLocalizationForRemove);
+        Message msg = new Message(Message.ACTION_REMOVE, new ArrayList<>(localizations));
         incoming.onNext(msg);
+        outgoing.onNext(msg);
     }
 
-    /**
-     * Clears all localizations from both the internal local cache and all remote subscribers.
-     */
-    public void clearAllLocalizations() {
-        clearAllLocalLocalizations();
-        clearAllRemoteLocalizations();
+    private void validateLocalizationForRemove(Localization localization) {
+        Preconditions.require(localization.getLocalizationUuid() != null,
+                "Can not remove a localization without a localizationUuid");
     }
 
-    /**
-     * Clears the internal cache. Does not effect remote subscribers
-     */
-    public void clearAllLocalLocalizations() {
-        localizations.clear();
-    }
-
-    /**
-     * Clears remote subscribers. Does not effect the internal cache of `this`
-     */
-    public void clearAllRemoteLocalizations() {
-        outgoing.onNext(new Message(Message.ACTION_CLEAR_ALL));
-    }
-
-    /**
-     * Clears out localizations for a given video, based on its UUID. This applys to both the local
-     * and remote caches.
-     * @param videoReferenceUuid
-     */
-    public void clearLocalizationsForVideo(UUID videoReferenceUuid) {
-        clearLocalLocalizationsForVideo(videoReferenceUuid);
-        clearRemoteLocalizationsForVideo(videoReferenceUuid);
-    }
-
-    /**
-     * Clears the localizations for a given video from remote subscribers. The local cache is not
-     * affected.
-     * @param videoReferenceUuid
-     */
-    public void clearRemoteLocalizationsForVideo(UUID videoReferenceUuid) {
-        Localization x = new Localization();
-        x.setVideoReferenceUuid(videoReferenceUuid);
-        outgoing.onNext(new Message(Message.ACTION_CLEAR_VIDEO, x));
-    }
-
-    /**
-     * Clears the localization for a given video from the local cache. Remote subscribers are not
-     * affected.
-     * @param videoReferenceUuid
-     */
-    public void clearLocalLocalizationsForVideo(UUID videoReferenceUuid) {
-        List<Localization> toBeCleared = localizations.stream()
-                .filter(m -> videoReferenceUuid.equals(m.getVideoReferenceUuid()))
-                .collect(Collectors.toList());
-        localizations.removeAll(toBeCleared);
-    }
-
-
-
-
-    /**
-     * DO NOT CALL DIRECTLY
-     * @param xs
-     */
     private void removeLocalizationsInternal(Collection<Localization> xs) {
-
-        var deletedLocalizations = new ArrayList<Localization>();
-        for (var x : xs) {
-            var i = Collections.binarySearch(localizations, x, uuidComparator);
-            if (i >= 0) {
-                log.debug("Removing localization (uuid = " + x.getLocalizationUuid() + ")");
-                deletedLocalizations.add(x);
+        for (var x: xs) {
+            try {
+                removeLocalizationInternal(x);
             }
-            else {
-                log.debug("A localization with UUID of " + x.getLocalizationUuid() +
-                        " was not found. Unable to remove.");
+            catch (IllegalArgumentException e) {
+                log.warn("Failed to remove a localization that was missing required values.", e);
             }
         }
+    }
 
-        if (!deletedLocalizations.isEmpty()) {
-            localizations.removeAll(deletedLocalizations);
-            var msg = new Message(Message.ACTION_REMOVE, deletedLocalizations);
-            outgoing.onNext(msg);
+    private void removeLocalizationInternal(Localization localization) {
+        boolean exists = false;
+        Message msg = null;
+        for (int i = 0; i< localizations.size(); i++) {
+            Localization b = localizations.get(i);
+            if (b.getLocalizationUuid().equals(localization.getLocalizationUuid())) {
+                localizations.remove(i);
+                exists = true;
+                break;
+            }
         }
-
+        if (!exists) {
+            log.debug("A localization with UUID of " + localization.getLocalizationUuid() +
+                    " was not found. Unable to remove.");
+        }
+        if (msg != null) {
+            log.debug("Removing localization (uuid = " + localization.getLocalizationUuid() +
+                    ")");
+        }
     }
 
 

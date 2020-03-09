@@ -60,13 +60,14 @@ public class DataGenerator {
         var concept = concepts.get(random.nextInt(concepts.size()));
         var elapseTime = Duration.ofMillis(random.nextInt(100000));
         var localizationUuid = UUID.randomUUID();
+        var videoReferenceUuid = UUID.randomUUID();
         var x = random.nextInt(1920) + 1;
         var y = random.nextInt(1080) + 1;
         var width = random.nextInt(1920 - x + 1) + 1;
         var height = random.nextInt(1080 - y + 1) + 1;
         var duration = Duration.ofMillis(random.nextInt(20000));
         var annotationUuid = UUID.randomUUID();
-        return new Localization(concept, elapseTime, localizationUuid, x, y,
+        return new Localization(concept, elapseTime, localizationUuid, videoReferenceUuid, x, y,
                 width, height, duration, annotationUuid);
     }
 

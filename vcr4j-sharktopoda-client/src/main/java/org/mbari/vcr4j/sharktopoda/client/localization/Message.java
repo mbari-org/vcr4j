@@ -2,6 +2,7 @@ package org.mbari.vcr4j.sharktopoda.client.localization;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @author Brian Schlining
@@ -22,17 +23,7 @@ public class Message {
      */
     public static String ACTION_REMOVE = "remove";
 
-    /**
-     * Clear the localizations and set new ones.
-     */
-    public static String ACTION_SET = "set";
-
-    /**
-     * Clear all localizations from the controller
-     */
-    public static String ACTION_CLEAR_VIDEO = "clear";
-
-    public static String ACTION_CLEAR_ALL = "clear all";
+    public static String ACTION_CLEAR = "clear";
 
     public static String ACTION_SELECT = "select";
 
@@ -55,7 +46,7 @@ public class Message {
         this(action, List.of(localization));
     }
 
-    public Message(String action, List<Localization> localizations) {
+    public Message(String action,  List<Localization> localizations) {
         this.action = action;
         this.localizations = Collections.unmodifiableList(localizations);
     }
@@ -67,4 +58,5 @@ public class Message {
     public List<Localization> getLocalizations() {
         return localizations;
     }
+
 }

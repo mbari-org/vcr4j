@@ -28,15 +28,15 @@ public class SelectionController {
                 .filter(msg -> Message.ACTION_DESELECT.equalsIgnoreCase(msg.getAction()))
                 .subscribe(msg -> deselect(msg.getLocalizations(), false));
 
-        controller.getLocalizations()
-                .addListener((ListChangeListener<Localization>) c -> {
-                    while (c.next()) {
-                        if (c.wasRemoved()) {
-                            List<Localization> removed = (List<Localization>) c.getRemoved();
-                            deselect(removed, true);
-                        }
-                    }
-                });
+//        controller.getLocalizations()
+//                .addListener((ListChangeListener<Localization>) c -> {
+//                    while (c.next()) {
+//                        if (c.wasRemoved()) {
+//                            List<Localization> removed = (List<Localization>) c.getRemoved();
+//                            deselect(removed, true);
+//                        }
+//                    }
+//                });
 
     }
 
@@ -58,7 +58,7 @@ public class SelectionController {
                 CollectionUtils.intersection(localizations, controller.getLocalizations());
 
         selectedLocalizations.removeAll(intersection);
-        if (sendNotify) {
+        if (sendNotify && !intersection.isEmpty()) {
             controller.getOutgoing()
                     .onNext(new Message(Message.ACTION_DESELECT, new ArrayList<>(intersection)));
         }
