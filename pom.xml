@@ -13,11 +13,11 @@
         <java.version>11</java.version>
         <javafx.version>14</javafx.version>
         <jeromq.version>0.5.2</jeromq.version>
-        <junit.version>4.12</junit.version>
-        <logback.version>1.2.3</logback.version>
+        <junit.version>4.13</junit.version>
+        <logback.version>1.3.0-alpha5</logback.version>
         <mbarix4j.version>2.0.5.jre11</mbarix4j.version>
-        <rx.version>2.2.15</rx.version>
-        <slf4j.version>1.7.29</slf4j.version>
+        <rx.version>2.2.18</rx.version>
+        <slf4j.version>2.0.0-alpha1</slf4j.version>
     </properties>
     <dependencies>
         <dependency>
@@ -47,6 +47,8 @@
     <modules>
         <module>vcr4j-core</module>
         <module>vcr4j-udp</module>
+        <module>vcr4j-sharktopoda</module>
+        <module>vcr4j-sharktopoda-client</module>
         <module>vcr4j-rs422</module>
         <module>vcr4j-rxtx</module>
         <module>vcr4j-purejavacomm</module>
@@ -54,15 +56,10 @@
         <module>vcr4j-jserialcomm</module>
         <module>vcr4j-kipro</module>
         <module>vcr4j-javafx</module>
-        <!--<module>vcr4j-vlcj</module>-->
         <module>vcr4j-v2-adapter</module>
         <module>vcr4j-ui</module>
-        <module>vcr4j-jogl</module>
-        <module>vcr4j-sharktopoda</module>
-        <module>vcr4j-sharktopoda-client</module>
-        <module>vcr4j-examples</module>
-        <!--        <module>vcr4j-vlcj</module>-->
         <module>vcr4j-vlc-http</module>
+        <module>vcr4j-examples</module>
     </modules>
     <build>
         <plugins>
@@ -107,6 +104,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>

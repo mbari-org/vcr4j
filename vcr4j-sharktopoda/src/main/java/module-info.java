@@ -4,6 +4,8 @@
  */
 module vcr4j.sharktopoda {
     exports org.mbari.vcr4j.sharktopoda.commands;
+    exports org.mbari.vcr4j.sharktopoda.model.request;
+    exports org.mbari.vcr4j.sharktopoda.model.response;
     exports org.mbari.vcr4j.sharktopoda.decorators;
     exports org.mbari.vcr4j.sharktopoda.model;
     exports org.mbari.vcr4j.sharktopoda;

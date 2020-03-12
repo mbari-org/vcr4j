@@ -12,9 +12,8 @@ module vcr4j.ui {
     requires javafx.controls;
     requires vcr4j.core;
     requires vcr4j.rs422;
-    requires rxtx.java;
-    requires java.desktop;
     requires vcr4j.rxtx;
+    requires java.desktop;
     requires org.slf4j;
     requires mbarix4j;
     requires vcr4j.v2.adapter;

@@ -16,7 +16,7 @@
 package org.mbari.vcr4j.ui.swing;
 
 
-import gnu.io.CommPortIdentifier;
+//import gnu.io.CommPortIdentifier;CommPortIdentifier
 import org.mbari.vcr4j.VideoController;
 import org.mbari.vcr4j.decorators.Decorator;
 import org.mbari.vcr4j.decorators.LoggingDecorator;
@@ -111,41 +111,42 @@ public class VCRConsoleFrame extends JFrame {
         menuHelpAbout.setText("About");
         menuHelpAbout.addActionListener(this::menuHelpAboutActionPerformed);
         menuConnect.setText("Connect to VCR");
-        menuConnect.addActionListener(e -> {
-            Set<CommPortIdentifier> ports = RXTXUtilities.getAvailableSerialPorts();
-            String[] portNames = ports.stream()
-                    .map(CommPortIdentifier::getName)
-                    .sorted()
-                    .toArray(String[]::new);
-
-
-
-            if (portNames.length == 0) {
-                JOptionPane.showMessageDialog(VCRConsoleFrame.this,
-                        "No serial ports were found. Unable to connect to a VCR.", "Error",
-                        JOptionPane.ERROR_MESSAGE);
-
-                return;
-            }
-
-            String s = (String) JOptionPane.showInputDialog(VCRConsoleFrame.this, "Select a serial port",
-                "VCR Serial Port", JOptionPane.PLAIN_MESSAGE, null, portNames, portNames[0]);
-
-            if ((s != null) && (s.length() > 0)) {
-                try {
-                    log.debug("Opening " + s);
-                    RXTXVideoIO io = RXTXVideoIO.open(s);
-                    Decorator syncDecorator = new VCRSyncDecorator<>(io);
-                    Decorator statusDecorator = new RS422StatusDecorator(io);
-                    Decorator loggingDecorator = new RS422LoggingDecorator(io);
-                    vcrPanel.setVideoController(new VideoController<>(io));
-                }
-                catch (Exception e1) {
-
-                    e1.printStackTrace();
-                }
-            }
-        });
+        // HACK: Needed to get java modules to compile ... module rxtx.java not found
+//        menuConnect.addActionListener(e -> {
+//            Set<CommPortIdentifier> ports = RXTXUtilities.getAvailableSerialPorts();
+//            String[] portNames = ports.stream()
+//                    .map(CommPortIdentifier::getName)
+//                    .sorted()
+//                    .toArray(String[]::new);
+//
+//
+//
+//            if (portNames.length == 0) {
+//                JOptionPane.showMessageDialog(VCRConsoleFrame.this,
+//                        "No serial ports were found. Unable to connect to a VCR.", "Error",
+//                        JOptionPane.ERROR_MESSAGE);
+//
+//                return;
+//            }
+//
+//            String s = (String) JOptionPane.showInputDialog(VCRConsoleFrame.this, "Select a serial port",
+//                "VCR Serial Port", JOptionPane.PLAIN_MESSAGE, null, portNames, portNames[0]);
+//
+//            if ((s != null) && (s.length() > 0)) {
+//                try {
+//                    log.debug("Opening " + s);
+//                    RXTXVideoIO io = RXTXVideoIO.open(s);
+//                    Decorator syncDecorator = new VCRSyncDecorator<>(io);
+//                    Decorator statusDecorator = new RS422StatusDecorator(io);
+//                    Decorator loggingDecorator = new RS422LoggingDecorator(io);
+//                    vcrPanel.setVideoController(new VideoController<>(io));
+//                }
+//                catch (Exception e1) {
+//
+//                    e1.printStackTrace();
+//                }
+//            }
+//        });
         menuFile.add(menuConnect);
         menuFile.add(menuFileExit);
         menuHelp.add(menuHelpAbout);

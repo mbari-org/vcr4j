@@ -1,6 +1,6 @@
 package org.mbari.vcr4j.ui.swing;
 
-import gnu.io.CommPortIdentifier;
+//import gnu.io.CommPortIdentifier;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.util.Iterator;
@@ -66,19 +66,20 @@ public class RXTXConnectionPanel extends VCRConnectionPanel {
 
 
     private JComboBox getVcrListCB() {
-        if (vcrListCB == null) {
-            vcrListCB = new JComboBox();
-
-            Set ports = RXTXUtilities.getAvailableSerialPorts();
-
-            vcrListCB.setPreferredSize(new java.awt.Dimension(200, 25));
-
-            for (Iterator i = ports.iterator(); i.hasNext(); ) {
-                CommPortIdentifier cpi = (CommPortIdentifier) i.next();
-
-                vcrListCB.addItem(cpi.getName());
-            }
-        }
+        // HACK: Needed to fix compilation with Java modules (rxtx.java not found!)
+//        if (vcrListCB == null) {
+//            vcrListCB = new JComboBox();
+//
+//            Set ports = RXTXUtilities.getAvailableSerialPorts();
+//
+//            vcrListCB.setPreferredSize(new java.awt.Dimension(200, 25));
+//
+//            for (Iterator i = ports.iterator(); i.hasNext(); ) {
+//                CommPortIdentifier cpi = (CommPortIdentifier) i.next();
+//
+//                vcrListCB.addItem(cpi.getName());
+//            }
+//        }
 
         return vcrListCB;
     }

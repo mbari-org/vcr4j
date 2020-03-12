@@ -7,7 +7,7 @@ module vcr4j.kipro {
     requires unirest.java;
     requires io.reactivex.rxjava2;
     requires org.slf4j;
-    requires gson;
+    requires com.google.gson;
     exports org.mbari.vcr4j.kipro;
     exports org.mbari.vcr4j.kipro.commands;
     exports org.mbari.vcr4j.kipro.decorators;

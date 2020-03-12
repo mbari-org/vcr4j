@@ -1,4 +1,4 @@
-package org.mbari.vcr4j;
+package org.mbari.vcr4j.adapter;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
