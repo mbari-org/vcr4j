@@ -18,7 +18,7 @@
 
 
 
-package org.mbari.vcr4j;
+package org.mbari.vcr4j.adapter;
 
 
 import mbarix4j.util.IObservable;

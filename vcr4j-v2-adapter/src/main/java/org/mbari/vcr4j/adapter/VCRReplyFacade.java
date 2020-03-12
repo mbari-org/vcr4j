@@ -3,13 +3,6 @@ package org.mbari.vcr4j.adapter;
 
 import mbarix4j.util.IObserver;
 import mbarix4j.util.ObservableSupport;
-import org.mbari.vcr4j.IVCRError;
-import org.mbari.vcr4j.IVCRReply;
-import org.mbari.vcr4j.IVCRState;
-import org.mbari.vcr4j.IVCRTimecode;
-import org.mbari.vcr4j.IVCRUserbits;
-import org.mbari.vcr4j.VCRTimecodeAdapter;
-import org.mbari.vcr4j.VCRUserbitsAdapter;
 import org.mbari.vcr4j.VideoError;
 import org.mbari.vcr4j.VideoIO;
 import org.mbari.vcr4j.VideoState;

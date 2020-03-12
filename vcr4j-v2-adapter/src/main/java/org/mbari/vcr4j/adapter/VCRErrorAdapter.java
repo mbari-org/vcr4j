@@ -18,12 +18,11 @@
 
 
 
-package org.mbari.vcr4j;
+package org.mbari.vcr4j.adapter;
 
 
 import mbarix4j.util.IObserver;
 import mbarix4j.util.ObservableSupport;
-import org.mbari.vcr4j.IVCRError;
 
 /**
  *

@@ -1,6 +1,5 @@
 package org.mbari.vcr4j.adapter;
 
-import org.mbari.vcr4j.VCRStateAdapter;
 import org.mbari.vcr4j.VideoIO;
 import org.mbari.vcr4j.rs422.RS422Error;
 import org.mbari.vcr4j.rs422.RS422State;

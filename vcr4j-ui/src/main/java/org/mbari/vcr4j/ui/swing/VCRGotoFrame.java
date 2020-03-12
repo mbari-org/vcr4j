@@ -22,8 +22,8 @@ package org.mbari.vcr4j.ui.swing;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import org.mbari.vcr4j.IVCR;
-import org.mbari.vcr4j.IVCRTimecode;
+import org.mbari.vcr4j.adapter.IVCR;
+import org.mbari.vcr4j.adapter.IVCRTimecode;
 
 /**
  * <p>

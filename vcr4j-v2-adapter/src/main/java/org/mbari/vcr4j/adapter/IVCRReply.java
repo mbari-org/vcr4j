@@ -18,7 +18,7 @@
 
 
 
-package org.mbari.vcr4j;
+package org.mbari.vcr4j.adapter;
 
 
 import mbarix4j.util.IObservable;
@@ -30,19 +30,19 @@ public interface IVCRReply extends IObservable {
 
     /**
      * @return  The error object associated with this reply
-     * @see  org.mbari.vcr4j.IVCRError
+     * @see  IVCRError
      */
     IVCRError getVcrError();
 
     /**
      * @return  The state object associated with this reply
-     * @see  org.mbari.vcr4j.IVCRState
+     * @see  IVCRState
      */
     IVCRState getVcrState();
 
     /**
      * @return  The timecode object associated with this reply
-     * @see  org.mbari.vcr4j.IVCRTimecode
+     * @see  IVCRTimecode
      */
     IVCRTimecode getVcrTimecode();
 

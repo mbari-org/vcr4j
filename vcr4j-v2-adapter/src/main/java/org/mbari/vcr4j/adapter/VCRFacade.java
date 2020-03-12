@@ -1,11 +1,5 @@
 package org.mbari.vcr4j.adapter;
 
-import org.mbari.vcr4j.IVCRError;
-import org.mbari.vcr4j.IVCRReply;
-import org.mbari.vcr4j.IVCRState;
-import org.mbari.vcr4j.IVCRTimecode;
-import org.mbari.vcr4j.IVCRUserbits;
-import org.mbari.vcr4j.VCRAdapter;
 import org.mbari.vcr4j.VideoError;
 import org.mbari.vcr4j.VideoIO;
 import org.mbari.vcr4j.VideoState;

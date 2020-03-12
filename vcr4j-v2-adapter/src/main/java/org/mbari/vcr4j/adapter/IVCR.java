@@ -18,7 +18,7 @@
 
 
 
-package org.mbari.vcr4j;
+package org.mbari.vcr4j.adapter;
 
 
 import org.mbari.vcr4j.time.Timecode;

@@ -21,7 +21,6 @@
 package org.mbari.vcr4j.ui.swing;
 
 import javafx.beans.property.ObjectProperty;
-import org.mbari.vcr4j.IVCRState;
 import org.mbari.vcr4j.VideoController;
 import org.mbari.vcr4j.VideoError;
 import org.mbari.vcr4j.VideoState;

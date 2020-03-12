@@ -32,8 +32,8 @@ import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import mbarix4j.swing.JFancyButton;
-import org.mbari.vcr4j.IVCR;
-import org.mbari.vcr4j.IVCRState;
+import org.mbari.vcr4j.adapter.IVCR;
+import org.mbari.vcr4j.adapter.IVCRState;
 
 /**
  * <p>

@@ -3,7 +3,6 @@ package org.mbari.vcr4j.purejavacomm;
 import org.mbari.vcr4j.rs422.RS422Exception;
 import org.mbari.vcr4j.rs422.RS422ResponseParser;
 import org.mbari.vcr4j.rs422.RS422State;
-import org.mbari.vcr4j.rs422.RS422Timecode;
 import org.mbari.vcr4j.rs422.RS422VideoIO;
 import org.mbari.vcr4j.util.Preconditions;
 import org.slf4j.Logger;

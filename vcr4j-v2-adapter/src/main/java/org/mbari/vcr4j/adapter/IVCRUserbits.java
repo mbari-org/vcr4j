@@ -1,5 +1,5 @@
 /*
- * @(#)IVCRTimecode.java   2009.02.24 at 09:44:52 PST
+ * @(#)IVCRUserbits.java   2009.02.24 at 09:44:52 PST
  *
  * Copyright 2007 MBARI
  *
@@ -18,39 +18,21 @@
 
 
 
-package org.mbari.vcr4j;
+package org.mbari.vcr4j.adapter;
 
-import javafx.beans.property.ObjectProperty;
+
 import mbarix4j.util.IObservable;
-import org.mbari.vcr4j.time.Timecode;
 
 /**
- * @author  brian
+ *
+ * @author brian
  */
-public interface IVCRTimecode extends IObservable {
+public interface IVCRUserbits extends IObservable {
 
     /**
-     * @return The frame number of the current timecode
+     * @return The user bits
      */
-    int getFrame();
+    byte[] getUserbits();
 
-    /**
-     * @return The hour value of the current timecode
-     */
-    int getHour();
-
-    /**
-     * @return The minute value of the current timecode
-     */
-    int getMinute();
-
-    /**
-     * @return The second value of the current timecode
-     */
-    int getSecond();
-
-
-    Timecode getTimecode();
-
-    ObjectProperty<Timecode> timecodeProperty();
+    void setUserbits(byte[] userbits);
 }

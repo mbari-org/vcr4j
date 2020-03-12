@@ -18,7 +18,7 @@
 
 
 
-package org.mbari.vcr4j;
+package org.mbari.vcr4j.adapter;
 
 /**
  * <p>Thrown by VCR class when a problem occurs with a class in the
