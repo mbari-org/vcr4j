@@ -15,19 +15,19 @@ public class Message {
      * localizations based on their localizationUuid. Remote apps
      * should add/update to persistent storage
      */
-    public static String ACTION_ADD = "add";
+    public static final String ACTION_ADD = "add";
 
     /**
      * Removes localizations from the existing set. Remote apps
      * should remove them from persistent storage
      */
-    public static String ACTION_REMOVE = "remove";
+    public static final String ACTION_REMOVE = "remove";
 
-    public static String ACTION_CLEAR = "clear";
+    public static final String ACTION_CLEAR = "clear";
 
-    public static String ACTION_SELECT = "select";
+    public static final String ACTION_SELECT = "select";
 
-    public static String ACTION_DESELECT = "deselect";
+    public static final String ACTION_DESELECT = "deselect";
 
     /**
      * add, delete
@@ -58,5 +58,12 @@ public class Message {
     public List<Localization> getLocalizations() {
         return localizations;
     }
+
+    @Override
+    public String toString() {
+        return "Message{" + "action=" + action + ", localizations=" + localizations + '}';
+    }
+    
+    
 
 }

@@ -41,16 +41,21 @@ public class SelectionController {
     }
 
     public void select(Collection<Localization> localizations, boolean sendNotify) {
-        Collection<Localization> intersection =
-                CollectionUtils.intersection(localizations, controller.getLocalizations());
+//        Collection<Localization> intersection =
+//                CollectionUtils.intersection(localizations, controller.getLocalizations());
+//
+//        selectedLocalizations.clear();
+//        selectedLocalizations.addAll(intersection);
 
-        selectedLocalizations.clear();
-        selectedLocalizations.addAll(intersection);
+//        if (sendNotify) {
+//            controller.getOutgoing()
+//                    .onNext(new Message(Message.ACTION_SELECT, new ArrayList<>(intersection)));
+//        }
 
-        if (sendNotify) {
-            controller.getOutgoing()
-                    .onNext(new Message(Message.ACTION_SELECT, new ArrayList<>(intersection)));
-        }
+          if (sendNotify && !localizations.isEmpty()) {
+              controller.getOutgoing()
+                      .onNext(new Message(Message.ACTION_SELECT, new ArrayList<>(localizations)));
+          }
     }
 
     public void deselect(Collection<Localization> localizations, boolean sendNotify) {

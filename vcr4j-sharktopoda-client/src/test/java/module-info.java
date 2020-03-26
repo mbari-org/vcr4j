@@ -12,9 +12,6 @@ open module vcr4j.sharktopoda.client {
     requires java.prefs;
     exports org.mbari.vcr4j.sharktopoda.client;
     exports org.mbari.vcr4j.sharktopoda.client.localization;
-    exports org.mbari.vcr4j.sharktopoda.client.decorators;
-    exports org.mbari.vcr4j.sharktopoda.client.gson;
-    exports org.mbari.vcr4j.sharktopoda.client.model;
     exports org.mbari.vcr4j.sharktopoda.client.udp;
 
     requires junit;
