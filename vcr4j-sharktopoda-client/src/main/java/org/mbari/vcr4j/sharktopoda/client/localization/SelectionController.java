@@ -28,34 +28,30 @@ public class SelectionController {
                 .filter(msg -> Message.ACTION_DESELECT.equalsIgnoreCase(msg.getAction()))
                 .subscribe(msg -> deselect(msg.getLocalizations(), false));
 
-//        controller.getLocalizations()
-//                .addListener((ListChangeListener<Localization>) c -> {
-//                    while (c.next()) {
-//                        if (c.wasRemoved()) {
-//                            List<Localization> removed = (List<Localization>) c.getRemoved();
-//                            deselect(removed, true);
-//                        }
-//                    }
-//                });
+    //    controller.getLocalizations()
+    //            .addListener((ListChangeListener<Localization>) c -> {
+    //                while (c.next()) {
+    //                    if (c.wasRemoved()) {
+    //                        List<Localization> removed = (List<Localization>) c.getRemoved();
+    //                        deselect(removed, true);
+    //                    }
+    //                }
+    //            });
 
     }
 
     public void select(Collection<Localization> localizations, boolean sendNotify) {
-//        Collection<Localization> intersection =
-//                CollectionUtils.intersection(localizations, controller.getLocalizations());
-//
-//        selectedLocalizations.clear();
-//        selectedLocalizations.addAll(intersection);
+       Collection<Localization> intersection =
+               CollectionUtils.intersection(localizations, controller.getLocalizations());
 
-//        if (sendNotify) {
-//            controller.getOutgoing()
-//                    .onNext(new Message(Message.ACTION_SELECT, new ArrayList<>(intersection)));
-//        }
+       selectedLocalizations.clear();
+       selectedLocalizations.addAll(intersection);
 
-          if (sendNotify && !localizations.isEmpty()) {
-              controller.getOutgoing()
-                      .onNext(new Message(Message.ACTION_SELECT, new ArrayList<>(localizations)));
-          }
+       if (sendNotify) {
+           controller.getOutgoing()
+                   .onNext(new Message(Message.ACTION_SELECT, new ArrayList<>(intersection)));
+       }
+
     }
 
     public void deselect(Collection<Localization> localizations, boolean sendNotify) {
