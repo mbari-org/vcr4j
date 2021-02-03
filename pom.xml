@@ -174,5 +174,13 @@
             <name>bintray</name>
             <url>http://dl.bintray.com/org-mbari/maven</url>
         </repository>
+        <repository>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <id>githumb-hohonuuli-maven</id>
+            <name>github</name>
+            <url>https://maven.pkg.github.com/mbari-org/maven</url>
+        </repository>
     </repositories>
 </project>
