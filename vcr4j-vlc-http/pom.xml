@@ -4,7 +4,7 @@
   <parent>
     <artifactId>vcr4j</artifactId>
     <groupId>org.mbari.vcr4j</groupId>
-    <version>4.4.0.jre11</version>
+    <version>4.4.1.jre11</version>
   </parent>
   <artifactId>vcr4j-vlc-http</artifactId>
   <name>vcr4j-vlc-http</name>
@@ -17,7 +17,7 @@
     <dependency>
       <groupId>com.squareup.okhttp3</groupId>
       <artifactId>okhttp</artifactId>
-      <version>4.2.2</version>
+      <version>4.9.1</version>
     </dependency>
     <dependency>
       <groupId>com.google.code.gson</groupId>

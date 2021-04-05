@@ -10,6 +10,10 @@ module vcr4j.sharktopoda.client {
     requires javafx.base;
     requires vcr4j.core;
     requires java.prefs;
+
+    opens org.mbari.vcr4j.sharktopoda.client.localization to com.google.gson;
+    opens org.mbari.vcr4j.sharktopoda.client.model to com.google.gson;
+
     exports org.mbari.vcr4j.sharktopoda.client;
     exports org.mbari.vcr4j.sharktopoda.client.localization;
     exports org.mbari.vcr4j.sharktopoda.client.decorators;
