@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.mbari.vcr4j</groupId>
     <artifactId>vcr4j</artifactId>
-    <version>4.0.2</version>
+    <version>4.0.3.jre8</version>
   </parent>
   <artifactId>vcr4j-rs422</artifactId>
   <name>vcr4j-rs422</name>
@@ -22,7 +22,7 @@
     <dependency>
       <groupId>org.mbari</groupId>
       <artifactId>mbarix4j</artifactId>
-      <version>1.10.0</version>
+      <version>1.10.1</version>
     </dependency>
   </dependencies>
 </project>
