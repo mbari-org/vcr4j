@@ -35,8 +35,8 @@
     <repositories>
     <repository>
         <id>sparetimelabs</id>
-        <name>sparetimelabes</name>
-        <url>http://www.sparetimelabs.com/maven2/</url>
+        <name>sparetimelabs</name>
+        <url>https://www.sparetimelabs.com/maven2/</url>
     </repository>
     </repositories>
 </project>
