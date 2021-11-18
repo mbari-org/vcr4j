@@ -279,13 +279,13 @@ public class SharktopodaVideoIO implements VideoIO<SharktopodaState, Sharktopoda
         sendCommandAndListenForResponse(packet, 1024, VideoCommands.REQUEST_STATUS);
     }
 
-    private void doShuttle(double rate, VideoCommand command) {
+    private void doShuttle(double rate, VideoCommand<?> command) {
         Play obj = new Play(uuid, rate);
         DatagramPacket packet = asPacket(obj);
         sendCommandAndListenForResponse(packet, 1024, command);
     }
 
-    private void doRequestIndex(VideoCommand command) {
+    private void doRequestIndex(VideoCommand<?> command) {
         RequestElapsedTime obj = new RequestElapsedTime(uuid);
         DatagramPacket packet = asPacket(obj);
         sendCommandAndListenForResponse(packet, 1024, command);

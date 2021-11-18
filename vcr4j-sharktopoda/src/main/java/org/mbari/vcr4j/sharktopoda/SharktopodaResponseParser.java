@@ -99,8 +99,8 @@ public class SharktopodaResponseParser {
             stateSubject.onNext(state);
         }
         else {
-            SharktopodaState state = new SharktopodaState(SharktopodaState.State.UNKNOWN_ERROR);
-            stateSubject.onNext(state);
+            // SharktopodaState state = new SharktopodaState(SharktopodaState.State.UNKNOWN_ERROR);
+            // stateSubject.onNext(state);
             SharktopodaError error = new SharktopodaError(false, true, true, Optional.of(VideoCommands.PLAY));
             errorSubject.onNext(error);
         }
@@ -113,8 +113,10 @@ public class SharktopodaResponseParser {
             stateSubject.onNext(state);
         }
         else {
-            SharktopodaState state = new SharktopodaState(SharktopodaState.State.UNKNOWN_ERROR);
-            stateSubject.onNext(state);
+            SharktopodaError error = new SharktopodaError(false, false, true, Optional.of(VideoCommands.PAUSE));
+            errorSubject.onNext(error);
+            // SharktopodaState state = new SharktopodaState(SharktopodaState.State.UNKNOWN_ERROR);
+            // stateSubject.onNext(state);
         }
     }
 
