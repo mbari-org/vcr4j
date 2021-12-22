@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import io.reactivex.Scheduler;
 import io.reactivex.schedulers.Schedulers;
 import org.mbari.vcr4j.sharktopoda.client.gson.DurationConverter;
+import org.mbari.vcr4j.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.zeromq.SocketType;
@@ -37,6 +38,7 @@ public class IO {
             .setDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
             .registerTypeAdapter(Duration .class, new DurationConverter())
             .create();
+    private final String sourceId = StringUtils.randomString(10);
 
     public IO(int incomingPort,
               int outgoingPort,
@@ -160,5 +162,9 @@ public class IO {
 
     public Gson getGson() {
         return gson;
+    }
+
+    public String getSourceId() {
+        return sourceId;
     }
 }

@@ -74,6 +74,8 @@ public class Localization {
      */
     private Integer height;
 
+    private String sourceId;
+
     /**
      * Default constructor. Will automatically set a localization UUID as this is required in the
      * hashcode, equals method.
@@ -239,6 +241,14 @@ public class Localization {
 
     public void setVideoReferenceUuid(UUID videoReferenceUuid) {
         this.videoReferenceUuid = videoReferenceUuid;
+    }
+
+    public String getSourceId() {
+        return sourceId;
+    }
+
+    public void setSourceId(String sourceId) {
+        this.sourceId = sourceId;
     }
 
     @Override
