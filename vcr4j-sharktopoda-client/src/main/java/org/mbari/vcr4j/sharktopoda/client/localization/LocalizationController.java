@@ -9,6 +9,7 @@ import org.mbari.vcr4j.sharktopoda.client.IOBus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -23,9 +24,11 @@ public class LocalizationController extends IOBus {
      */
     private final ObservableList<Localization> localizations = FXCollections.observableArrayList();
 
+    private final Comparator<Localization> elapsedTimeComparator = Comparator.comparing(Localization::getElapsedTime);
+
     private final ObservableList<Localization> readOnlyLocalizations =
             new SortedList<>(FXCollections.unmodifiableObservableList(localizations),
-                    Comparator.comparing(Localization::getElapsedTime));
+                    elapsedTimeComparator);
 
 
     private final Logger log = LoggerFactory.getLogger(getClass());
