@@ -4,7 +4,7 @@
  */
 open module vcr4j.udp {
     exports org.mbari.vcr4j.udp;
-    requires io.reactivex.rxjava2;
+    requires io.reactivex.rxjava3;
     requires org.slf4j;
     requires vcr4j.core;
     requires junit;

@@ -1,7 +1,8 @@
 package org.mbari.vcr4j.decorators;
 
-import io.reactivex.Observer;
-import io.reactivex.disposables.Disposable;
+
+import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.disposables.Disposable;
 import org.mbari.vcr4j.VideoCommand;
 import org.mbari.vcr4j.VideoError;
 import org.mbari.vcr4j.VideoIO;
@@ -32,7 +33,7 @@ public class StatusDecorator<S extends VideoState, E extends VideoError> impleme
     private Disposable disposable;
 
     public StatusDecorator(VideoIO<S, E> io) {
-        commandSubscriber = new Observer<VideoCommand>() {
+        commandSubscriber = new Observer<>() {
             @Override
             public void onComplete() { }
 

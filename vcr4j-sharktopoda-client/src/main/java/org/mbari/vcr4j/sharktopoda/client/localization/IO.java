@@ -2,8 +2,6 @@ package org.mbari.vcr4j.sharktopoda.client.localization;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import io.reactivex.Scheduler;
-import io.reactivex.schedulers.Schedulers;
 import org.mbari.vcr4j.sharktopoda.client.gson.DurationConverter;
 import org.mbari.vcr4j.util.StringUtils;
 import org.slf4j.Logger;

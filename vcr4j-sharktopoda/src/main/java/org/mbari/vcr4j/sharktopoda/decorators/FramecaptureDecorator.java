@@ -1,10 +1,10 @@
 package org.mbari.vcr4j.sharktopoda.decorators;
 
-import io.reactivex.Observable;
-import io.reactivex.Observer;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.subjects.PublishSubject;
-import io.reactivex.subjects.Subject;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.subjects.PublishSubject;
+import io.reactivex.rxjava3.subjects.Subject;
 import org.mbari.vcr4j.decorators.Decorator;
 import org.mbari.vcr4j.sharktopoda.Constants;
 import org.mbari.vcr4j.sharktopoda.SharktopodaError;
@@ -35,6 +35,8 @@ public class FramecaptureDecorator implements Decorator {
     private final SharktopodaVideoIO io;
     private final int port;
     private DatagramSocket server;
+
+    private final byte[] lock = new byte[]{1};
 
     private final Logger log = LoggerFactory.getLogger(getClass());
     private final Subject<FramecaptureResponse> framecaptureSubject;
@@ -133,8 +135,10 @@ public class FramecaptureDecorator implements Decorator {
     }
 
     private DatagramSocket getServer() throws SocketException {
-        if (server == null || server.isClosed()) {
-            server = new DatagramSocket(port);
+        synchronized (lock) {
+            if (server == null || server.isClosed()) {
+                server = new DatagramSocket(port);
+            }
         }
         return server;
     }

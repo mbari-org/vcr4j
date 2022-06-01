@@ -5,7 +5,7 @@
 module vcr4j.javafx {
     exports org.mbari.vcr4j.javafx;
     exports org.mbari.vcr4j.javafx.decorators;
-    requires io.reactivex.rxjava2;
+    requires io.reactivex.rxjava3;
     requires javafx.media;
     requires vcr4j.core;
 }

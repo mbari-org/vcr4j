@@ -11,18 +11,18 @@ import java.util.Optional;
  */
 public class UDPError implements VideoError {
 
-    private final Optional<VideoCommand> videoCommand;
+    private final Optional<VideoCommand<?>> videoCommand;
     private final boolean connectionError;
     private final boolean parserError;
 
-    public UDPError(boolean connectionError, boolean parserError, Optional<VideoCommand> videoCommand) {
+    public UDPError(boolean connectionError, boolean parserError, Optional<VideoCommand<?>> videoCommand) {
         this.connectionError = connectionError;
         this.parserError = parserError;
         this.videoCommand = videoCommand;
     }
 
     @Override
-    public Optional<VideoCommand> getVideoCommand() {
+    public Optional<VideoCommand<?>> getVideoCommand() {
         return videoCommand;
     }
 

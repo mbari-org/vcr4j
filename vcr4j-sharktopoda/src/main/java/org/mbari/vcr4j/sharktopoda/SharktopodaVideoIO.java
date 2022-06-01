@@ -1,8 +1,8 @@
 package org.mbari.vcr4j.sharktopoda;
 
-import io.reactivex.Observable;
-import io.reactivex.subjects.PublishSubject;
-import io.reactivex.subjects.Subject;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.subjects.PublishSubject;
+import io.reactivex.rxjava3.subjects.Subject;
 import org.mbari.vcr4j.VideoCommand;
 import org.mbari.vcr4j.VideoIO;
 import org.mbari.vcr4j.VideoIndex;
@@ -46,7 +46,7 @@ public class SharktopodaVideoIO implements VideoIO<SharktopodaState, Sharktopoda
      * UDP request are done in real time. So we should always add a timestamp to the VideoIndex
      */
     private final Subject<VideoIndex> indexSubject;
-    private final Subject<VideoCommand> commandSubject;
+    private final Subject<VideoCommand<?>> commandSubject;
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     private final SharktopodaResponseParser responseParser;
@@ -65,7 +65,7 @@ public class SharktopodaVideoIO implements VideoIO<SharktopodaState, Sharktopoda
         errorSubject = s3.toSerialized();
         PublishSubject<VideoIndex> s4 = PublishSubject.create();
         indexSubject = s4.toSerialized();
-        PublishSubject<VideoCommand> s5 = PublishSubject.create();
+        PublishSubject<VideoCommand<?>> s5 = PublishSubject.create();
         commandSubject = s5.toSerialized();
 
         responseParser = new SharktopodaResponseParser(uuid,
@@ -130,7 +130,7 @@ public class SharktopodaVideoIO implements VideoIO<SharktopodaState, Sharktopoda
     }
 
     public synchronized void sendCommandAndListenForResponse(DatagramPacket packet,
-            int sizeBytes, VideoCommand command) {
+            int sizeBytes, VideoCommand<?> command) {
         try {
             int timeout = (command instanceof OpenCmd) ? 20000 : 1000;
             byte[] msg = new byte[sizeBytes];
@@ -180,12 +180,12 @@ public class SharktopodaVideoIO implements VideoIO<SharktopodaState, Sharktopoda
     }
 
     @Override
-    public <A extends VideoCommand> void send(A videoCommand) {
+    public <A extends VideoCommand<?>> void send(A videoCommand) {
         commandSubject.onNext(videoCommand);
     }
 
     @Override
-    public Subject<VideoCommand> getCommandSubject() {
+    public Subject<VideoCommand<?>> getCommandSubject() {
         return commandSubject;
     }
 

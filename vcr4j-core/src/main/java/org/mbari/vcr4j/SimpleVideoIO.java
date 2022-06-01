@@ -1,8 +1,8 @@
 package org.mbari.vcr4j;
 
 
-import io.reactivex.Observable;
-import io.reactivex.subjects.Subject;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.subjects.Subject;
 
 /**
  * Sometimes you need a VideoIO object that is an amalgam of observables from different sources.

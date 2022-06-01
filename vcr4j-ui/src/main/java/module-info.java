@@ -6,7 +6,7 @@ module vcr4j.ui {
     requires com.jfoenix;
     requires de.jensd.fx.fontawesomefx.commons;
     requires de.jensd.fx.fontawesomefx.materialicons;
-    requires io.reactivex.rxjava2;
+    requires io.reactivex.rxjava3;
     requires javafx.graphics;
     requires javafx.fxml;
     requires javafx.controls;

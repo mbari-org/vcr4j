@@ -1,8 +1,8 @@
 package org.mbari.vcr4j.udp;
 
-import io.reactivex.Observable;
-import io.reactivex.subjects.PublishSubject;
-import io.reactivex.subjects.Subject;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.subjects.PublishSubject;
+import io.reactivex.rxjava3.subjects.Subject;
 import org.mbari.vcr4j.VideoCommand;
 import org.mbari.vcr4j.VideoIO;
 import org.mbari.vcr4j.VideoIndex;
@@ -34,7 +34,7 @@ public class UDPVideoIO implements VideoIO<UDPState, UDPError> {
     private byte[] receiveMessage = new byte[1024];
     public static final byte[] GET_TIMECODE = "ltc.".getBytes();
     private final Logger log = LoggerFactory.getLogger(getClass());
-    private final Optional<VideoCommand> timecodeRequest = Optional.of(VideoCommands.REQUEST_TIMECODE);
+    private final Optional<VideoCommand<?>> timecodeRequest = Optional.of(VideoCommands.REQUEST_TIMECODE);
     UDPResponseParser responseParser = new UDPResponseParser();
     private final Subject<UDPState> stateSubject;
 
@@ -44,7 +44,7 @@ public class UDPVideoIO implements VideoIO<UDPState, UDPError> {
     private final Observable<VideoIndex> indexObservable = responseParser.getTimecodeObservable()
             .map(tc -> new VideoIndex(Optional.of(Instant.now()), Optional.empty(), Optional.of(tc)));
 
-    private final Subject<VideoCommand> commandSubject;
+    private final Subject<VideoCommand<?>> commandSubject;
 
 
     public UDPVideoIO(String host, int port) throws UnknownHostException, SocketException {
@@ -52,7 +52,7 @@ public class UDPVideoIO implements VideoIO<UDPState, UDPError> {
 
         PublishSubject<UDPState>  s1 = PublishSubject.create();
         stateSubject = s1.toSerialized();
-        PublishSubject<VideoCommand> s2 = PublishSubject.create();
+        PublishSubject<VideoCommand<?>> s2 = PublishSubject.create();
         commandSubject = s2.toSerialized();
 
         inetAddress = InetAddress.getByName(host);
@@ -114,12 +114,12 @@ public class UDPVideoIO implements VideoIO<UDPState, UDPError> {
     }
 
     @Override
-    public <A extends VideoCommand> void send(A videoCommand) {
+    public <A extends VideoCommand<?>> void send(A videoCommand) {
         commandSubject.onNext(videoCommand);
     }
 
     @Override
-    public Subject<VideoCommand> getCommandSubject() {
+    public Subject<VideoCommand<?>> getCommandSubject() {
         return commandSubject;
     }
 
@@ -147,14 +147,6 @@ public class UDPVideoIO implements VideoIO<UDPState, UDPError> {
         }
 
         return socket;
-    }
-
-    @Override
-    protected void finalize() throws Throwable {
-        if (socket != null && !socket.isClosed()) {
-            socket.close();
-        }
-        super.finalize();
     }
 
     @Override

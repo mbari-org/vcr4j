@@ -1,8 +1,8 @@
 package org.mbari.vcr4j.sharktopoda.client.udp;
 
 import com.google.gson.Gson;
-import io.reactivex.Observable;
 
+import io.reactivex.rxjava3.core.Observable;
 import org.mbari.vcr4j.sharktopoda.client.model.GenericCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

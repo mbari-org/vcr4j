@@ -8,7 +8,7 @@ module vcr4j.core {
     exports org.mbari.vcr4j.decorators;
     exports org.mbari.vcr4j.time;
     exports org.mbari.vcr4j.util;
-    requires io.reactivex.rxjava2;
+    requires io.reactivex.rxjava3;
     requires org.reactivestreams;
     requires org.slf4j;
 }

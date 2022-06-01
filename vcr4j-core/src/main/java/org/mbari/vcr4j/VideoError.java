@@ -12,5 +12,5 @@ public interface VideoError {
     /**
      * @return The command that triggered the error
      */
-    Optional<VideoCommand> getVideoCommand();
+    Optional<VideoCommand<?>> getVideoCommand();
 }

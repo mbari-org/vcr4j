@@ -1,7 +1,7 @@
 package org.mbari.vcr4j.decorators;
 
-import io.reactivex.Observer;
-import io.reactivex.disposables.Disposable;
+import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.disposables.Disposable;
 import org.mbari.vcr4j.VideoCommand;
 import org.mbari.vcr4j.VideoError;
 import org.mbari.vcr4j.VideoIO;
@@ -24,7 +24,7 @@ public class VideoSyncDecorator<S extends VideoState, E extends VideoError> impl
     private Disposable disposable;
 
     // Kill the timer when the commandSubject gets closed
-    Observer<VideoCommand> observer = new Observer<VideoCommand>() {
+    Observer<VideoCommand<?>> observer = new Observer<>() {
         @Override
         public void onComplete() {
             timer.cancel();

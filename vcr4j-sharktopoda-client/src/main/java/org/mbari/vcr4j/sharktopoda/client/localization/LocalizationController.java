@@ -1,7 +1,6 @@
 package org.mbari.vcr4j.sharktopoda.client.localization;
 
 
-import io.reactivex.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
@@ -10,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @author Brian Schlining
@@ -32,7 +30,7 @@ public class LocalizationController extends IOBus {
 
     public LocalizationController() {
 
-        Observable<Message> msgObservable = incoming.ofType(Message.class);
+        var msgObservable = incoming.ofType(Message.class);
 
         msgObservable
                 .filter(msg -> Message.ACTION_ADD.equalsIgnoreCase(msg.getAction()))

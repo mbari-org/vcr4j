@@ -4,7 +4,7 @@
  */
 module vcr4j.sharktopoda {
     requires com.google.gson;
-    requires io.reactivex.rxjava2;
+    requires io.reactivex.rxjava3;
     requires org.slf4j;
     requires vcr4j.core;
     

@@ -3,7 +3,7 @@
  * @since 2020-03-12T13:03:00
  */
 open module vcr4j.sharktopoda.client {
-    requires io.reactivex.rxjava2;
+    requires io.reactivex.rxjava3;
     requires com.google.gson;
     requires org.slf4j;
     requires jeromq;

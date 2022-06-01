@@ -1,9 +1,7 @@
 package org.mbari.vcr4j;
 
-
-
-import io.reactivex.Observable;
-import io.reactivex.subjects.Subject;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.subjects.Subject;
 
 import java.io.Closeable;
 
@@ -11,7 +9,7 @@ public interface VideoIO<S extends VideoState, E extends VideoError> extends Clo
 
 
 
-    <A extends VideoCommand> void send(A videoCommand);
+    <A extends VideoCommand<?>> void send(A videoCommand);
 
     /**
      * We foresee needing to chain several VideoIO services together. The current plan is
@@ -21,7 +19,7 @@ public interface VideoIO<S extends VideoState, E extends VideoError> extends Clo
      * for each frame.
      * @return A Subject that is the pipeline for all commands sent to the VideoIO provider
      */
-    Subject<VideoCommand> getCommandSubject();
+    Subject<VideoCommand<?>> getCommandSubject();
 
 
     String getConnectionID();
