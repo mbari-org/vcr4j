@@ -6,7 +6,7 @@ import java.util.UUID;
  * @author Brian Schlining
  * @since 2016-08-26T11:32:00
  */
-public class PlayCmd extends RCommand<PlayCmd.Request> {
+public class PlayCmd extends RCommand<PlayCmd.Request, PlayCmd.Response> {
     public static final String Command = "play";
 
     public PlayCmd(UUID uuid, Double rate) {
@@ -40,9 +40,19 @@ public class PlayCmd extends RCommand<PlayCmd.Request> {
     }
 
     public static class Response extends RResponse {
-        public Response(String response, String status) {
-            super(response, status);
+        public Response(String status, UUID uuid) {
+            super(Command, status, uuid);
         }
+
+        @Override
+        public boolean success() {
+            return isOk();
+        }
+    }
+
+    @Override
+    public Class<Response> responseType() {
+        return Response.class;
     }
 
 }

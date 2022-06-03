@@ -5,9 +5,10 @@ import org.mbari.vcr4j.VideoCommand;
 import java.net.URL;
 import java.util.UUID;
 
-public class RequestVideoInfoCmd implements VideoCommand<RequestVideoInfoCmd.Request> {
+public class RequestVideoInfoCmd
+        implements VideoCommand<RequestVideoInfoCmd.Request> {
 
-    public static final String Command = "request video information";
+    public static final String Command = "request information";
     private final Request value;
 
     public RequestVideoInfoCmd() {
@@ -36,27 +37,16 @@ public class RequestVideoInfoCmd implements VideoCommand<RequestVideoInfoCmd.Req
         }
     }
 
-    public static class Response {
-        private String response;
-        private UUID uuid;
+    public static class Response extends RResponse {
         private URL url;
         private Long durationMillis;
         private Double frameRate;
 
-        public Response(String response, UUID uuid, URL url, Long durationMillis, Double frameRate) {
-            this.response = response;
-            this.uuid = uuid;
+        public Response(UUID uuid, URL url, Long durationMillis, Double frameRate) {
+            super(Command, null, uuid);
             this.url = url;
             this.durationMillis = durationMillis;
             this.frameRate = frameRate;
-        }
-
-        public String getResponse() {
-            return response;
-        }
-
-        public UUID getUuid() {
-            return uuid;
         }
 
         public URL getUrl() {
@@ -69,6 +59,10 @@ public class RequestVideoInfoCmd implements VideoCommand<RequestVideoInfoCmd.Req
 
         public Double getFrameRate() {
             return frameRate;
+        }
+        @Override
+        public boolean success() {
+            return getUuid() != null && durationMillis != null && frameRate != null;
         }
     }
 }

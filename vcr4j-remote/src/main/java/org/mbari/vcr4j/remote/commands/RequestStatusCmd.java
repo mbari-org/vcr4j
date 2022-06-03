@@ -1,15 +1,19 @@
 package org.mbari.vcr4j.remote.commands;
 
+import org.mbari.vcr4j.VideoState;
+import org.mbari.vcr4j.remote.RState;
+
 import java.util.UUID;
 
-public class CloseCmd extends RCommand<CloseCmd.Request, CloseCmd.Response> {
-    public static final String Command = "close";
+public class RequestStatusCmd extends RCommand<RequestStatusCmd.Request, RequestStatusCmd.Response> {
 
-    public CloseCmd(CloseCmd.Request value) {
+    public static final String Command = "request status";
+
+    public RequestStatusCmd(Request value) {
         super(value);
     }
 
-    public CloseCmd(UUID uuid) {
+    public RequestStatusCmd(UUID uuid) {
         this(new Request(uuid));
     }
 
@@ -19,15 +23,21 @@ public class CloseCmd extends RCommand<CloseCmd.Request, CloseCmd.Response> {
         }
     }
 
-    // Ack
     public static class Response extends RResponse {
+
+        private RState state;
         public Response(String status, UUID uuid) {
             super(Command, status, uuid);
+            state = RState.parse(status);
+        }
+
+        public RState getState() {
+            return state;
         }
 
         @Override
         public boolean success() {
-            return isAck();
+            return state != null;
         }
     }
 

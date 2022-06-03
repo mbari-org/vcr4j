@@ -5,7 +5,7 @@ import org.mbari.vcr4j.VideoCommand;
 import java.net.URL;
 import java.util.UUID;
 
-public class OpenCmd extends RCommand<OpenCmd.Request> {
+public class OpenCmd extends RCommand<OpenCmd.Request, OpenCmd.Response> {
     public static final String Command = "open";
 
     public OpenCmd(UUID uuid, URL url) {
@@ -32,9 +32,19 @@ public class OpenCmd extends RCommand<OpenCmd.Request> {
     }
 
     public static class Response extends RResponse {
-        public Response(String response, String status) {
-            super(response, status);
+        public Response(String status, UUID uuid) {
+            super(Command, status, uuid);
         }
+
+        @Override
+        public boolean success() {
+            return isOk();
+        }
+    }
+
+    @Override
+    public Class<Response> responseType() {
+        return Response.class;
     }
 
 }

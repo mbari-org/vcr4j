@@ -2,14 +2,15 @@ package org.mbari.vcr4j.remote.commands;
 
 import java.util.UUID;
 
-public class CloseCmd extends RCommand<CloseCmd.Request, CloseCmd.Response> {
-    public static final String Command = "close";
+public class PauseCmd extends RCommand<PauseCmd.Request, PauseCmd.Response> {
 
-    public CloseCmd(CloseCmd.Request value) {
+    public static final String Command = "pause";
+
+    public PauseCmd(Request value) {
         super(value);
     }
 
-    public CloseCmd(UUID uuid) {
+    public PauseCmd(UUID uuid) {
         this(new Request(uuid));
     }
 
@@ -19,7 +20,6 @@ public class CloseCmd extends RCommand<CloseCmd.Request, CloseCmd.Response> {
         }
     }
 
-    // Ack
     public static class Response extends RResponse {
         public Response(String status, UUID uuid) {
             super(Command, status, uuid);
@@ -27,7 +27,7 @@ public class CloseCmd extends RCommand<CloseCmd.Request, CloseCmd.Response> {
 
         @Override
         public boolean success() {
-            return isAck();
+            return isOk();
         }
     }
 

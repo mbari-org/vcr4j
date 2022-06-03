@@ -4,7 +4,7 @@ import org.mbari.vcr4j.VideoCommand;
 
 import java.util.UUID;
 
-public class RCommand<A extends RRequest> implements VideoCommand<A> {
+public abstract class RCommand<A extends RRequest, B extends RResponse> implements VideoCommand<A> {
 
     private final A value;
 
@@ -21,5 +21,7 @@ public class RCommand<A extends RRequest> implements VideoCommand<A> {
     public A getValue() {
         return value;
     }
+
+    public abstract Class<B> responseType();
 
 }

@@ -12,26 +12,30 @@ public class RError implements VideoError {
     private final boolean unknownError;
     private final VideoCommand<?> videoCommand;
 
-    private String message;
+    private final String message;
+
+    private final Throwable exception;
 
     public RError(boolean connectionError,
                   boolean parserError,
                   boolean unknownError,
                   VideoCommand<?> videoCommand,
-                  String message) {
+                  String message,
+                  Throwable throwable) {
         this.connectionError = connectionError;
         this.parserError = parserError;
         this.unknownError = unknownError;
         this.videoCommand = videoCommand;
         this.message = message;
+        this.exception = throwable;
     }
 
     public RError(boolean connectionError, boolean parserError, boolean unknownError, VideoCommand<?> videoCommand) {
-        this(connectionError, parserError, unknownError, videoCommand, null);
+        this(connectionError, parserError, unknownError, videoCommand, null, null);
     }
 
     public RError(boolean connectionError, boolean parserError, boolean unknownError) {
-        this(connectionError, parserError, unknownError, null, null);
+        this(connectionError, parserError, unknownError, null, null, null);
     }
 
     @Override
@@ -42,6 +46,10 @@ public class RError implements VideoError {
     @Override
     public Optional<VideoCommand<?>> getVideoCommand() {
         return Optional.ofNullable(videoCommand);
+    }
+
+    public Optional<Throwable> getException() {
+        return Optional.ofNullable(exception);
     }
 
     public boolean isConnectionError() {

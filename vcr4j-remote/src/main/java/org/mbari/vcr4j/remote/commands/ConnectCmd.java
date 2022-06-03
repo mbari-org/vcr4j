@@ -58,8 +58,13 @@ public class ConnectCmd implements VideoCommand<ConnectCmd.Request> {
     }
 
     public static class Response extends RResponse {
-        public Response(String response, String status) {
-            super(response, status);
+        public Response(String status) {
+            super(Command, status);
+        }
+
+        @Override
+        public boolean success() {
+            return isAck();
         }
     }
 
