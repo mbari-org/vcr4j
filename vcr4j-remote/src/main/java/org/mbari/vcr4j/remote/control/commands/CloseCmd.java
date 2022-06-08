@@ -27,7 +27,7 @@ public class CloseCmd extends RCommand<CloseCmd.Request, CloseCmd.Response> {
 
         @Override
         public boolean success() {
-            return isAck();
+            return isOk();
         }
     }
 

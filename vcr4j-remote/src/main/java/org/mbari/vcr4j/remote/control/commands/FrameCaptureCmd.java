@@ -69,7 +69,7 @@ public class FrameCaptureCmd extends RCommand<FrameCaptureCmd.Request, FrameCapt
 
         @Override
         public boolean success() {
-            return isAck() || (isOk() && elapsedTimeMillis != null);
+            return isOk() && elapsedTimeMillis != null;
         }
     }
 }

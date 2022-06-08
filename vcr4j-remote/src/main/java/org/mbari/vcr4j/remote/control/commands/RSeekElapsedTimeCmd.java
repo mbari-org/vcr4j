@@ -37,7 +37,7 @@ public class RSeekElapsedTimeCmd
 
         @Override
         public boolean success() {
-            return isAck();
+            return isOk();
         }
     }
 

@@ -13,7 +13,6 @@ import org.mbari.vcr4j.VideoIndex;
 import org.mbari.vcr4j.commands.SeekElapsedTimeCmd;
 import org.mbari.vcr4j.commands.ShuttleCmd;
 import org.mbari.vcr4j.commands.VideoCommands;
-import org.mbari.vcr4j.remote.commands.*;
 import org.mbari.vcr4j.remote.control.commands.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -171,6 +170,10 @@ public class RVideoIO implements VideoIO<RState, RError> {
 
     @Override
     public Observable<RError> getErrorObservable() {
+        return errorSubject;
+    }
+
+    protected Subject<RError> getErrorSubject() {
         return errorSubject;
     }
 

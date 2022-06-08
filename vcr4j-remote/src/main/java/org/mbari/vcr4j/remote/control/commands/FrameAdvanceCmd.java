@@ -29,7 +29,7 @@ public class FrameAdvanceCmd extends RCommand<FrameAdvanceCmd.Request, FrameAdva
 
         @Override
         public boolean success() {
-            return isAck();
+            return isOk();
         }
     }
 

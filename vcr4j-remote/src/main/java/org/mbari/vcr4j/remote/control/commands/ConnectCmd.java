@@ -64,7 +64,7 @@ public class ConnectCmd implements VideoCommand<ConnectCmd.Request> {
 
         @Override
         public boolean success() {
-            return isAck();
+            return isOk();
         }
     }
 

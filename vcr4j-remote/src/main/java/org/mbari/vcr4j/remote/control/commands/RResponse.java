@@ -34,9 +34,5 @@ public abstract class RResponse {
         return status != null && status.equalsIgnoreCase("ok");
     }
 
-    public boolean isAck() {
-        return status != null && status.equalsIgnoreCase("ack");
-    }
-
     public abstract boolean success();
 }
