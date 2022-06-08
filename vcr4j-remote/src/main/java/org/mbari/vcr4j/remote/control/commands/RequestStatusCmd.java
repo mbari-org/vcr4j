@@ -1,16 +1,18 @@
-package org.mbari.vcr4j.remote.commands;
+package org.mbari.vcr4j.remote.control.commands;
+
+import org.mbari.vcr4j.remote.control.RState;
 
 import java.util.UUID;
 
-public class PauseCmd extends RCommand<PauseCmd.Request, PauseCmd.Response> {
+public class RequestStatusCmd extends RCommand<RequestStatusCmd.Request, RequestStatusCmd.Response> {
 
-    public static final String Command = "pause";
+    public static final String Command = "request status";
 
-    public PauseCmd(Request value) {
+    public RequestStatusCmd(Request value) {
         super(value);
     }
 
-    public PauseCmd(UUID uuid) {
+    public RequestStatusCmd(UUID uuid) {
         this(new Request(uuid));
     }
 
@@ -21,13 +23,20 @@ public class PauseCmd extends RCommand<PauseCmd.Request, PauseCmd.Response> {
     }
 
     public static class Response extends RResponse {
+
+        private RState state;
         public Response(String status, UUID uuid) {
             super(Command, status, uuid);
+            state = RState.parse(status);
+        }
+
+        public RState getState() {
+            return state;
         }
 
         @Override
         public boolean success() {
-            return isOk();
+            return state != null;
         }
     }
 

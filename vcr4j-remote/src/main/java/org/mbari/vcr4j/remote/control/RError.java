@@ -1,4 +1,4 @@
-package org.mbari.vcr4j.remote;
+package org.mbari.vcr4j.remote.control;
 
 import org.mbari.vcr4j.VideoCommand;
 import org.mbari.vcr4j.VideoError;

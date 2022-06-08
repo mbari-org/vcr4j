@@ -1,4 +1,4 @@
-package org.mbari.vcr4j.remote.commands;
+package org.mbari.vcr4j.remote.control.commands;
 
 import java.util.UUID;
 
@@ -31,11 +31,11 @@ public abstract class RResponse {
     }
 
     public boolean isOk() {
-        return status.equalsIgnoreCase("ok");
+        return status != null && status.equalsIgnoreCase("ok");
     }
 
     public boolean isAck() {
-        return status.equalsIgnoreCase("ack");
+        return status != null && status.equalsIgnoreCase("ack");
     }
 
     public abstract boolean success();

@@ -1,31 +1,23 @@
-package org.mbari.vcr4j.remote.commands;
+package org.mbari.vcr4j.remote.control.commands;
 
 import java.util.UUID;
 
-public class SeekElapsedTimeCmd
-        extends RCommand<SeekElapsedTimeCmd.Request, SeekElapsedTimeCmd.Response> {
+public class FrameAdvanceCmd extends RCommand<FrameAdvanceCmd.Request, FrameAdvanceCmd.Response> {
 
     public static final String Command = "seek elapsed time";
 
-    public SeekElapsedTimeCmd(Request value) {
+    public FrameAdvanceCmd(FrameAdvanceCmd.Request value) {
         super(value);
     }
 
-    public SeekElapsedTimeCmd(UUID uuid, Long elapsedTimeMillis) {
-        this(new Request(uuid, elapsedTimeMillis));
+    public FrameAdvanceCmd(UUID uuid) {
+        this(new Request(uuid));
     }
 
     public static class Request extends RRequest {
 
-        private Long elapsedTimeMillis;
-
-        public Request(UUID uuid, Long elapsedTimeMillis) {
+        public Request(UUID uuid) {
             super(Command, uuid);
-            this.elapsedTimeMillis = elapsedTimeMillis;
-        }
-
-        public Long getElapsedTimeMillis() {
-            return elapsedTimeMillis;
         }
     }
 

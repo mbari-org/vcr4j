@@ -1,21 +1,19 @@
-package org.mbari.vcr4j.remote.commands;
+package org.mbari.vcr4j.remote.control.commands;
 
 import java.util.UUID;
 
-public class FrameAdvanceCmd extends RCommand<FrameAdvanceCmd.Request, FrameAdvanceCmd.Response> {
+public class CloseCmd extends RCommand<CloseCmd.Request, CloseCmd.Response> {
+    public static final String Command = "close";
 
-    public static final String Command = "seek elapsed time";
-
-    public FrameAdvanceCmd(FrameAdvanceCmd.Request value) {
+    public CloseCmd(CloseCmd.Request value) {
         super(value);
     }
 
-    public FrameAdvanceCmd(UUID uuid) {
+    public CloseCmd(UUID uuid) {
         this(new Request(uuid));
     }
 
     public static class Request extends RRequest {
-
         public Request(UUID uuid) {
             super(Command, uuid);
         }
@@ -23,8 +21,8 @@ public class FrameAdvanceCmd extends RCommand<FrameAdvanceCmd.Request, FrameAdva
 
     // Ack
     public static class Response extends RResponse {
-        public Response(String status) {
-            super(Command, status);
+        public Response(String status, UUID uuid) {
+            super(Command, status, uuid);
         }
 
         @Override

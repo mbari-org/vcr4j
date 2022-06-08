@@ -1,43 +1,30 @@
-package org.mbari.vcr4j.remote.commands;
-
-import org.mbari.vcr4j.VideoCommand;
+package org.mbari.vcr4j.remote.control.commands;
 
 import java.net.URL;
 import java.util.UUID;
 
-public class RequestVideoInfoCmd
-        implements VideoCommand<RequestVideoInfoCmd.Request> {
+public class RequestVideoInfoCmd extends RCommand<RequestVideoInfoCmd.Request, RequestVideoInfoCmd.Response> {
 
     public static final String Command = "request information";
-    private final Request value;
 
     public RequestVideoInfoCmd() {
-        value = new Request();
+        super(new Request());
     }
+
 
     @Override
-    public String getName() {
-        return Command;
+    public Class<Response> responseType() {
+        return Response.class;
     }
 
-    @Override
-    public Request getValue() {
-        return value;
-    }
-
-    public static class Request {
-        private String command;
+    public static class Request extends RRequest {
 
         public Request() {
-            this.command = Command;
-        }
-
-        public String getCommand() {
-            return command;
+            super(Command, null);
         }
     }
 
-    public static class Response extends RResponse {
+    public static class Response extends RResponse implements VideoInfo {
         private URL url;
         private Long durationMillis;
         private Double frameRate;

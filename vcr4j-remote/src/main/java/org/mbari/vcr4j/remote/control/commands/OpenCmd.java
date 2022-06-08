@@ -1,6 +1,4 @@
-package org.mbari.vcr4j.remote.commands;
-
-import org.mbari.vcr4j.VideoCommand;
+package org.mbari.vcr4j.remote.control.commands;
 
 import java.net.URL;
 import java.util.UUID;

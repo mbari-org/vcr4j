@@ -1,8 +1,6 @@
-package org.mbari.vcr4j.remote.commands;
+package org.mbari.vcr4j.remote.control.commands;
 
 import org.mbari.vcr4j.VideoCommand;
-
-import java.util.UUID;
 
 public abstract class RCommand<A extends RRequest, B extends RResponse> implements VideoCommand<A> {
 
@@ -23,5 +21,10 @@ public abstract class RCommand<A extends RRequest, B extends RResponse> implemen
     }
 
     public abstract Class<B> responseType();
+
+//    public DatagramPacket asPacket(InetAddress inetAddress, int port) {
+//        byte[] b = RVideoIO.GSON.toJson(getValue()).getBytes(StandardCharsets.UTF_8);
+//        return new DatagramPacket(b, b.length, inetAddress, port);
+//    }
 
 }
