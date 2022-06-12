@@ -3,7 +3,6 @@ package org.mbari.vcr4j.remote.control;
 import io.reactivex.rxjava3.subjects.Subject;
 import org.mbari.vcr4j.VideoIndex;
 
-import org.mbari.vcr4j.remote.commands.*;
 import org.mbari.vcr4j.remote.control.commands.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,9 +49,7 @@ public class RResponseParser {
             errorSubject.onNext(e);
             return Optional.empty();
         }
-    }
-
-    public <B extends RResponse> void handle(RCommand<?, B> command, String msg) {
+    }    public <B extends RResponse> void handle(RCommand<?, B> command, String msg) {
         parse(command, msg).ifPresent(response -> {
             if (response instanceof RequestStatusCmd.Response r) {
                 stateSubject.onNext(r.getState());

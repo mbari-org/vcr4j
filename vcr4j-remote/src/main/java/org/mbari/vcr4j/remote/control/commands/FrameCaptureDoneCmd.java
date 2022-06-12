@@ -2,16 +2,19 @@ package org.mbari.vcr4j.remote.control.commands;
 
 import java.util.UUID;
 
-public class FrameCaptureCmd extends RCommand<FrameCaptureCmd.Request, FrameCaptureCmd.Response> {
+public class FrameCaptureDoneCmd extends RCommand<FrameCaptureDoneCmd.Request, FrameCaptureDoneCmd.Response> {
 
-    public static final String Command = "frame capture";
+    public static final String Command = "frame capture done";
 
-    public FrameCaptureCmd(Request value) {
+    public FrameCaptureDoneCmd(Request value) {
         super(value);
     }
 
-    public FrameCaptureCmd(UUID uuid, UUID imageReferenceUuid, String imageLocation) {
-        this(new Request(uuid, imageReferenceUuid, imageLocation));
+    public FrameCaptureDoneCmd(UUID uuid,
+                               UUID imageReferenceUuid,
+                               String imageLocation,
+                               Long elapsedTimeMilllis) {
+        super(new Request(uuid, imageReferenceUuid, imageLocation, elapsedTimeMilllis));
     }
 
     @Override
@@ -21,13 +24,18 @@ public class FrameCaptureCmd extends RCommand<FrameCaptureCmd.Request, FrameCapt
 
     public static class Request extends RRequest {
 
+        private Long elapsedTimeMillis;
         private String imageLocation;
         private UUID imageReferenceUuid;
 
-        public Request(UUID uuid, UUID imageReferenceUuid, String imageLocation) {
+        public Request(UUID uuid,
+                       UUID imageReferenceUuid,
+                       String imageLocation,
+                       Long elapsedTimeMillis) {
             super(Command, uuid);
             this.imageReferenceUuid = imageReferenceUuid;
             this.imageLocation = imageLocation;
+            this.elapsedTimeMillis = elapsedTimeMillis;
         }
 
         public String getImageLocation() {
@@ -37,9 +45,13 @@ public class FrameCaptureCmd extends RCommand<FrameCaptureCmd.Request, FrameCapt
         public UUID getImageReferenceUuid() {
             return imageReferenceUuid;
         }
+
+        public Long getElapsedTimeMillis() {
+            return elapsedTimeMillis;
+        }
     }
 
-    // Ack
+
     public static class Response extends RResponse {
         public Response(String status) {
             super(Command, status);

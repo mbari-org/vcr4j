@@ -22,9 +22,4 @@ public abstract class RCommand<A extends RRequest, B extends RResponse> implemen
 
     public abstract Class<B> responseType();
 
-//    public DatagramPacket asPacket(InetAddress inetAddress, int port) {
-//        byte[] b = RVideoIO.GSON.toJson(getValue()).getBytes(StandardCharsets.UTF_8);
-//        return new DatagramPacket(b, b.length, inetAddress, port);
-//    }
-
 }

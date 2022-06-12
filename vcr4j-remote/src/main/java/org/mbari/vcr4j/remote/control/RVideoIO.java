@@ -115,6 +115,10 @@ public class RVideoIO implements VideoIO<RState, RError> {
                 .forEach(this::doCommand);
         disposables.add(a);
 
+        a = commandSubject.ofType(FrameCaptureCmd.class)
+                .forEach(this::doCommand);
+        disposables.add(a);
+
 
         try {
             socket = new DatagramSocket(0);

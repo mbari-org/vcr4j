@@ -19,13 +19,28 @@ public class NoopCmd extends RCommand<NoopCmd.Request, NoopCmd.Response> {
     }
 
     public static class Response extends RResponse {
+
+        private String cause;
         public Response(String response, String status) {
             super(response, status);
+        }
+
+        public Response(String response, String status, String cause) {
+            this(response, status, cause, null);
+        }
+
+        public Response(String response, String status, String cause, UUID uuid) {
+            super(response, status, uuid);
+            this.cause = cause;
         }
 
         @Override
         public boolean success() {
             return true;
+        }
+
+        public String getCause() {
+            return cause;
         }
     }
 }

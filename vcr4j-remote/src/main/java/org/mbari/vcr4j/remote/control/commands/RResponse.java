@@ -3,6 +3,9 @@ package org.mbari.vcr4j.remote.control.commands;
 import java.util.UUID;
 
 public abstract class RResponse {
+
+    public static final String OK = "ok";
+    public static final String FAILED = "failed";
     private final String response;
     private final String status;
 
@@ -31,7 +34,7 @@ public abstract class RResponse {
     }
 
     public boolean isOk() {
-        return status != null && status.equalsIgnoreCase("ok");
+        return status != null && status.equalsIgnoreCase(OK);
     }
 
     public abstract boolean success();
