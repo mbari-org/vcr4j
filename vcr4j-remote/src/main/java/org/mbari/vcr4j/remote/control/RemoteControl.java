@@ -1,7 +1,10 @@
 package org.mbari.vcr4j.remote.control;
 
+import org.mbari.vcr4j.decorators.LoggingDecorator;
 import org.mbari.vcr4j.decorators.VCRSyncDecorator;
+import org.mbari.vcr4j.remote.control.commands.ConnectCmd;
 import org.mbari.vcr4j.remote.control.commands.FrameCaptureDoneCmd;
+import org.mbari.vcr4j.remote.control.commands.RequestAllVideoInfosCmd.Video;
 import org.mbari.vcr4j.remote.player.PlayerIO;
 import org.mbari.vcr4j.remote.player.RxControlPlayer;
 import org.slf4j.Logger;
@@ -53,6 +56,7 @@ public class RemoteControl {
         private Consumer<FrameCaptureDoneCmd> frameCaptureDoneFn = (f) -> {};
 
         private boolean withMonitoring = false;
+        private boolean withLogging = false;
 
         public Builder(UUID uuid) {
             this.uuid = uuid;
@@ -88,6 +92,11 @@ public class RemoteControl {
             return this;
         }
 
+        public Builder withLogging(boolean log) {
+            withLogging = log;
+            return this;
+        }
+
         public Builder whenFrameCaptureIsDone(Consumer<FrameCaptureDoneCmd> fn) {
             frameCaptureDoneFn = fn;
             return this;
@@ -106,6 +115,11 @@ public class RemoteControl {
                 if (withMonitoring) {
                     new VCRSyncDecorator<>(videoIo);
                 }
+                if (withLogging) {
+                    new LoggingDecorator<>(videoIo);
+                }
+
+                videoIo.send(new ConnectCmd(selfPort, selfHost));
                 return Optional.of(remoteControl);
             }
             catch (Exception e) {
@@ -114,6 +128,8 @@ public class RemoteControl {
                         .log("Failed to build RemoteControl");
                 return Optional.empty();
             }
+
+            
 
         }
     }

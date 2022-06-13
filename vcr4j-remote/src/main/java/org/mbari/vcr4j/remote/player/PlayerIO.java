@@ -90,18 +90,18 @@ public class PlayerIO {
         }
     }
 
-    private void handleError(SimpleRequest requestOrResponse,
+    private void handleError(SimpleRequest simpleRequest,
                              InetAddress address,
                              int port,
                              Exception ex) {
-        var response = ex == null ? player.handleError(requestOrResponse)
-                : player.handleError(requestOrResponse, ex);
+        var response = ex == null ? player.handleError(simpleRequest)
+                : player.handleError(simpleRequest, ex);
         try {
             respond(response, address, port);
         } catch (IOException e) {
             log.atError()
                     .setCause(e)
-                    .log("Unable to send an error response for request: " + requestOrResponse.getRaw());
+                    .log("Unable to send an error response for request: " + simpleRequest.getRaw());
         }
     }
 

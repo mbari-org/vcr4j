@@ -6,10 +6,9 @@ import org.mbari.vcr4j.VideoCommand;
  * @author Brian Schlining
  * @since 2016-08-25T17:21:00
  */
-public class ConnectCmd implements VideoCommand<ConnectCmd.Request> {
+public class ConnectCmd extends RCommand<ConnectCmd.Request, ConnectCmd.Response> {
 
     public static final String Command = "connect";
-    private final Request value;
 
     public ConnectCmd(int port) {
         this(port, "localhost");
@@ -20,32 +19,27 @@ public class ConnectCmd implements VideoCommand<ConnectCmd.Request> {
     }
 
     public ConnectCmd(Request request) {
-        this.value = request;
+        super(request);
     }
+
+    
 
     @Override
-    public String getName() {
-        return Command;
+    public Class<Response> responseType() {
+        return Response.class;
     }
 
-    @Override
-    public Request getValue() {
-        return value;
-    }
 
-    public static class Request {
+    public static class Request extends RRequest {
         private final int port;
         private final String host;
 
         private final String command = Command;
 
         public Request(int port, String host) {
+            super(Command, null);
             this.port = port;
             this.host = host;
-        }
-
-        public String getCommand() {
-            return command;
         }
 
         public int getPort() {
