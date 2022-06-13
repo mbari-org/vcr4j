@@ -51,7 +51,6 @@
         <module>vcr4j-sharktopoda-client</module>
         <module>vcr4j-remote</module>
         <module>vcr4j-javafx</module>
-        <module>vcr4j-ui</module>
         <module>vcr4j-examples</module>
     </modules>
     <build>

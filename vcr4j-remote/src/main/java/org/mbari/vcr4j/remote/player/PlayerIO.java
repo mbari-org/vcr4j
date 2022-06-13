@@ -58,6 +58,7 @@ public class PlayerIO {
             case ClearLocalizationsCmd.Command -> ClearLocalizationsCmd.Request.class;
             case RemoveLocalizationsCmd.Command -> RemoveLocalizationsCmd.Request.class;
             case UpdateLocalizationsCmd.Command -> UpdateLocalizationsCmd.Request.class;
+            default -> NoopCmd.Request.class;
         };
         var request = gson.fromJson(simpleRequest.getRaw(), clazz);
 
@@ -68,6 +69,7 @@ public class PlayerIO {
             case ClearLocalizationsCmd.Command -> player.handleClearLocalizationsRequest((ClearLocalizationsCmd.Request) request);
             case RemoveLocalizationsCmd.Command -> player.handleDeleteLocalizationsRequest((RemoveLocalizationsCmd.Request) request);
             case UpdateLocalizationsCmd.Command -> player.handleUpdateLocalizationsRequest((UpdateLocalizationsCmd.Request) request);
+            default -> player.handleError(simpleRequest);
         };
         return response;
     }

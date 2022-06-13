@@ -14,13 +14,13 @@ import io.reactivex.rxjava3.subjects.Subject;
 public class SimpleVideoIO<S extends VideoState, E extends VideoError> implements VideoIO<S, E> {
 
     private final String connectionID;
-    private final Subject<VideoCommand> commandSubject;
+    private final Subject<VideoCommand<?>> commandSubject;
     private final Observable<E> errorObservable;
     private final Observable<S> stateObservable;
     private final Observable<VideoIndex> indexObservable;
 
     public SimpleVideoIO(String connectionID,
-            Subject<VideoCommand> commandSubject,
+            Subject<VideoCommand<?>> commandSubject,
             Observable<S> stateObservable,
             Observable<E> errorObservable,
             Observable<VideoIndex> indexObservable) {
@@ -32,7 +32,7 @@ public class SimpleVideoIO<S extends VideoState, E extends VideoError> implement
     }
 
     @Override
-    public Subject<VideoCommand> getCommandSubject() {
+    public Subject<VideoCommand<?>> getCommandSubject() {
         return commandSubject;
     }
 
@@ -57,7 +57,7 @@ public class SimpleVideoIO<S extends VideoState, E extends VideoError> implement
     }
 
     @Override
-    public <A extends VideoCommand> void send(A videoCommand) {
+    public <A extends VideoCommand<?>> void send(A videoCommand) {
         commandSubject.onNext(videoCommand);
     }
 

@@ -13,44 +13,16 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <dependencies>
-        <dependency>
-            <groupId>org.mbari.vcr4j</groupId>
-            <artifactId>vcr4j-rxtx</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.mbari.vcr4j</groupId>
-            <artifactId>vcr4j-purejavacomm</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.mbari.vcr4j</groupId>
-            <artifactId>vcr4j-jssc</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+
         <dependency>
             <groupId>org.mbari.vcr4j</groupId>
             <artifactId>vcr4j-udp</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.mbari.vcr4j</groupId>
-            <artifactId>vcr4j-kipro</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.mbari.vcr4j</groupId>
-            <artifactId>vcr4j-jserialcomm</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+
         <dependency>
             <groupId>org.mbari.vcr4j</groupId>
             <artifactId>vcr4j-sharktopoda</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.mbari.vcr4j</groupId>
-            <artifactId>vcr4j-vlc-http</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

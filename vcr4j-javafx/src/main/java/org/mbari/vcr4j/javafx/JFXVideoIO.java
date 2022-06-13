@@ -1,8 +1,8 @@
 package org.mbari.vcr4j.javafx;
 
-import io.reactivex.Observable;
-import io.reactivex.subjects.PublishSubject;
-import io.reactivex.subjects.Subject;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.subjects.PublishSubject;
+import io.reactivex.rxjava3.subjects.Subject;
 import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
 import org.mbari.vcr4j.SimpleVideoError;
@@ -24,7 +24,7 @@ public class JFXVideoIO implements VideoIO<JFXVideoState, SimpleVideoError> {
     private static final double eps = 0.1;
     public static final double FAST_FORWARD_RATE = 3D;
 
-    private final Subject<VideoCommand> commandSubject;
+    private final Subject<VideoCommand<?>> commandSubject;
 
     private final Subject<SimpleVideoError> errorObservable;
 
@@ -37,7 +37,7 @@ public class JFXVideoIO implements VideoIO<JFXVideoState, SimpleVideoError> {
     public JFXVideoIO(MediaPlayer mediaPlayer) {
         this.mediaPlayer = mediaPlayer;
 
-        PublishSubject<VideoCommand> s1 = PublishSubject.create();
+        PublishSubject<VideoCommand<?>> s1 = PublishSubject.create();
         commandSubject = s1.toSerialized();
         PublishSubject<SimpleVideoError> s2 = PublishSubject.create();
         errorObservable = s2.toSerialized();
@@ -80,12 +80,12 @@ public class JFXVideoIO implements VideoIO<JFXVideoState, SimpleVideoError> {
     }
 
     @Override
-    public <A extends VideoCommand> void send(A videoCommand) {
+    public <A extends VideoCommand<?>> void send(A videoCommand) {
         commandSubject.onNext(videoCommand);
     }
 
     @Override
-    public Subject<VideoCommand> getCommandSubject() {
+    public Subject<VideoCommand<?>> getCommandSubject() {
         return commandSubject;
     }
 
