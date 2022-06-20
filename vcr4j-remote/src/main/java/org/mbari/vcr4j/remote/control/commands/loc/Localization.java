@@ -12,7 +12,17 @@ public class Localization {
     private Integer width;
     private Integer height;
 
-    public Localization(UUID uuid, String concept, Long elapsedTimeMillis, Long durationMillis, Integer x, Integer y, Integer width, Integer height) {
+    private String color; // hex string like "#FFDDCC"
+
+    public Localization(UUID uuid,
+                        String concept,
+                        Long elapsedTimeMillis,
+                        Long durationMillis,
+                        Integer x,
+                        Integer y,
+                        Integer width,
+                        Integer height,
+                        String color) {
         this.uuid = uuid;
         this.concept = concept;
         this.elapsedTimeMillis = elapsedTimeMillis;
@@ -21,6 +31,7 @@ public class Localization {
         this.y = y;
         this.width = width;
         this.height = height;
+        this.color = color;
     }
 
     public Localization() {

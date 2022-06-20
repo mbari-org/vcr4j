@@ -21,8 +21,8 @@ public class PauseCmd extends RCommand<PauseCmd.Request, PauseCmd.Response> {
     }
 
     public static class Response extends RResponse {
-        public Response(String status, UUID uuid) {
-            super(Command, status, uuid);
+        public Response(String status) {
+            super(Command, status);
         }
 
         @Override

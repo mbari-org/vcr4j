@@ -25,12 +25,9 @@ public class NoopCmd extends RCommand<NoopCmd.Request, NoopCmd.Response> {
             super(response, status);
         }
 
-        public Response(String response, String status, String cause) {
-            this(response, status, cause, null);
-        }
 
-        public Response(String response, String status, String cause, UUID uuid) {
-            super(response, status, uuid);
+        public Response(String response, String status, String cause) {
+            super(response, status);
             this.cause = cause;
         }
 

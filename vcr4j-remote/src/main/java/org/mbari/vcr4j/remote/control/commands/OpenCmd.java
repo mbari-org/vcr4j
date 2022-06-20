@@ -31,7 +31,7 @@ public class OpenCmd extends RCommand<OpenCmd.Request, OpenCmd.Response> {
 
     public static class Response extends RResponse {
         public Response(String status, UUID uuid) {
-            super(Command, status, uuid);
+            super(Command, status);
         }
 
         @Override

@@ -25,15 +25,24 @@ public class RequestVideoInfoCmd extends RCommand<RequestVideoInfoCmd.Request, R
     }
 
     public static class Response extends RResponse implements VideoInfo {
+
+        private UUID uuid;
         private URL url;
         private Long durationMillis;
         private Double frameRate;
 
         public Response(UUID uuid, URL url, Long durationMillis, Double frameRate) {
-            super(Command, null, uuid);
+            super(Command, null);
+            this.uuid = uuid;
             this.url = url;
             this.durationMillis = durationMillis;
             this.frameRate = frameRate;
+        }
+
+
+        @Override
+        public UUID getUuid() {
+            return null;
         }
 
         public URL getUrl() {

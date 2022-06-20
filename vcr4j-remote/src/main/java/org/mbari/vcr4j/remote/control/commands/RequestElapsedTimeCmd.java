@@ -27,8 +27,8 @@ public class RequestElapsedTimeCmd
     public static class Response extends RResponse {
         private Long elapsedTimeMillis;
 
-        public Response(String status, UUID uuid, Long elapsedTimeMillis) {
-            super(Command, status, uuid);
+        public Response(String status, Long elapsedTimeMillis) {
+            super(Command, status);
             this.elapsedTimeMillis = elapsedTimeMillis;
         }
 

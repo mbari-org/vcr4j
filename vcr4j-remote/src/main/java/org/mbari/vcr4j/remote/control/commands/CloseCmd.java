@@ -22,7 +22,7 @@ public class CloseCmd extends RCommand<CloseCmd.Request, CloseCmd.Response> {
     // Ack
     public static class Response extends RResponse {
         public Response(String status, UUID uuid) {
-            super(Command, status, uuid);
+            super(Command, status);
         }
 
         @Override

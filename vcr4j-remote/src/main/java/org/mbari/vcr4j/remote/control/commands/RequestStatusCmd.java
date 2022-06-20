@@ -25,8 +25,8 @@ public class RequestStatusCmd extends RCommand<RequestStatusCmd.Request, Request
     public static class Response extends RResponse {
 
         private RState state;
-        public Response(String status, UUID uuid) {
-            super(Command, status, uuid);
+        public Response(String status) {
+            super(Command, status);
             state = RState.parse(status);
         }
 
