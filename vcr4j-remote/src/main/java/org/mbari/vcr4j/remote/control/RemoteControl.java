@@ -4,9 +4,8 @@ import org.mbari.vcr4j.decorators.LoggingDecorator;
 import org.mbari.vcr4j.decorators.VCRSyncDecorator;
 import org.mbari.vcr4j.remote.control.commands.ConnectCmd;
 import org.mbari.vcr4j.remote.control.commands.FrameCaptureDoneCmd;
-import org.mbari.vcr4j.remote.control.commands.RequestAllVideoInfosCmd.Video;
 import org.mbari.vcr4j.remote.player.PlayerIO;
-import org.mbari.vcr4j.remote.player.RxControlPlayer;
+import org.mbari.vcr4j.remote.player.RxControlRequestHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,13 +18,13 @@ import java.util.function.Consumer;
 public class RemoteControl {
 
     private final RVideoIO videoIO;
-    private final RxControlPlayer player;
+    private final RxControlRequestHandler player;
 
     private final PlayerIO playerIO;
 
     public RemoteControl(RVideoIO videoIO,
                          PlayerIO playerIO,
-                         RxControlPlayer player) {
+                         RxControlRequestHandler player) {
         this.videoIO = videoIO;
         this.playerIO = playerIO;
         this.player = player;
@@ -39,7 +38,7 @@ public class RemoteControl {
         return playerIO;
     }
 
-    public RxControlPlayer getPlayer() {
+    public RxControlRequestHandler getPlayer() {
         return player;
     }
 
@@ -107,7 +106,7 @@ public class RemoteControl {
         public Optional<RemoteControl> build() {
             try {
                 var videoIo = new RVideoIO(uuid, vcrHost, vcrPort);
-                var player = new RxControlPlayer(frameCaptureDoneFn);
+                var player = new RxControlRequestHandler(frameCaptureDoneFn);
                 var playerIo = new PlayerIO(selfPort, player);
 
                 var remoteControl = new RemoteControl(videoIo, playerIo, player);

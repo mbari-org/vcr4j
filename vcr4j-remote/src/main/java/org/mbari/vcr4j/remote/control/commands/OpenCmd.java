@@ -30,7 +30,7 @@ public class OpenCmd extends RCommand<OpenCmd.Request, OpenCmd.Response> {
     }
 
     public static class Response extends RResponse {
-        public Response(String status, UUID uuid) {
+        public Response(String status) {
             super(Command, status);
         }
 

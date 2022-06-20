@@ -4,7 +4,7 @@ import java.util.UUID;
 
 public class FrameAdvanceCmd extends RCommand<FrameAdvanceCmd.Request, FrameAdvanceCmd.Response> {
 
-    public static final String Command = "seek elapsed time";
+    public static final String Command = "frame advance";
 
     public FrameAdvanceCmd(FrameAdvanceCmd.Request value) {
         super(value);

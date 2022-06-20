@@ -39,6 +39,10 @@ public class RequestVideoInfoCmd extends RCommand<RequestVideoInfoCmd.Request, R
             this.frameRate = frameRate;
         }
 
+        public Response() {
+            super(Command, RResponse.FAILED);
+        }
+
 
         @Override
         public UUID getUuid() {

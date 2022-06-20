@@ -13,9 +13,9 @@ import java.util.function.Consumer;
  * This implementation is for the app that controls the video player,
  * not the video player itself.
  */
-public class RxControlPlayer extends RxPlayer {
+public class RxControlRequestHandler extends RxRequestHandler {
 
-    private static final Logger log = LoggerFactory.getLogger(RxControlPlayer.class);
+    private static final Logger log = LoggerFactory.getLogger(RxControlRequestHandler.class);
 
     private final Consumer<FrameCaptureDoneCmd> frameCaptureDoneFn;
 
@@ -26,8 +26,8 @@ public class RxControlPlayer extends RxPlayer {
      *                           should handle things in a seperate thread so
      *                           as not to block the response.
      */
-    public RxControlPlayer(Consumer<FrameCaptureDoneCmd> frameCaptureDoneFn) {
-        super();
+    public RxControlRequestHandler(Consumer<FrameCaptureDoneCmd> frameCaptureDoneFn) {
+        super(new NoopVideoController());
         this.frameCaptureDoneFn = frameCaptureDoneFn;
     }
 

@@ -21,8 +21,8 @@ public class ShowCmd extends RCommand<ShowCmd.Request, ShowCmd.Response> {
 
     // Ack
     public static class Response extends RResponse {
-        public Response(String response, String status) {
-            super(response, status);
+        public Response(String status) {
+            super(Command, status);
         }
 
         @Override

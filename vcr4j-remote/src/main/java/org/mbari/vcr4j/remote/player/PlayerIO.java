@@ -4,10 +4,6 @@ import com.google.gson.Gson;
 
 import org.mbari.vcr4j.remote.control.RVideoIO;
 import org.mbari.vcr4j.remote.control.commands.*;
-import org.mbari.vcr4j.remote.control.commands.loc.AddLocalizationsCmd;
-import org.mbari.vcr4j.remote.control.commands.loc.ClearLocalizationsCmd;
-import org.mbari.vcr4j.remote.control.commands.loc.RemoveLocalizationsCmd;
-import org.mbari.vcr4j.remote.control.commands.loc.UpdateLocalizationsCmd;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,14 +19,14 @@ public class PlayerIO {
     private static final Gson gson = RVideoIO.GSON;
 
     private final int port;
-    private final Player player;
+    private final RequestHandler requestHandler;
     private DatagramSocket server;
     private Thread receiverThread;
     private volatile boolean ok = true;
 
-    public PlayerIO(int port, Player player) {
+    public PlayerIO(int port, RequestHandler requestHandler) {
         this.port = port;
-        this.player = player;
+        this.requestHandler = requestHandler;
         init();
     }
 
@@ -49,30 +45,8 @@ public class PlayerIO {
 
     }
 
-    private RResponse composeResponse(SimpleRequest simpleRequest) {
 
-        var clazz = switch (simpleRequest.getCommand()) {
-            case FrameCaptureCmd.Command ->  FrameCaptureCmd.Request.class;
-            case FrameCaptureDoneCmd.Command -> FrameCaptureDoneCmd.Request.class;
-            case AddLocalizationsCmd.Command -> AddLocalizationsCmd.Request.class;
-            case ClearLocalizationsCmd.Command -> ClearLocalizationsCmd.Request.class;
-            case RemoveLocalizationsCmd.Command -> RemoveLocalizationsCmd.Request.class;
-            case UpdateLocalizationsCmd.Command -> UpdateLocalizationsCmd.Request.class;
-            default -> NoopCmd.Request.class;
-        };
-        var request = gson.fromJson(simpleRequest.getRaw(), clazz);
 
-        var response = switch (simpleRequest.getCommand()) {
-            case FrameCaptureCmd.Command ->  player.handleFrameCaptureRequest((FrameCaptureCmd.Request) request);
-            case FrameCaptureDoneCmd.Command -> player.handleFrameCaptureDoneRequest((FrameCaptureDoneCmd.Request) request);
-            case AddLocalizationsCmd.Command -> player.handleAddLocalizationsRequest((AddLocalizationsCmd.Request) request);
-            case ClearLocalizationsCmd.Command -> player.handleClearLocalizationsRequest((ClearLocalizationsCmd.Request) request);
-            case RemoveLocalizationsCmd.Command -> player.handleDeleteLocalizationsRequest((RemoveLocalizationsCmd.Request) request);
-            case UpdateLocalizationsCmd.Command -> player.handleUpdateLocalizationsRequest((UpdateLocalizationsCmd.Request) request);
-            default -> player.handleError(simpleRequest);
-        };
-        return response;
-    }
 
     private void respond(RResponse response, InetAddress address, int port) throws IOException {
         var bytes = gson.toJson(response).getBytes();
@@ -82,7 +56,7 @@ public class PlayerIO {
 
     private void handleRequest(SimpleRequest request, InetAddress address, int port) {
         try {
-            var response = composeResponse(request);
+            var response = requestHandler.composeResponse(request);
             respond(response, address, port);
         }
         catch (Exception e) {
@@ -90,12 +64,14 @@ public class PlayerIO {
         }
     }
 
+    private void handleConnectRequest(SimpleRequest request)
+
     private void handleError(SimpleRequest simpleRequest,
                              InetAddress address,
                              int port,
                              Exception ex) {
-        var response = ex == null ? player.handleError(simpleRequest)
-                : player.handleError(simpleRequest, ex);
+        var response = ex == null ? requestHandler.handleError(simpleRequest)
+                : requestHandler.handleError(simpleRequest, ex);
         try {
             respond(response, address, port);
         } catch (IOException e) {
@@ -119,9 +95,9 @@ public class PlayerIO {
                     server.receive(packet);
                     String msg = new String(packet.getData(), 0, packet.getLength());
                     log.debug("Received <<< " + msg);
-                    var requestOrResponse = RVideoIO.GSON.fromJson(msg, SimpleRequest.class);
-                    requestOrResponse.setRaw(msg);
-                    handleRequest(requestOrResponse, packet.getAddress(), packet.getPort());
+                    var simpleRequest = RVideoIO.GSON.fromJson(msg, SimpleRequest.class);
+                    simpleRequest.setRaw(msg);
+                    handleRequest(simpleRequest, packet.getAddress(), packet.getPort());
                 }
                 catch (Exception e) {
                     log.debug("Error while reading UDP datagram", e);

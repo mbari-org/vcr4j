@@ -14,6 +14,6 @@ dependency>
 ## Usage
 
 ```
-MediaPlayer mediaPlayer = // ... create javafx media player
+MediaPlayer mediaPlayer = // ... create javafx media requestHandler
 VideoIO<JFXVideoState, SimpleVideoError> io = new JFXVideoIO(mediaPlayer);
 ```

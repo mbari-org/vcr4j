@@ -68,6 +68,7 @@ public class RequestAllVideoInfosCmd
 
         }
 
+
         public List<VideoInfo> getVideos() {
             return videos;
         }

@@ -82,4 +82,23 @@ public class RState implements VideoState {
                 .orElse(State.NOT_FOUND);
         return new RState(state);
     }
+
+    public static RState.State fromRate(double rate) {
+
+        if (rate == 1.0) {
+            return State.PLAYING;
+        }
+        else if (rate == 0.0) {
+            return State.PAUSED;
+        }
+        else if (rate > 1.0) {
+            return State.SHUTTLE_FORWARD;
+        }
+        else if (rate < 1.0) {
+            return State.SHUTTLE_REVERSE;
+        }
+        else {
+            return State.UNKNOWN_ERROR;
+        }
+    }
 }

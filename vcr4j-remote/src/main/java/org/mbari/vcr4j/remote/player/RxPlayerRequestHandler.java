@@ -12,9 +12,9 @@ import java.util.function.Consumer;
 /**
  * THis is an implementation for the video player.
  */
-public class RxPlayerPlayer extends RxPlayer {
+public class RxPlayerRequestHandler extends RxRequestHandler {
 
-    private static final Logger log = LoggerFactory.getLogger(RxControlPlayer.class);
+    private static final Logger log = LoggerFactory.getLogger(RxControlRequestHandler.class);
     private final Consumer<FrameCaptureCmd> frameCaptureFn;
 
     /**
@@ -23,8 +23,8 @@ public class RxPlayerPlayer extends RxPlayer {
      *                       When it's completed it needs to send a
      *                       FrameCaptureDoneCmd to the controlling app.
      */
-    public RxPlayerPlayer(Consumer<FrameCaptureCmd> frameCaptureFn) {
-        super();
+    public RxPlayerRequestHandler(Consumer<FrameCaptureCmd> frameCaptureFn) {
+        super(videoController);
         this.frameCaptureFn = frameCaptureFn;
     }
 

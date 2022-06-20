@@ -22,7 +22,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.function.Consumer;
 
 public class RVideoIO implements VideoIO<RState, RError> {
 

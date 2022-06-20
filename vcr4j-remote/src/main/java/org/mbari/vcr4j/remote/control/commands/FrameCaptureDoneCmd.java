@@ -22,7 +22,7 @@ public class FrameCaptureDoneCmd extends RCommand<FrameCaptureDoneCmd.Request, F
         return Response.class;
     }
 
-    public static class Request extends RRequest {
+    public static class Request extends RRequest implements FrameCapture {
 
         private Long elapsedTimeMillis;
         private String imageLocation;
