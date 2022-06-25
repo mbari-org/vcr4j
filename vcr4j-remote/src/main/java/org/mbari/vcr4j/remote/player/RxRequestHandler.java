@@ -6,6 +6,8 @@ import io.reactivex.rxjava3.subjects.Subject;
 import org.mbari.vcr4j.remote.control.RState;
 import org.mbari.vcr4j.remote.control.commands.*;
 import org.mbari.vcr4j.remote.control.commands.loc.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
 
@@ -20,10 +22,16 @@ public abstract class RxRequestHandler implements RequestHandler {
     private final Subject<LocalizationsCmd<?, ?>> localizationsCmdSubject;
     private final VideoController videoController;
 
+    private final Logger log = LoggerFactory.getLogger(getClass());
+
     public RxRequestHandler(VideoController videoController) {
         PublishSubject<LocalizationsCmd<?, ?>> pubSub = PublishSubject.create();
         this.localizationsCmdSubject = pubSub.toSerialized();
         this.videoController = videoController;
+    }
+
+    public VideoController getVideoController() {
+        return videoController;
     }
 
     @Override

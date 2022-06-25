@@ -13,8 +13,25 @@ public class FrameCaptureDoneCmd extends RCommand<FrameCaptureDoneCmd.Request, F
     public FrameCaptureDoneCmd(UUID uuid,
                                UUID imageReferenceUuid,
                                String imageLocation,
-                               Long elapsedTimeMilllis) {
-        super(new Request(uuid, imageReferenceUuid, imageLocation, elapsedTimeMilllis));
+                               Long elapsedTimeMilllis,
+                               String status) {
+        super(new Request(uuid, imageReferenceUuid, imageLocation, elapsedTimeMilllis, status));
+    }
+
+    public static FrameCaptureDoneCmd fail(FrameCapture fc) {
+        return new FrameCaptureDoneCmd(fc.getUuid(),
+                fc.getImageReferenceUuid(),
+                fc.getImageLocation(),
+                fc.getElapsedTimeMillis(),
+                RResponse.FAILED);
+    }
+
+    public static FrameCaptureDoneCmd success(FrameCapture fc) {
+        return new FrameCaptureDoneCmd(fc.getUuid(),
+                fc.getImageReferenceUuid(),
+                fc.getImageLocation(),
+                fc.getElapsedTimeMillis(),
+                RResponse.OK);
     }
 
     @Override
@@ -28,14 +45,18 @@ public class FrameCaptureDoneCmd extends RCommand<FrameCaptureDoneCmd.Request, F
         private String imageLocation;
         private UUID imageReferenceUuid;
 
+        private String status;
+
         public Request(UUID uuid,
                        UUID imageReferenceUuid,
                        String imageLocation,
-                       Long elapsedTimeMillis) {
+                       Long elapsedTimeMillis,
+                       String status) {
             super(Command, uuid);
             this.imageReferenceUuid = imageReferenceUuid;
             this.imageLocation = imageLocation;
             this.elapsedTimeMillis = elapsedTimeMillis;
+            this.status = status;
         }
 
         public String getImageLocation() {
@@ -48,6 +69,10 @@ public class FrameCaptureDoneCmd extends RCommand<FrameCaptureDoneCmd.Request, F
 
         public Long getElapsedTimeMillis() {
             return elapsedTimeMillis;
+        }
+
+        public String getStatus() {
+            return status;
         }
     }
 

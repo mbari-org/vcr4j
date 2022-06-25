@@ -18,16 +18,16 @@ import java.util.function.Consumer;
 public class RemoteControl {
 
     private final RVideoIO videoIO;
-    private final RxControlRequestHandler player;
+    private final RxControlRequestHandler requestHandler;
 
     private final PlayerIO playerIO;
 
-    public RemoteControl(RVideoIO videoIO,
+    private RemoteControl(RVideoIO videoIO,
                          PlayerIO playerIO,
-                         RxControlRequestHandler player) {
+                         Consumer<FrameCaptureDoneCmd> frameCaptureDoneFn) {
         this.videoIO = videoIO;
         this.playerIO = playerIO;
-        this.player = player;
+        this.requestHandler = new RxControlRequestHandler(frameCaptureDoneFn);
     }
 
     public RVideoIO getVideoIO() {
@@ -38,8 +38,8 @@ public class RemoteControl {
         return playerIO;
     }
 
-    public RxControlRequestHandler getPlayer() {
-        return player;
+    public RxControlRequestHandler getRequestHandler() {
+        return requestHandler;
     }
 
 
@@ -81,10 +81,6 @@ public class RemoteControl {
             return this;
         }
 
-        public Builder selfHost(String host) {
-            selfHost = host;
-            return this;
-        }
 
         public Builder withMonitoring(boolean monitor) {
             withMonitoring = monitor;
@@ -109,7 +105,7 @@ public class RemoteControl {
                 var player = new RxControlRequestHandler(frameCaptureDoneFn);
                 var playerIo = new PlayerIO(selfPort, player);
 
-                var remoteControl = new RemoteControl(videoIo, playerIo, player);
+                var remoteControl = new RemoteControl(videoIo, playerIo, frameCaptureDoneFn);
 
                 if (withMonitoring) {
                     new VCRSyncDecorator<>(videoIo);

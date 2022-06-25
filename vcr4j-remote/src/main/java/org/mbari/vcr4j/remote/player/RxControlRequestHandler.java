@@ -1,6 +1,7 @@
 package org.mbari.vcr4j.remote.player;
 
 
+import org.mbari.vcr4j.remote.control.commands.ConnectCmd;
 import org.mbari.vcr4j.remote.control.commands.FrameCaptureCmd;
 import org.mbari.vcr4j.remote.control.commands.FrameCaptureDoneCmd;
 import org.mbari.vcr4j.remote.control.commands.RResponse;
@@ -33,6 +34,13 @@ public class RxControlRequestHandler extends RxRequestHandler {
 
 
     @Override
+    public ConnectCmd.Response handleConnect(ConnectCmd.Request request) {
+        log.atWarn()
+                .log("The handleConnect method is not supported in the controller app");
+        return new ConnectCmd.Response(RResponse.FAILED);
+    }
+
+    @Override
     public FrameCaptureDoneCmd.Response handleFrameCaptureDoneRequest(FrameCaptureDoneCmd.Request request) {
         frameCaptureDoneFn.accept(new FrameCaptureDoneCmd(request));
         return new FrameCaptureDoneCmd.Response(RResponse.OK);
@@ -45,7 +53,10 @@ public class RxControlRequestHandler extends RxRequestHandler {
      */
     @Override
     public FrameCaptureCmd.Response handleFrameCaptureRequest(FrameCaptureCmd.Request request) {
-        throw new UnsupportedOperationException("This method is not implemented in the controller application");
+        //throw new UnsupportedOperationException("This method is not implemented in the controller application");
+        log.atWarn()
+                .log("The handleFrameCaptureRequest method is not supported in the controller app");
+        return new FrameCaptureCmd.Response(RResponse.FAILED);
     }
 
 }

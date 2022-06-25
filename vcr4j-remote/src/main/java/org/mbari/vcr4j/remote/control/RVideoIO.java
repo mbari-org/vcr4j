@@ -2,6 +2,7 @@ package org.mbari.vcr4j.remote.control;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.subjects.PublishSubject;
@@ -14,6 +15,7 @@ import org.mbari.vcr4j.commands.SeekElapsedTimeCmd;
 import org.mbari.vcr4j.commands.ShuttleCmd;
 import org.mbari.vcr4j.commands.VideoCommands;
 import org.mbari.vcr4j.remote.control.commands.*;
+import org.mbari.vcr4j.remote.control.commands.loc.LocalizationsCmd;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -123,6 +125,10 @@ public class RVideoIO implements VideoIO<RState, RError> {
                 .forEach(this::doCommand); 
         disposables.add(a);
 
+        a = commandSubject.ofType(LocalizationsCmd.class)
+                .forEach(this::doCommand);
+        // TODO break up localizations into size limited requests?
+        disposables.add(a);
 
         try {
             socket = new DatagramSocket(0);
@@ -174,6 +180,10 @@ public class RVideoIO implements VideoIO<RState, RError> {
         }
         disposables.forEach(Disposable::dispose);
         socket = null;
+    }
+
+    public boolean isClosed() {
+        return socket == null || socket.isClosed();
     }
 
     @Override

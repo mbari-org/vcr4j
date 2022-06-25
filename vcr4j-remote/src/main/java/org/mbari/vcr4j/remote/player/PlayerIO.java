@@ -46,8 +46,6 @@ public class PlayerIO {
     }
 
 
-
-
     private void respond(RResponse response, InetAddress address, int port) throws IOException {
         var bytes = gson.toJson(response).getBytes();
         var responsePacket = new DatagramPacket(bytes, bytes.length, address, port);
@@ -63,8 +61,6 @@ public class PlayerIO {
             handleError(request, address, port, e);
         }
     }
-
-    private void handleConnectRequest(SimpleRequest request)
 
     private void handleError(SimpleRequest simpleRequest,
                              InetAddress address,
@@ -113,5 +109,9 @@ public class PlayerIO {
 
     public void close() {
         ok = false;
+    }
+
+    public RequestHandler getRequestHandler() {
+        return requestHandler;
     }
 }

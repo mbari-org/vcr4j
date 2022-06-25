@@ -19,7 +19,7 @@ public class FrameCaptureCmd extends RCommand<FrameCaptureCmd.Request, FrameCapt
         return Response.class;
     }
 
-    public static class Request extends RRequest {
+    public static class Request extends RRequest implements FrameCapture {
 
         private String imageLocation;
         private UUID imageReferenceUuid;
@@ -37,6 +37,11 @@ public class FrameCaptureCmd extends RCommand<FrameCaptureCmd.Request, FrameCapt
         public UUID getImageReferenceUuid() {
             return imageReferenceUuid;
         }
+
+        public Long getElapsedTimeMillis() {
+            return null;
+        }
+
     }
 
     // Ack
