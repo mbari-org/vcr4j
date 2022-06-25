@@ -1,5 +1,6 @@
 package org.mbari.vcr4j.examples.remote;
 
+import org.mbari.vcr4j.commands.VideoCommands;
 import org.mbari.vcr4j.remote.control.RemoteControl;
 import org.mbari.vcr4j.remote.control.commands.loc.AddLocalizationsCmd;
 import org.mbari.vcr4j.remote.control.commands.loc.Localization;
@@ -27,7 +28,7 @@ public class PingPong1 {
 
 
 
-        Thread.sleep(1000);
+        Thread.sleep(100);
 
         var loc = new Localization(UUID.randomUUID(), "foo", 10L, 10L, 10, 20, 30, 40, "#FFFFFF");
         videoControl.getLifeCycle()
@@ -35,11 +36,16 @@ public class PingPong1 {
                 .get()
                 .send(new AddLocalizationsCmd(uuid, List.of(loc)));
 
+        Thread.sleep(100);
 
-        Thread.sleep(1000);
-        var opt = videoControl.getLifeCycle().get();
-        if (opt.isEmpty()) System.out.println("WTF");
+        remoteControl.getVideoIO().send(new AddLocalizationsCmd(uuid, List.of(loc)));
 
+
+        Thread.sleep(100);
+
+        remoteControl.getVideoIO().send(VideoCommands.PLAY);
+
+        Thread.sleep(100);
 
         remoteControl.close();
         videoControl.close();
