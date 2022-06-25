@@ -134,6 +134,7 @@ public class RVideoIO implements VideoIO<RState, RError> {
             socket = new DatagramSocket(0);
             socket.connect(inetAddress, port);
             socket.setSoTimeout(8000);
+            log.atInfo().log("Connected to " + inetAddress.getHostName() + ":" + port);
         }
         catch (Exception e) {
             errorSubject.onNext(new RError(true, false, false, null, null, e));
@@ -176,6 +177,7 @@ public class RVideoIO implements VideoIO<RState, RError> {
     @Override
     public void close() {
         if (socket != null && (!socket.isClosed() || socket.isConnected())) {
+            log.atInfo().log("Disconnecting socket on port " + port);
             socket.close();
         }
         disposables.forEach(Disposable::dispose);
@@ -221,7 +223,7 @@ public class RVideoIO implements VideoIO<RState, RError> {
             s.send(packet);
 
             if (log.isDebugEnabled()) {
-                log.debug(command.toString() + " >>> " + new String(packet.getData()));
+                log.debug("Sending command >>> " + new String(packet.getData()));
             }
 
             s.receive(incomingPacket);    // blocks until returned on timeout
@@ -229,8 +231,13 @@ public class RVideoIO implements VideoIO<RState, RError> {
             int numBytes = incomingPacket.getLength();
             byte[] response = new byte[numBytes];
             System.arraycopy(incomingPacket.getData(), 0, response, 0, numBytes);
+            var responseMsg = new String(response, StandardCharsets.UTF_8);
 
-            responseParser.handle(command, new String(response, StandardCharsets.UTF_8));
+            if (log.isDebugEnabled()) {
+                log.debug("Received response <<< " + responseMsg);
+            }
+
+            responseParser.handle(command, responseMsg);
         } catch (Exception e) {
             // response will be null
             if (log.isErrorEnabled()) {

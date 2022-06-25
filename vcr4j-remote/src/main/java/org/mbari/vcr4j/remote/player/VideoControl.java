@@ -4,20 +4,28 @@ import org.mbari.vcr4j.remote.control.RemoteControl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Closeable;
 import java.util.Optional;
 
-public class VideoControl {
+public class VideoControl implements Closeable {
 
     private final PlayerIO playerIO;
 
     private final RVideoIOLifeCycle lifeCycle;
 
-    private final RequestHandler requestHandler;
+    private final RxPlayerRequestHandler requestHandler;
 
-    private VideoControl(PlayerIO io, VideoController videoController, boolean withLogging) {
-        lifeCycle = new RVideoIOLifeCycle(withLogging);
-        requestHandler = io.getRequestHandler();
+    private VideoControl(PlayerIO io, RxPlayerRequestHandler requestHandler, boolean withLogging) {
+        this.requestHandler = requestHandler;
         playerIO = io;
+        lifeCycle = requestHandler.getLifeCycle();
+    }
+
+    @Override
+    public void close() {
+        playerIO.close();
+        lifeCycle.disconnect();
+        getRequestHandler().close();
     }
 
     public PlayerIO getPlayerIO() {
@@ -35,14 +43,14 @@ public class VideoControl {
     public static class Builder {
         private static final Logger log = LoggerFactory.getLogger(RemoteControl.Builder.class);
 
-        private int selfPort = 8888;
+        private int port = 8888;
 
         private boolean withLogging = false;
 
         private VideoController videoController = new NoopVideoController();
 
-        public Builder selfPort(int port) {
-            selfPort = port;
+        public Builder port(int port) {
+            this.port = port;
             return this;
         }
 
@@ -60,8 +68,8 @@ public class VideoControl {
             try {
                 var lifeCycle = new RVideoIOLifeCycle(withLogging);
                 var requestHandler = new RxPlayerRequestHandler(videoController, lifeCycle);
-                var playerIo = new PlayerIO(selfPort, requestHandler);
-                var videoControl = new VideoControl(playerIo, videoController, withLogging);
+                var playerIo = new PlayerIO(port, requestHandler);
+                var videoControl = new VideoControl(playerIo, requestHandler, withLogging);
                 return Optional.of(videoControl);
             }
             catch (Exception e) {

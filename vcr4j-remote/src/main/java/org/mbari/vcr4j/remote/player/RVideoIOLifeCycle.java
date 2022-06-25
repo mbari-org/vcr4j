@@ -23,6 +23,7 @@ public class RVideoIOLifeCycle {
 
     public Optional<RVideoIO> connect(UUID uuid, String host, int port) {
 
+        log.atDebug().log("Connecting to " + host + ":" + port);
         var io = videoIO.updateAndGet(old -> {
             try {
                 if (old != null) {
@@ -56,10 +57,14 @@ public class RVideoIOLifeCycle {
     }
 
     public void disconnect() {
+        log.info("Found " + videoIO.get());
         videoIO.updateAndGet(old -> {
             try {
                 if (old != null) {
                     old.close();
+                }
+                else {
+                    log.atDebug().log("No port was open");
                 }
             }
             catch (Exception e) {

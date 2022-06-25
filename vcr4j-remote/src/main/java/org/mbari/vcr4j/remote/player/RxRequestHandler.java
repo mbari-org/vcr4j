@@ -9,6 +9,7 @@ import org.mbari.vcr4j.remote.control.commands.loc.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Closeable;
 import java.time.Duration;
 
 
@@ -17,7 +18,7 @@ import java.time.Duration;
  * observable so the implementation can do whatever it needs to do to manage the
  * localizations. As implemented all localization requests response with an OK.
  */
-public abstract class RxRequestHandler implements RequestHandler {
+public abstract class RxRequestHandler implements RequestHandler, Closeable {
 
     private final Subject<LocalizationsCmd<?, ?>> localizationsCmdSubject;
     private final VideoController videoController;
@@ -28,6 +29,11 @@ public abstract class RxRequestHandler implements RequestHandler {
         PublishSubject<LocalizationsCmd<?, ?>> pubSub = PublishSubject.create();
         this.localizationsCmdSubject = pubSub.toSerialized();
         this.videoController = videoController;
+    }
+
+    @Override
+    public void close() {
+        localizationsCmdSubject.onComplete();
     }
 
     public VideoController getVideoController() {

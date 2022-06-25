@@ -13,16 +13,19 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <dependencies>
-
         <dependency>
             <groupId>org.mbari.vcr4j</groupId>
             <artifactId>vcr4j-udp</artifactId>
             <version>${project.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.mbari.vcr4j</groupId>
             <artifactId>vcr4j-sharktopoda</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mbari.vcr4j</groupId>
+            <artifactId>vcr4j-remote</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

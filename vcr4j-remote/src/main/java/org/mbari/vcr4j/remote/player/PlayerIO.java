@@ -36,6 +36,7 @@ public class PlayerIO {
             receiverThread = buildReceiverThread();
             receiverThread.setDaemon(true);
             receiverThread.start();
+            log.atDebug().log("Started server's receiver thread: " + receiverThread.getName());
         }
         catch (Exception e) {
             log.atError()
@@ -47,8 +48,12 @@ public class PlayerIO {
 
 
     private void respond(RResponse response, InetAddress address, int port) throws IOException {
-        var bytes = gson.toJson(response).getBytes();
+        var msg = gson.toJson(response);
+        var bytes = msg.getBytes();
         var responsePacket = new DatagramPacket(bytes, bytes.length, address, port);
+        if (log.isDebugEnabled()) {
+            log.debug("Responding >>> " + msg);
+        }
         server.send(responsePacket);
     }
 
@@ -90,7 +95,7 @@ public class PlayerIO {
                 try {
                     server.receive(packet);
                     String msg = new String(packet.getData(), 0, packet.getLength());
-                    log.debug("Received <<< " + msg);
+                    log.debug("Received command <<< " + msg);
                     var simpleRequest = RVideoIO.GSON.fromJson(msg, SimpleRequest.class);
                     simpleRequest.setRaw(msg);
                     handleRequest(simpleRequest, packet.getAddress(), packet.getPort());

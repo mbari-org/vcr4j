@@ -34,8 +34,6 @@ public class ConnectCmd extends RCommand<ConnectCmd.Request, ConnectCmd.Response
         private final int port;
         private final String host;
 
-        private final String command = Command;
-
         public Request(int port, String host) {
             super(Command, null);
             this.port = port;

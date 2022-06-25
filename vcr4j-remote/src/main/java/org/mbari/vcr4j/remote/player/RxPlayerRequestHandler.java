@@ -30,6 +30,10 @@ public class RxPlayerRequestHandler extends RxRequestHandler {
         this.lifeCycle = lifeCycle;
     }
 
+    public RVideoIOLifeCycle getLifeCycle() {
+        return lifeCycle;
+    }
+
     /**
      * THis method shouldn't actually be used on the video player side. It's needed
      * for the controlling applicaiton though.

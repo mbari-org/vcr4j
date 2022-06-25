@@ -9,13 +9,14 @@ import org.mbari.vcr4j.remote.player.RxControlRequestHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Closeable;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-public class RemoteControl {
+public class RemoteControl implements Closeable {
 
     private final RVideoIO videoIO;
     private final RxControlRequestHandler requestHandler;
@@ -42,15 +43,22 @@ public class RemoteControl {
         return requestHandler;
     }
 
+    @Override
+    public void close() {
+        videoIO.close();
+        playerIO.close();
+        requestHandler.close();
+    }
+
 
     public static class Builder {
 
         private static final Logger log = LoggerFactory.getLogger(Builder.class);
 
         private final UUID uuid;
-        private int vcrPort = 8888;
-        private String vcrHost = "localhost";
-        private int selfPort = 8899;
+        private int remotePort = 8888;
+        private String remoteHost = "localhost";
+        private int port = 8899;
         private String selfHost;
         private Consumer<FrameCaptureDoneCmd> frameCaptureDoneFn = (f) -> {};
 
@@ -66,18 +74,18 @@ public class RemoteControl {
             }
         }
 
-        public Builder vcrPort(int port) {
-            vcrPort = port;
+        public Builder remotePort(int port) {
+            remotePort = port;
             return this;
         }
 
-        public Builder vcrHost(String host) {
-            vcrHost = host;
+        public Builder remoteHost(String host) {
+            remoteHost = host;
             return this;
         }
 
-        public Builder selfPort(int port) {
-            selfPort = port;
+        public Builder port(int port) {
+            this.port = port;
             return this;
         }
 
@@ -101,9 +109,9 @@ public class RemoteControl {
 
         public Optional<RemoteControl> build() {
             try {
-                var videoIo = new RVideoIO(uuid, vcrHost, vcrPort);
+                var videoIo = new RVideoIO(uuid, remoteHost, remotePort);
                 var player = new RxControlRequestHandler(frameCaptureDoneFn);
-                var playerIo = new PlayerIO(selfPort, player);
+                var playerIo = new PlayerIO(port, player);
 
                 var remoteControl = new RemoteControl(videoIo, playerIo, frameCaptureDoneFn);
 
@@ -114,7 +122,7 @@ public class RemoteControl {
                     new LoggingDecorator<>(videoIo);
                 }
 
-                videoIo.send(new ConnectCmd(selfPort, selfHost));
+                videoIo.send(new ConnectCmd(port, selfHost));
                 return Optional.of(remoteControl);
             }
             catch (Exception e) {
