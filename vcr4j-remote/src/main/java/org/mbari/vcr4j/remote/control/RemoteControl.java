@@ -1,6 +1,7 @@
 package org.mbari.vcr4j.remote.control;
 
 import org.mbari.vcr4j.decorators.LoggingDecorator;
+import org.mbari.vcr4j.decorators.StatusDecorator;
 import org.mbari.vcr4j.decorators.VCRSyncDecorator;
 import org.mbari.vcr4j.remote.control.commands.ConnectCmd;
 import org.mbari.vcr4j.remote.control.commands.FrameCaptureDoneCmd;
@@ -65,6 +66,8 @@ public class RemoteControl implements Closeable {
         private boolean withMonitoring = false;
         private boolean withLogging = false;
 
+        private boolean withStatus = false;
+
         public Builder(UUID uuid) {
             this.uuid = uuid;
             try {
@@ -100,11 +103,15 @@ public class RemoteControl implements Closeable {
             return this;
         }
 
+        public Builder withStatus(boolean status) {
+            withStatus = status;
+            return this;
+        }
+
         public Builder whenFrameCaptureIsDone(Consumer<FrameCaptureDoneCmd> fn) {
             frameCaptureDoneFn = fn;
             return this;
         }
-
 
 
         public Optional<RemoteControl> build() {
@@ -121,6 +128,9 @@ public class RemoteControl implements Closeable {
                 if (withLogging) {
                     new LoggingDecorator<>(videoIo);
                 }
+                if (withStatus) {
+                    new StatusDecorator<>(videoIo);
+                }
 
                 videoIo.send(new ConnectCmd(port, selfHost));
                 return Optional.of(remoteControl);
@@ -131,8 +141,6 @@ public class RemoteControl implements Closeable {
                         .log("Failed to build RemoteControl");
                 return Optional.empty();
             }
-
-            
 
         }
     }

@@ -70,7 +70,7 @@ public class NoopVideoController implements VideoController {
     }
 
     @Override
-    public CompletableFuture<FrameCapture> framecapture(UUID videoUuid, Path saveLocation) {
+    public CompletableFuture<FrameCapture> framecapture(UUID videoUuid, UUID imageReferenceUuid, Path saveLocation) {
         return CompletableFuture.failedFuture(new UnsupportedOperationException("This is not implemented"));
     }
 }

@@ -106,11 +106,15 @@ public interface VideoController {
      * Important: Be careful with threading when doing a framecapture. As much
      * as possible, IO should be done off of the UI thread.
      * @param videoUuid
+     * @param imageReferenceUuid This is a key for a specific image. The value is essentially just
+     *                           passed through and returned by the FrameCapture object.
      * @param saveLocation
      * @return A future that completes after the image has been written to disk.
      *  The future should be complete exceptionally if the image can't be captured
      *  or written to disk.
      */
-    CompletableFuture<FrameCapture> framecapture(UUID videoUuid, Path saveLocation);
+    CompletableFuture<FrameCapture> framecapture(UUID videoUuid,
+                                                 UUID imageReferenceUuid,
+                                                 Path saveLocation);
 
 }

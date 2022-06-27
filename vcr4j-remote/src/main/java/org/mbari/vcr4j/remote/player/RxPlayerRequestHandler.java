@@ -61,7 +61,7 @@ public class RxPlayerRequestHandler extends RxRequestHandler {
                     .log(path + " already exist. Overwriting existing file");
         }
         getVideoController()
-                .framecapture(request.getUuid(), path)
+                .framecapture(request.getUuid(), request.getImageReferenceUuid(), path)
                 .handle((fc, ex) -> {
                     var resp = (fc == null || ex != null) ?
                             FrameCaptureDoneCmd.fail(request) :

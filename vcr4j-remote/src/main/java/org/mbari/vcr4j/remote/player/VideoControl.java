@@ -15,9 +15,9 @@ public class VideoControl implements Closeable {
 
     private final RxPlayerRequestHandler requestHandler;
 
-    private VideoControl(PlayerIO io, RxPlayerRequestHandler requestHandler, boolean withLogging) {
-        this.requestHandler = requestHandler;
+    private VideoControl(PlayerIO io) {
         playerIO = io;
+        requestHandler = (RxPlayerRequestHandler) playerIO.getRequestHandler();
         lifeCycle = requestHandler.getLifeCycle();
     }
 
@@ -37,8 +37,9 @@ public class VideoControl implements Closeable {
     }
 
     public RxPlayerRequestHandler getRequestHandler() {
-        return (RxPlayerRequestHandler) requestHandler;
+        return requestHandler;
     }
+    
 
     public static class Builder {
         private static final Logger log = LoggerFactory.getLogger(RemoteControl.Builder.class);
@@ -69,7 +70,7 @@ public class VideoControl implements Closeable {
                 var lifeCycle = new RVideoIOLifeCycle(withLogging);
                 var requestHandler = new RxPlayerRequestHandler(videoController, lifeCycle);
                 var playerIo = new PlayerIO(port, requestHandler);
-                var videoControl = new VideoControl(playerIo, requestHandler, withLogging);
+                var videoControl = new VideoControl(playerIo);
                 return Optional.of(videoControl);
             }
             catch (Exception e) {
