@@ -2,10 +2,12 @@ package org.mbari.vcr4j.examples.remote;
 
 import org.mbari.vcr4j.commands.VideoCommands;
 import org.mbari.vcr4j.remote.control.RemoteControl;
+import org.mbari.vcr4j.remote.control.commands.OpenCmd;
 import org.mbari.vcr4j.remote.control.commands.loc.AddLocalizationsCmd;
 import org.mbari.vcr4j.remote.control.commands.loc.Localization;
 import org.mbari.vcr4j.remote.player.VideoControl;
 
+import java.net.URL;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,10 +25,14 @@ public class PingPong1 {
         var remoteControl = new RemoteControl.Builder(uuid)
                 .port(5000)
                 .remotePort(8888)
+                .remoteHost("localhost")
                 .build()
                 .get();
 
 
+        remoteControl
+                .getVideoIO()
+                        .send(new OpenCmd(uuid, new URL("http://m3.shore.mbari.org/videos/M3/proxy/DocRicketts/2021/11/1401/D1401_20211113T181927Z_h264.mp4")));
 
         Thread.sleep(100);
 

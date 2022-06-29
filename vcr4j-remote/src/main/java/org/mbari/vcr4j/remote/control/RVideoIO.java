@@ -56,10 +56,13 @@ public class RVideoIO implements VideoIO<RState, RError> {
 
     private List<Disposable> disposables = new ArrayList<>();
 
+    private final String connectionId;
+
     public RVideoIO(UUID uuid, String host, int port) throws UnknownHostException, SocketException {
         this.uuid = uuid;
         this.port = port;
         inetAddress = InetAddress.getByName(host);
+
 
         PublishSubject<List<VideoInfo>> s1 = PublishSubject.create();
         videoInfoSubject = s1.toSerialized();
@@ -72,7 +75,7 @@ public class RVideoIO implements VideoIO<RState, RError> {
         PublishSubject<VideoCommand<?>> s5 = PublishSubject.create();
         commandSubject = s5.toSerialized();
         responseParser = new RResponseParser(uuid, stateSubject, errorSubject, indexSubject, videoInfoSubject);
-
+        connectionId = getConnectionID();
         init();
     }
 
@@ -130,17 +133,20 @@ public class RVideoIO implements VideoIO<RState, RError> {
         // TODO break up localizations into size limited requests?
         disposables.add(a);
 
+        a = commandSubject.ofType(OpenCmd.class)
+                .forEach(this::doCommand);
+        disposables.add(a);
+
         try {
             socket = new DatagramSocket(0);
             socket.connect(inetAddress, port);
             socket.setSoTimeout(8000);
-            log.atInfo().log("Connected to " + inetAddress.getHostName() + ":" + port);
+            log.atInfo().log( "Connected to " + connectionId);
         }
         catch (Exception e) {
             errorSubject.onNext(new RError(true, false, false, null, null, e));
         }
     }
-
 
 
     private void doCommand(RCommand<?, ?> cmd) {
@@ -173,11 +179,10 @@ public class RVideoIO implements VideoIO<RState, RError> {
         return uuid.toString() + "@" + inetAddress.getCanonicalHostName() + ":" + port ;
     }
 
-
     @Override
     public void close() {
         if (socket != null && (!socket.isClosed() || socket.isConnected())) {
-            log.atInfo().log("Disconnecting socket on port " + port);
+            log.atInfo().log(connectionId + " - Disconnecting socket");
             socket.close();
         }
         disposables.forEach(Disposable::dispose);
@@ -223,7 +228,7 @@ public class RVideoIO implements VideoIO<RState, RError> {
             s.send(packet);
 
             if (log.isDebugEnabled()) {
-                log.debug("Sending command >>> " + new String(packet.getData()));
+                log.debug(connectionId + " - Sending command >>> " + new String(packet.getData()));
             }
 
             s.receive(incomingPacket);    // blocks until returned on timeout
@@ -234,14 +239,14 @@ public class RVideoIO implements VideoIO<RState, RError> {
             var responseMsg = new String(response, StandardCharsets.UTF_8);
 
             if (log.isDebugEnabled()) {
-                log.debug("Received response <<< " + responseMsg);
+                log.debug(connectionId + " - Received response <<< " + responseMsg);
             }
 
             responseParser.handle(command, responseMsg);
         } catch (Exception e) {
             // response will be null
             if (log.isErrorEnabled()) {
-                log.error("UDP connection failed.", e);
+                log.error(connectionId + " - UDP connection failed", e);
                 errorSubject.onNext(new RError(true, false, false, command));
             }
         }

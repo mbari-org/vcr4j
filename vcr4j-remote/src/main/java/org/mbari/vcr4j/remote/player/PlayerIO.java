@@ -24,9 +24,17 @@ public class PlayerIO {
     private Thread receiverThread;
     private volatile boolean ok = true;
 
+    private String connectionId;
+
     public PlayerIO(int port, RequestHandler requestHandler) {
         this.port = port;
         this.requestHandler = requestHandler;
+        try {
+            connectionId = InetAddress.getLocalHost().getHostName() + ":" + port;
+        }
+        catch (Exception e) {
+            connectionId = "localhost:" + port;
+        }
         init();
     }
 
@@ -36,7 +44,7 @@ public class PlayerIO {
             receiverThread = buildReceiverThread();
             receiverThread.setDaemon(true);
             receiverThread.start();
-            log.atDebug().log("Started server's receiver thread: " + receiverThread.getName());
+            log.atDebug().log(connectionId + " - Started server's receiver thread: " + receiverThread.getName());
         }
         catch (Exception e) {
             log.atError()
@@ -78,7 +86,7 @@ public class PlayerIO {
         } catch (IOException e) {
             log.atError()
                     .setCause(e)
-                    .log("Unable to send an error response for request: " + simpleRequest.getRaw());
+                    .log(connectionId + " - Unable to send an error response for request: " + simpleRequest.getRaw());
         }
     }
 
@@ -95,20 +103,20 @@ public class PlayerIO {
                 try {
                     server.receive(packet);
                     String msg = new String(packet.getData(), 0, packet.getLength());
-                    log.debug("Received command <<< " + msg);
+                    log.debug(connectionId + " - Received command <<< " + msg);
                     var simpleRequest = RVideoIO.GSON.fromJson(msg, SimpleRequest.class);
                     simpleRequest.setRaw(msg);
                     handleRequest(simpleRequest, packet.getAddress(), packet.getPort());
                 }
                 catch (Exception e) {
-                    log.debug("Error while reading UDP datagram", e);
+                    log.debug(connectionId + " - Error while reading UDP datagram", e);
                 }
             }
             if (server != null && !server.isClosed()) {
                 server.close();
                 server = null;
             }
-            log.info("Shutting down UDP server");
+            log.info(connectionId + " - Shutting down UDP server");
         });
     }
 
