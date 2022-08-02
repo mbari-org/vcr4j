@@ -7,6 +7,7 @@ import org.mbari.vcr4j.remote.control.commands.ConnectCmd;
 import org.mbari.vcr4j.remote.control.commands.FrameCaptureDoneCmd;
 import org.mbari.vcr4j.remote.player.PlayerIO;
 import org.mbari.vcr4j.remote.player.RxControlRequestHandler;
+import org.mbari.vcr4j.util.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,6 +70,7 @@ public class RemoteControl implements Closeable {
         private boolean withStatus = false;
 
         public Builder(UUID uuid) {
+            Preconditions.checkArgument(uuid != null, "UUID is required");
             this.uuid = uuid;
             try {
                 this.selfHost = InetAddress.getLocalHost().getHostName();

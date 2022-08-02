@@ -16,6 +16,7 @@ import org.mbari.vcr4j.commands.ShuttleCmd;
 import org.mbari.vcr4j.commands.VideoCommands;
 import org.mbari.vcr4j.remote.control.commands.*;
 import org.mbari.vcr4j.remote.control.commands.loc.LocalizationsCmd;
+import org.mbari.vcr4j.util.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,6 +60,7 @@ public class RVideoIO implements VideoIO<RState, RError> {
     private final String connectionId;
 
     public RVideoIO(UUID uuid, String host, int port) throws UnknownHostException, SocketException {
+        Preconditions.checkArgument(uuid != null, "UUID is required");
         this.uuid = uuid;
         this.port = port;
         inetAddress = InetAddress.getByName(host);
@@ -125,6 +127,7 @@ public class RVideoIO implements VideoIO<RState, RError> {
         disposables.add(a);
 
         a = commandSubject.ofType(ConnectCmd.class)
+                .map(cmd -> new ConnectCmd(cmd.getValue().getPort(), cmd.getValue().getHost(), uuid))
                 .forEach(this::doCommand); 
         disposables.add(a);
 
