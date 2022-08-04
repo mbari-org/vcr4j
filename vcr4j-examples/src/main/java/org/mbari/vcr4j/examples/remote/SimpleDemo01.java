@@ -1,6 +1,7 @@
 package org.mbari.vcr4j.examples.remote;
 
 import org.docopt.Docopt;
+import org.mbari.vcr4j.commands.VideoCommands;
 import org.mbari.vcr4j.remote.control.RemoteControl;
 import org.mbari.vcr4j.remote.control.commands.OpenCmd;
 
@@ -25,12 +26,15 @@ public class SimpleDemo01 {
         var io = new RemoteControl.Builder(uuid)
                 .port(5000)
                 .remotePort(8888)
+                .remoteHost("localhost")
+                .withMonitoring(true)
                 .build()
                 .get();
 
         io.getVideoIO().send(new OpenCmd(uuid, url));
+        io.getVideoIO().send(VideoCommands.PLAY);
 
-        Thread.sleep(2000);
+        Thread.sleep(20000);
         io.close();
 
 

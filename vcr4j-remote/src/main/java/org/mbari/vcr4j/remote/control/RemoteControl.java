@@ -117,6 +117,11 @@ public class RemoteControl implements Closeable {
 
 
         public Optional<RemoteControl> build() {
+
+            log.atDebug()
+                    .log(() -> "Building. Listening on port " + port + ". Sending commands to " +
+                            remoteHost + ":" + remotePort);
+
             try {
                 var videoIo = new RVideoIO(uuid, remoteHost, remotePort);
                 var player = new RxControlRequestHandler(frameCaptureDoneFn);

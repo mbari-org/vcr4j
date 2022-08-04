@@ -25,7 +25,7 @@ public class RState implements VideoState {
         }
     }
 
-    private final State state;
+    private State state;
 
     public RState(State state) {
         this.state = state;

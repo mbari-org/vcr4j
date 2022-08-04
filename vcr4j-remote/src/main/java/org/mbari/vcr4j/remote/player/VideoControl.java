@@ -42,7 +42,7 @@ public class VideoControl implements Closeable {
     
 
     public static class Builder {
-        private static final Logger log = LoggerFactory.getLogger(RemoteControl.Builder.class);
+        private static final Logger log = LoggerFactory.getLogger(Builder.class);
 
         private int port = 8888;
 
@@ -66,6 +66,8 @@ public class VideoControl implements Closeable {
         }
 
         public Optional<VideoControl> build() {
+            log.atDebug()
+                    .log(() -> "Building. Listening on port " + port + " using " + videoController);
             try {
                 var lifeCycle = new RVideoIOLifeCycle(withLogging);
                 var requestHandler = new RxPlayerRequestHandler(videoController, lifeCycle);

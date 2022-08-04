@@ -136,10 +136,6 @@ public class RVideoIO implements VideoIO<RState, RError> {
         // TODO break up localizations into size limited requests?
         disposables.add(a);
 
-        a = commandSubject.ofType(OpenCmd.class)
-                .forEach(this::doCommand);
-        disposables.add(a);
-
         try {
             socket = new DatagramSocket(0);
             socket.connect(inetAddress, port);

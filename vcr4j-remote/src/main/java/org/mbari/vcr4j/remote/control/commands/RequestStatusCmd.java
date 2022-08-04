@@ -24,14 +24,18 @@ public class RequestStatusCmd extends RCommand<RequestStatusCmd.Request, Request
 
     public static class Response extends RResponse {
 
-        private RState state;
+        private String state;
         public Response(String status) {
             super(Command, status);
-            state = RState.parse(status);
+            this.state = status;
         }
 
-        public RState getState() {
+        public String getState() {
             return state;
+        }
+
+        public RState state() {
+            return RState.parse(state);
         }
 
         @Override
