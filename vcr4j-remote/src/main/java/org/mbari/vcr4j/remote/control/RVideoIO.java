@@ -86,6 +86,15 @@ public class RVideoIO implements VideoIO<RState, RError> {
                 .forEach(this::doCommand);
         disposables.add(a);
 
+        a = commandSubject.ofType(CloseCmd.class)
+                .map(cmd -> new SizedRequest(cmd, 1024))
+                .forEach(cmd -> doCommand(cmd.cmd, cmd.size));
+        disposables.add(a);
+
+        a = commandSubject.ofType(PlayCmd.class)
+                .forEach(this::doCommand);
+        disposables.add(a);
+
         a = commandSubject.ofType(VideoCommands.class)
                 .map(c ->
                     switch (c) {
@@ -123,6 +132,10 @@ public class RVideoIO implements VideoIO<RState, RError> {
         disposables.add(a);
 
         a = commandSubject.ofType(FrameCaptureCmd.class)
+                .forEach(this::doCommand);
+        disposables.add(a);
+
+        a = commandSubject.ofType(FrameCaptureDoneCmd.class)
                 .forEach(this::doCommand);
         disposables.add(a);
 
@@ -181,7 +194,7 @@ public class RVideoIO implements VideoIO<RState, RError> {
     @Override
     public void close() {
         if (socket != null && (!socket.isClosed() || socket.isConnected())) {
-            log.atInfo().log(connectionId + " - Disconnecting socket");
+            log.atInfo().log("Disconnecting from " + connectionId );
             socket.close();
         }
         disposables.forEach(Disposable::dispose);

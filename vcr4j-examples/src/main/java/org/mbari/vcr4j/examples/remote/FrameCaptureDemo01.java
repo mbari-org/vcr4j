@@ -1,18 +1,23 @@
 package org.mbari.vcr4j.examples.remote;
 
 import org.docopt.Docopt;
+import org.mbari.vcr4j.VideoCommand;
+import org.mbari.vcr4j.commands.SeekElapsedTimeCmd;
 import org.mbari.vcr4j.commands.VideoCommands;
 import org.mbari.vcr4j.remote.control.RemoteControl;
+import org.mbari.vcr4j.remote.control.commands.FrameCaptureCmd;
 import org.mbari.vcr4j.remote.control.commands.OpenCmd;
+import org.mbari.vcr4j.remote.control.commands.RemoteCommands;
 
+import java.io.File;
 import java.net.URL;
+import java.time.Duration;
 import java.util.Map;
 import java.util.UUID;
 
-public class SimpleDemo01 {
-
+public class FrameCaptureDemo01 {
     public static void main(String[] args) throws Exception {
-        String prog = SimpleDemo01.class.getName();
+        String prog = FrameCaptureDemo01.class.getName();
         String doc = "Usage: " + prog + " <port> <url>\n" +
                 "Options:\n" +
                 "  -h, --help";
@@ -27,15 +32,23 @@ public class SimpleDemo01 {
                 .port(5000)
                 .remotePort(8888)
                 .remoteHost("localhost")
-                .withMonitoring(true)
                 .build()
                 .get();
 
-        io.getVideoIO().send(new OpenCmd(uuid, url));
-        io.getVideoIO().send(VideoCommands.PLAY);
+        var videoIo = io.getVideoIO();
 
-        Thread.sleep(20000);
+        var png = File.createTempFile("trashme", ".png");
+        png.deleteOnExit();
+        videoIo.send(new OpenCmd(uuid, url));
+        Thread.sleep(500);
+        videoIo.send(new SeekElapsedTimeCmd(Duration.ofMillis(10000)));
+        videoIo.send(VideoCommands.PLAY);
+        videoIo.send(VideoCommands.PAUSE);
+        videoIo.send(new FrameCaptureCmd(uuid, UUID.randomUUID(), png.getAbsolutePath()));
+        Thread.sleep(500);
+        videoIo.send(RemoteCommands.CLOSE);
         io.close();
+
 
 
     }

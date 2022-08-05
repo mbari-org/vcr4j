@@ -66,6 +66,11 @@ public class RxPlayerRequestHandler extends RxRequestHandler {
                     var resp = (fc == null || ex != null) ?
                             FrameCaptureDoneCmd.fail(request) :
                             FrameCaptureDoneCmd.success(fc);
+                    if (log.isDebugEnabled()) {
+                        var msg = RVideoIO.GSON.toJson(resp);
+                        log.atDebug()
+                                .log("Framecapture is done. Sending: \n" + msg);
+                    }
                     lifeCycle.get().ifPresent(io -> io.send(resp));
                     return null;
                 });

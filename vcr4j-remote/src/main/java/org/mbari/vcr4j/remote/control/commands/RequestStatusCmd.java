@@ -24,7 +24,7 @@ public class RequestStatusCmd extends RCommand<RequestStatusCmd.Request, Request
 
     public static class Response extends RResponse {
 
-        private String state;
+        private transient String state;
         public Response(String status) {
             super(Command, status);
             this.state = status;

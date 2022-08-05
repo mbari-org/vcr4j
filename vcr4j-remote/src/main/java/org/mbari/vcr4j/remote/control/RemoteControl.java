@@ -3,6 +3,7 @@ package org.mbari.vcr4j.remote.control;
 import org.mbari.vcr4j.decorators.LoggingDecorator;
 import org.mbari.vcr4j.decorators.StatusDecorator;
 import org.mbari.vcr4j.decorators.VCRSyncDecorator;
+import org.mbari.vcr4j.decorators.VideoSyncDecorator;
 import org.mbari.vcr4j.remote.control.commands.ConnectCmd;
 import org.mbari.vcr4j.remote.control.commands.FrameCaptureDoneCmd;
 import org.mbari.vcr4j.remote.player.PlayerIO;
@@ -130,7 +131,7 @@ public class RemoteControl implements Closeable {
                 var remoteControl = new RemoteControl(videoIo, playerIo, frameCaptureDoneFn);
 
                 if (withMonitoring) {
-                    new VCRSyncDecorator<>(videoIo);
+                    new VideoSyncDecorator<>(videoIo);
                 }
                 if (withLogging) {
                     new LoggingDecorator<>(videoIo);

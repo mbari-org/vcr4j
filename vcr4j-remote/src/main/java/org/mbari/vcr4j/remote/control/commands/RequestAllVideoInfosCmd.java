@@ -20,7 +20,6 @@ public class RequestAllVideoInfosCmd
     }
 
     public static class Request extends RRequest {
-        private String command;
 
         public Request() {
             super(Command, null);
