@@ -7,7 +7,7 @@ import org.mbari.vcr4j.remote.control.commands.RResponse;
 import java.util.List;
 import java.util.UUID;
 
-public class AddLocalizationsCmd extends LocalizationsCmd<AddLocalizationsCmd.Request, AddLocalizationsCmd.Response> {
+public class AddLocalizationsCmd extends LocalizationsPayloadCmd<Localization, AddLocalizationsCmd.Request, AddLocalizationsCmd.Response> {
 
     public static final String Command = "add localizations";
 
@@ -24,18 +24,12 @@ public class AddLocalizationsCmd extends LocalizationsCmd<AddLocalizationsCmd.Re
         return Response.class;
     }
 
-    public static class Request extends RRequest {
-
-        private List<Localization> localizations;
+    public static class Request extends LocalizationRequest<Localization> {
 
         public Request(UUID uuid, List<Localization> localizations) {
-            super(Command, uuid);
-            this.localizations = List.copyOf(localizations);
+            super(Command, uuid, localizations);
         }
 
-        public List<Localization> getLocalizations() {
-            return localizations;
-        }
     }
 
     public static class Response extends RResponse {

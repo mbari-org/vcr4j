@@ -3,6 +3,8 @@ package org.mbari.vcr4j.util;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class CollectionUtils {
 
@@ -16,5 +18,11 @@ public class CollectionUtils {
         }
 
         return list;
+    }
+
+    public static <T> List<List<T>> grouped(List<T> collection, int batchSize) {
+        return IntStream.iterate(0, i -> i < collection.size(), i -> i + batchSize)
+                .mapToObj(i -> collection.subList(i, Math.min(i + batchSize, collection.size())))
+                .collect(Collectors.toList());
     }
 }

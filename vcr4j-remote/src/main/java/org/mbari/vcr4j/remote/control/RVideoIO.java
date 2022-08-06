@@ -15,7 +15,8 @@ import org.mbari.vcr4j.commands.SeekElapsedTimeCmd;
 import org.mbari.vcr4j.commands.ShuttleCmd;
 import org.mbari.vcr4j.commands.VideoCommands;
 import org.mbari.vcr4j.remote.control.commands.*;
-import org.mbari.vcr4j.remote.control.commands.loc.LocalizationsCmd;
+import org.mbari.vcr4j.remote.control.commands.loc.*;
+import org.mbari.vcr4j.util.CollectionUtils;
 import org.mbari.vcr4j.util.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -145,7 +146,7 @@ public class RVideoIO implements VideoIO<RState, RError> {
         disposables.add(a);
 
         a = commandSubject.ofType(LocalizationsCmd.class)
-                .forEach(this::doCommand);
+                .forEach(this::doLocalizationsCommand);
         // TODO break up localizations into size limited requests?
         disposables.add(a);
 
@@ -171,6 +172,32 @@ public class RVideoIO implements VideoIO<RState, RError> {
         var packet = asPacket(cmd);
         sendCommand(packet, responseSize, cmd);
     }
+
+    private void doLocalizationsCommand(LocalizationsCmd<?, ?> command) {
+
+        if (command instanceof ClearLocalizationsCmd cmd) {
+            doCommand(cmd);
+        }
+        else if (command instanceof AddLocalizationsCmd cmd){
+            cmd.groupedPayload(10)
+                    .stream()
+                    .map(xs -> new AddLocalizationsCmd(cmd.getValue().getUuid(), xs))
+                    .forEach(this::doCommand);
+        }
+        else if (command instanceof RemoveLocalizationsCmd cmd) {
+            cmd.groupedPayload(10)
+                    .stream()
+                    .map(xs -> new RemoveLocalizationsCmd(cmd.getValue().getUuid(), xs))
+                    .forEach(this::doCommand);
+        }
+        else if (command instanceof UpdateLocalizationsCmd cmd) {
+            cmd.groupedPayload(10)
+                    .stream()
+                    .map(xs -> new UpdateLocalizationsCmd(cmd.getValue().getUuid(), xs))
+                    .forEach(this::doCommand);
+        }
+    }
+
 
     public UUID getUuid() {
         return uuid;

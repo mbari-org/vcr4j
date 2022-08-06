@@ -6,7 +6,7 @@ import org.mbari.vcr4j.remote.control.commands.RResponse;
 import java.util.List;
 import java.util.UUID;
 
-public class RemoveLocalizationsCmd extends LocalizationsCmd<RemoveLocalizationsCmd.Request, RemoveLocalizationsCmd.Response> {
+public class RemoveLocalizationsCmd extends LocalizationsPayloadCmd<UUID, RemoveLocalizationsCmd.Request, RemoveLocalizationsCmd.Response> {
     public static final String Command = "remove localizations";
 
     public RemoveLocalizationsCmd(Request value) {
@@ -22,17 +22,12 @@ public class RemoveLocalizationsCmd extends LocalizationsCmd<RemoveLocalizations
         return Response.class;
     }
 
-    public static class Request extends RRequest {
+    public static class Request extends LocalizationRequest<UUID> {
 
-        private List<UUID> localizations;
         public Request(UUID uuid, List<UUID> localizations) {
-            super(Command, uuid);
-            this.localizations = localizations;
+            super(Command, uuid, localizations);
         }
 
-        public List<UUID> getLocalizations() {
-            return localizations;
-        }
     }
 
     public static class Response extends RResponse {

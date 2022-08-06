@@ -1,5 +1,6 @@
 package org.mbari.vcr4j.remote.control.commands.loc;
 
+import java.util.Objects;
 import java.util.UUID;
 
 public class Localization {
@@ -12,7 +13,7 @@ public class Localization {
     private Integer width;
     private Integer height;
 
-    private String color; // hex string like "#FFDDCC"
+    private String color = "#DDDDDD"; // hex string like "#FFDDCC"
 
     public Localization(UUID uuid,
                         String concept,
@@ -36,6 +37,7 @@ public class Localization {
 
     public Localization() {
     }
+
 
     public UUID getUuid() {
         return uuid;
@@ -99,5 +101,26 @@ public class Localization {
 
     public void setHeight(Integer height) {
         this.height = height;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Localization that = (Localization) o;
+        return Objects.equals(uuid, that.uuid) && Objects.equals(concept, that.concept) && Objects.equals(elapsedTimeMillis, that.elapsedTimeMillis) && Objects.equals(durationMillis, that.durationMillis) && Objects.equals(x, that.x) && Objects.equals(y, that.y) && Objects.equals(width, that.width) && Objects.equals(height, that.height) && Objects.equals(color, that.color);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(uuid, concept, elapsedTimeMillis, durationMillis, x, y, width, height, color);
     }
 }
