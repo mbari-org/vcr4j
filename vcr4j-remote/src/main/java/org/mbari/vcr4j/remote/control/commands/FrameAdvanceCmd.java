@@ -2,6 +2,11 @@ package org.mbari.vcr4j.remote.control.commands;
 
 import java.util.UUID;
 
+/**
+ * Advance a single frame
+ * @author Brian Schlining
+ * @since 2022-08-08
+ */
 public class FrameAdvanceCmd extends RCommand<FrameAdvanceCmd.Request, FrameAdvanceCmd.Response> {
 
     public static final String Command = "frame advance";

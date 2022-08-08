@@ -6,6 +6,11 @@ import java.time.Duration;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Request the current elapsed time into the video.
+ * @author Brian Schlining
+ * @since 2022-08-08
+ */
 public class RequestElapsedTimeCmd
         extends RCommand<RequestElapsedTimeCmd.Request, RequestElapsedTimeCmd.Response> {
     public static final String Command = "request elapsed time";

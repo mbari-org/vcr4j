@@ -12,7 +12,9 @@ import java.util.function.Consumer;
 
 /**
  * This implementation is for the app that controls the video player,
- * not the video player itself.
+ * not the video player itself. It is created using {@link org.mbari.vcr4j.remote.control.RemoteControl.Builder}
+ * @author Brian Schlining
+ * @since 2022-08-08
  */
 public class RxControlRequestHandler extends RxRequestHandler {
 

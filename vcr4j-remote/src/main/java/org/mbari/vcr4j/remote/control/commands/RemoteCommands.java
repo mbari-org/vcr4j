@@ -2,6 +2,11 @@ package org.mbari.vcr4j.remote.control.commands;
 
 import org.mbari.vcr4j.VideoCommand;
 
+/**
+ *
+ * @author Brian Schlining
+ * @since 2022-08-08
+ */
 public enum RemoteCommands implements VideoCommand<Void> {
 
     FRAMEADVANCE("frame advance"),

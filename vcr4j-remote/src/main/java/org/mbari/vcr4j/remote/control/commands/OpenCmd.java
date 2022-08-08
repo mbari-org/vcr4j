@@ -3,6 +3,9 @@ package org.mbari.vcr4j.remote.control.commands;
 import java.net.URL;
 import java.util.UUID;
 
+/**
+ * Open a video.
+ */
 public class OpenCmd extends RCommand<OpenCmd.Request, OpenCmd.Response> {
     public static final String Command = "open";
 

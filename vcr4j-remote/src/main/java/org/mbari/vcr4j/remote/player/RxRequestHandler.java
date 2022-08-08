@@ -17,6 +17,8 @@ import java.time.Duration;
  * This takes all the localization cmd/requests and dumps them into an
  * observable so the implementation can do whatever it needs to do to manage the
  * localizations. As implemented all localization requests response with an OK.
+ * @author Brian Schlining
+ * @since 2022-08-08
  */
 public abstract class RxRequestHandler implements RequestHandler, Closeable {
 

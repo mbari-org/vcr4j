@@ -8,7 +8,11 @@ import java.io.Closeable;
 public interface VideoIO<S extends VideoState, E extends VideoError> extends Closeable {
 
 
-
+    /**
+     * Send a command to the video player
+     * @param videoCommand The command to send
+     * @param <A> The type of the video Command
+     */
     <A extends VideoCommand<?>> void send(A videoCommand);
 
     /**
@@ -22,12 +26,33 @@ public interface VideoIO<S extends VideoState, E extends VideoError> extends Clo
     Subject<VideoCommand<?>> getCommandSubject();
 
 
+    /**
+     *
+     * @return A string unique to the particular video io connection
+     */
     String getConnectionID();
 
+    /**
+     * Close the video io and free it's resources.
+     */
     void close();
 
+    /**
+     * All errors that occur will be sent to this observable
+     * @return stream of errors
+     */
     Observable<E> getErrorObservable();
+
+    /**
+     * Listen to this observable for responses to status requests
+     * @return Status stream
+     */
     Observable<S> getStateObservable();
+
+    /**
+     *
+     * @return THis observable streams timecode/elapsedtime/timestamp responses.
+     */
     Observable<VideoIndex> getIndexObservable();
 
 }

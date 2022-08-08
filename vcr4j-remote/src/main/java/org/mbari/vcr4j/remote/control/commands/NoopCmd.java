@@ -2,6 +2,10 @@ package org.mbari.vcr4j.remote.control.commands;
 
 import java.util.UUID;
 
+/**
+ * Does nothing. Some commands not used by {{@link org.mbari.vcr4j.remote.control.RVideoIO}} are
+ * mapped to this.
+ */
 public class NoopCmd extends RCommand<NoopCmd.Request, NoopCmd.Response> {
     public NoopCmd() {
         super(null);

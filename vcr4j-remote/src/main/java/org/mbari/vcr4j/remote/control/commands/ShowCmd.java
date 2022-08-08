@@ -2,6 +2,11 @@ package org.mbari.vcr4j.remote.control.commands;
 
 import java.util.UUID;
 
+/**
+ * Focus the window for the given video.
+ * @author Brian Schlining
+ * @since 2022-08-08
+ */
 public class ShowCmd extends RCommand<ShowCmd.Request, ShowCmd.Response> {
     public static final String Command = "show";
 

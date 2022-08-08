@@ -2,6 +2,10 @@ package org.mbari.vcr4j.remote.control.commands;
 
 import java.util.UUID;
 
+/**
+ * This is normally sent from the video player to the {{@link org.mbari.vcr4j.remote.control.RemoteControl}}
+ * once the video player has completed a framecapture.
+ */
 public class FrameCaptureDoneCmd extends RCommand<FrameCaptureDoneCmd.Request, FrameCaptureDoneCmd.Response> {
 
     public static final String Command = "frame capture done";

@@ -5,8 +5,12 @@ import org.mbari.vcr4j.VideoCommand;
 import java.util.UUID;
 
 /**
+ * This command informs the video player of the port that this RemoteControl is listening to. The
+ * video player uses this port to send {{@link FrameCaptureDoneCmd}} and any
+ * {{@link org.mbari.vcr4j.remote.control.commands.loc.LocalizationsCmd}} that were initiated
+ * by the video player.
  * @author Brian Schlining
- * @since 2016-08-25T17:21:00
+ * @since 2022-08-08
  */
 public class ConnectCmd extends RCommand<ConnectCmd.Request, ConnectCmd.Response> {
 

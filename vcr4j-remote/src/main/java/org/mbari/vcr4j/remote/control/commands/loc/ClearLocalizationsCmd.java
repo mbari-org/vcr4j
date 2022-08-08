@@ -6,6 +6,11 @@ import org.mbari.vcr4j.remote.control.commands.RResponse;
 
 import java.util.UUID;
 
+/**
+ * Tell the remote end to remove all localizations
+ * @author Brian Schlining
+ * @since 2022-08-08
+ */
 public class ClearLocalizationsCmd extends LocalizationsCmd<ClearLocalizationsCmd.Request, ClearLocalizationsCmd.Response> {
 
     public static final String Command = "clear localizations";

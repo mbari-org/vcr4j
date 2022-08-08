@@ -2,6 +2,11 @@ package org.mbari.vcr4j.remote.control.commands;
 
 import java.util.UUID;
 
+/**
+ * Base class for all remote responses.
+ * @author Brian Schlining
+ * @since 2022-08-08
+ */
 public abstract class RResponse {
 
     public static final String OK = "ok";

@@ -2,6 +2,11 @@ package org.mbari.vcr4j.remote.control.commands;
 
 import java.util.UUID;
 
+/**
+ * Pause video playback
+ * @author Brian Schlining
+ * @since 2022-08-08
+ */
 public class PauseCmd extends RCommand<PauseCmd.Request, PauseCmd.Response> {
 
     public static final String Command = "pause";

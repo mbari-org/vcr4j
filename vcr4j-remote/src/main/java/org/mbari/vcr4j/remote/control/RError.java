@@ -5,6 +5,10 @@ import org.mbari.vcr4j.VideoError;
 
 import java.util.Optional;
 
+/**
+ * @author Brian Schlining
+ * @since 2022-08-08
+ */
 public class RError implements VideoError {
 
     private final boolean connectionError;

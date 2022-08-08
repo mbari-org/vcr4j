@@ -12,6 +12,11 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * Video controller that does nothing.
+ * @author Brian Schlining
+ * @since 2022-08-08
+ */
 public class NoopVideoController implements VideoController {
 
     @Override

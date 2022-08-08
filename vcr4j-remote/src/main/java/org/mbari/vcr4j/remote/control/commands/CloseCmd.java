@@ -2,6 +2,9 @@ package org.mbari.vcr4j.remote.control.commands;
 
 import java.util.UUID;
 
+/**
+ * Command to close the remote video
+ */
 public class CloseCmd extends RCommand<CloseCmd.Request, CloseCmd.Response> {
     public static final String Command = "close";
 

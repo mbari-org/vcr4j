@@ -13,6 +13,11 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 
 
+/**
+ * This is the receiving server for the video player. All commands are passed to a {{@link RequestHandler}}
+ * @author Brian Schlining
+ * @since 2022-08-08
+ */
 public class PlayerIO {
 
     private static final Logger log = LoggerFactory.getLogger(PlayerIO.class);

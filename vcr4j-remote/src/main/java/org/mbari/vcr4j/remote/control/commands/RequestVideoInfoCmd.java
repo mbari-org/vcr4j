@@ -3,6 +3,11 @@ package org.mbari.vcr4j.remote.control.commands;
 import java.net.URL;
 import java.util.UUID;
 
+/**
+ * Request info about the video in the focused window in the video player
+ * @author Brian Schlining
+ * @since 2022-08-08
+ */
 public class RequestVideoInfoCmd extends RCommand<RequestVideoInfoCmd.Request, RequestVideoInfoCmd.Response> {
 
     public static final String Command = "request information";

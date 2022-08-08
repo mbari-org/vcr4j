@@ -7,6 +7,11 @@ import org.slf4j.LoggerFactory;
 import java.io.Closeable;
 import java.util.Optional;
 
+/**
+ * VideoControl is for video player applications that need to recieve commands from a {@link RemoteControl}.
+ * @author Brian Schlining
+ * @since 2022-08-08
+ */
 public class VideoControl implements Closeable {
 
     private final PlayerIO playerIO;
@@ -39,8 +44,17 @@ public class VideoControl implements Closeable {
     public RxPlayerRequestHandler getRequestHandler() {
         return requestHandler;
     }
-    
 
+
+    /**
+     * Builder for constructing a VideoControl.
+     * {@snippet :
+     *   var videoControl = new VideoControl.Builder(8888)
+     *     .withLogging(false)
+     *     .videoController(new NoopVideoController())
+     *     .build();
+     * }
+     */
     public static class Builder {
         private static final Logger log = LoggerFactory.getLogger(Builder.class);
 

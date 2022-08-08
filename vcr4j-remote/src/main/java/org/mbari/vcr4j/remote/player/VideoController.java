@@ -11,6 +11,10 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * @author Brian Schlining
+ * @since 2022-08-08
+ */
 public interface VideoController {
 
     /**

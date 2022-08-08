@@ -19,10 +19,14 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+/**
+ * RemoteControl is for applications that need to send commands to a video player.
+ * @author Brian Schlining
+ * @since 2022-08-08
+ */
 public class RemoteControl implements Closeable {
 
     private final RVideoIO videoIO;
-    private final RxControlRequestHandler requestHandler;
 
     private final PlayerIO playerIO;
 
@@ -31,7 +35,6 @@ public class RemoteControl implements Closeable {
                          Consumer<FrameCaptureDoneCmd> frameCaptureDoneFn) {
         this.videoIO = videoIO;
         this.playerIO = playerIO;
-        this.requestHandler = new RxControlRequestHandler(frameCaptureDoneFn);
     }
 
     public RVideoIO getVideoIO() {
@@ -43,17 +46,30 @@ public class RemoteControl implements Closeable {
     }
 
     public RxControlRequestHandler getRequestHandler() {
-        return requestHandler;
+        return (RxControlRequestHandler) playerIO.getRequestHandler();
     }
 
     @Override
     public void close() {
         videoIO.close();
         playerIO.close();
-        requestHandler.close();
+        getRequestHandler().close();
     }
 
 
+    /**
+     * Builder for constructing a RemoteControl.
+     * {@snippet :
+     *   var remoteControl = new RemoteControl.Builder()
+     *     .remotePort(8888)                // The port the video player is listening to. Default is 8888
+     *     .port(5000)                      // The port the video player can send its commands to. Default is 8899
+     *     .withLogging(true)               // Enable command logging. Default is false
+     *     .withMonitoring(false)           // Enable timers to track status/timecode from video player. Default is false
+     *     .withStatus(true)                // Send status command when a command is sent that can change state. Default is false
+     *     .whenFrameCaptureIsDone(cmd -> {}); // What to do when a frame grab has been taken
+     *     .build()
+     * }
+     */
     public static class Builder {
 
         private static final Logger log = LoggerFactory.getLogger(Builder.class);

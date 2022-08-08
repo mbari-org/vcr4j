@@ -4,6 +4,11 @@ import java.net.URL;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Request information about all open videos
+ * @author Brian Schlining
+ * @since 2022-08-08
+ */
 public class RequestAllVideoInfosCmd
         extends RCommand<RequestAllVideoInfosCmd.Request, RequestAllVideoInfosCmd.Response> {
 

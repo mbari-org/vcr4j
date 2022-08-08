@@ -11,6 +11,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Parses an incoming response to it's correct type. If the response needs to be passed to an
+ * observable, this class forwards it to the correct observable.
+ * @author Brian Schlining
+ * @since 2022-08-08
+ */
 public class RResponseParser {
 
     private final UUID uuid;
@@ -20,6 +26,14 @@ public class RResponseParser {
     private final Subject<List<VideoInfo>> videoInfoSubject;
     private final Logger log = LoggerFactory.getLogger(getClass());
 
+    /**
+     * Constructor
+     * @param uuid THe video uuid
+     * @param stateSubject The status subject for {{{@link RVideoIO}}}
+     * @param errorSubject THe error submject for RVideoIO
+     * @param indexSubject The index subject for RVideoIO
+     * @param videoInfoSubject The video info subject for RVideoIO
+     */
     public RResponseParser(UUID uuid,
                            Subject<RState> stateSubject,
                            Subject<RError> errorSubject,
@@ -49,7 +63,15 @@ public class RResponseParser {
             errorSubject.onNext(e);
             return Optional.empty();
         }
-    }    public <B extends RResponse> void handle(RCommand<?, B> command, String msg) {
+    }
+
+    /**
+     * Handle a response
+     * @param command The command that was sent
+     * @param msg The raw response to the command from the remote video.
+     * @param <B> The type of the response
+     */
+    public <B extends RResponse> void handle(RCommand<?, B> command, String msg) {
         parse(command, msg).ifPresent(response -> {
             if (response instanceof RequestStatusCmd.Response r) {
                 stateSubject.onNext(r.state());

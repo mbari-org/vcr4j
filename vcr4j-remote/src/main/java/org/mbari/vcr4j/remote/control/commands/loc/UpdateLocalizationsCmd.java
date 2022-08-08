@@ -6,6 +6,12 @@ import org.mbari.vcr4j.remote.control.commands.RResponse;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Command the remote and to update the contained localizations. If the matching UUID is not
+ * found in the remote end, those localizations should be ignored.
+ * @author Brian Schlining
+ * @since 2022-08-08
+ */
 public class UpdateLocalizationsCmd extends LocalizationsPayloadCmd<Localization, UpdateLocalizationsCmd.Request, UpdateLocalizationsCmd.Response> {
 
     public static final String Command = "update localizations";

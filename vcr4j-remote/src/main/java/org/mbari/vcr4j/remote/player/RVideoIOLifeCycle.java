@@ -9,6 +9,16 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
+/**
+ * This manages the life cycle of a {@link RVideoIO} that is created by the video player in
+ * response to {@link org.mbari.vcr4j.remote.control.commands.ConnectCmd}s sent by a
+ * {@link org.mbari.vcr4j.remote.control.RemoteControl}. It is used to send
+ * commands from the video player to the remote control.
+ *
+ * This is normally manged by the {@link VideoControl} and shouldn't need to be called directly
+ * @author Brian Schlining
+ * @since 2022-08-08
+ */
 public class RVideoIOLifeCycle {
 
     private static final Logger log = LoggerFactory.getLogger(RVideoIOLifeCycle.class);

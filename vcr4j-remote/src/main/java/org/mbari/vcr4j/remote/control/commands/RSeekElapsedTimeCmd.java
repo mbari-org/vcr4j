@@ -2,6 +2,11 @@ package org.mbari.vcr4j.remote.control.commands;
 
 import java.util.UUID;
 
+/**
+ * Seek to the provided time in the video
+ * @author Brian Schlining
+ * @since 2022-08-08
+ */
 public class RSeekElapsedTimeCmd
         extends RCommand<RSeekElapsedTimeCmd.Request, RSeekElapsedTimeCmd.Response> {
 

@@ -4,6 +4,11 @@ import org.mbari.vcr4j.VideoCommand;
 
 import java.util.UUID;
 
+/**
+ * Base class for all Remote requests
+ * @author Brian Schlining
+ * @since 2022-08-08
+ */
 public class RRequest {
 
     protected String command;

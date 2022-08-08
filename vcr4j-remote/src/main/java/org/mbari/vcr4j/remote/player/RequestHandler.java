@@ -9,6 +9,11 @@ import org.mbari.vcr4j.remote.control.commands.loc.UpdateLocalizationsCmd;
 
 import java.util.function.Function;
 
+/**
+ * Base interface for anything that handles incoming commands
+ * @author Brian Schlining
+ * @since 2022-08-08
+ */
 public interface RequestHandler {
 
     // Video control methods

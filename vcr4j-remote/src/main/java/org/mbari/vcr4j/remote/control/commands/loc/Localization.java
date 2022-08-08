@@ -3,6 +3,11 @@ package org.mbari.vcr4j.remote.control.commands.loc;
 import java.util.Objects;
 import java.util.UUID;
 
+/**
+ * Defines a rectangular bounding box.
+ * @author Brian Schlining
+ * @since 2022-08-08
+ */
 public class Localization {
     private UUID uuid;
     private String concept;

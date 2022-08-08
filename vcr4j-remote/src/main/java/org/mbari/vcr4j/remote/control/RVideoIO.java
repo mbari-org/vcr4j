@@ -27,6 +27,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * A {@link VideoIO} for the UPD remote control. This class manages the outbound UDP commands from
+ * the {@link RemoteControl} to the {{@link org.mbari.vcr4j.remote.player.VideoControl}}. For general
+ * usage don't instantiate this class, use {{@link RemoteControl.Builder}} instead.
+ *
+ * In practice, this VideoIO controls only one video.
+ * @author Brian Schlining
+ * @since 2022-08-08
+ */
 public class RVideoIO implements VideoIO<RState, RError> {
 
     private record SizedRequest(RCommand<?, ?> cmd, int size) {}
@@ -199,9 +208,14 @@ public class RVideoIO implements VideoIO<RState, RError> {
     }
 
 
+    /**
+     * The UUID of the video that is being controlled.
+     * @return
+     */
     public UUID getUuid() {
         return uuid;
     }
+
 
     @Override
     public <A extends VideoCommand<?>> void send(A videoCommand) {

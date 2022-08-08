@@ -4,6 +4,11 @@ import org.mbari.vcr4j.remote.control.RState;
 
 import java.util.UUID;
 
+/**
+ * Request status fo video (e.g. playing, paused, shuttling forward, shuttling reverse)
+ * @author Brian Schlining
+ * @since 2022-08-08
+ */
 public class RequestStatusCmd extends RCommand<RequestStatusCmd.Request, RequestStatusCmd.Response> {
 
     public static final String Command = "request status";

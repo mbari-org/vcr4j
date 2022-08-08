@@ -2,6 +2,9 @@ package org.mbari.vcr4j.remote.control.commands;
 
 import java.util.UUID;
 
+/**
+ * Initiate a frame capture
+ */
 public class FrameCaptureCmd extends RCommand<FrameCaptureCmd.Request, FrameCaptureCmd.Response> {
 
     public static final String Command = "frame capture";

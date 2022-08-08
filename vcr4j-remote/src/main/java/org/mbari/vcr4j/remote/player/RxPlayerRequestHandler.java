@@ -14,7 +14,10 @@ import java.nio.file.Paths;
 import java.util.function.Consumer;
 
 /**
- * THis is an implementation for the video player.
+ * THis is an implementation for the video player. It is created by
+ * {@link VideoControl}
+ * @author Brian Schlining
+ * @since 2022-08-08
  */
 public class RxPlayerRequestHandler extends RxRequestHandler {
 

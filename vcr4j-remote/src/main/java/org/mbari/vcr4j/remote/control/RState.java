@@ -4,6 +4,10 @@ import org.mbari.vcr4j.VideoState;
 
 import java.util.Arrays;
 
+/**
+ * @author Brian Schlining
+ * @since 2022-08-08
+ */
 public class RState implements VideoState {
 
     public enum State {

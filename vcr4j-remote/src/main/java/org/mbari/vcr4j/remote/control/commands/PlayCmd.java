@@ -2,9 +2,12 @@ package org.mbari.vcr4j.remote.control.commands;
 
 import java.util.UUID;
 
+
 /**
+ * Play the video. THe rate field set's the playback speed. The rate should be a valid value for the video
+ * player.
  * @author Brian Schlining
- * @since 2016-08-26T11:32:00
+ * @since 2022-08-08
  */
 public class PlayCmd extends RCommand<PlayCmd.Request, PlayCmd.Response> {
     public static final String Command = "play";
