@@ -7,7 +7,7 @@ import java.util.UUID;
  * Open a video.
  */
 public class OpenCmd extends RCommand<OpenCmd.Request, OpenCmd.Response> {
-    public static final String Command = "open";
+    public static final String COMMAND = "open";
 
     public OpenCmd(UUID uuid, URL url) {
         this(new Request(uuid, url));
@@ -22,7 +22,7 @@ public class OpenCmd extends RCommand<OpenCmd.Request, OpenCmd.Response> {
         private final URL url;
 
         public Request(UUID uuid, URL url) {
-            super(Command, uuid);
+            super(COMMAND, uuid);
             this.url = url;
         }
 
@@ -34,7 +34,7 @@ public class OpenCmd extends RCommand<OpenCmd.Request, OpenCmd.Response> {
 
     public static class Response extends RResponse {
         public Response(String status) {
-            super(Command, status);
+            super(COMMAND, status);
         }
 
         @Override

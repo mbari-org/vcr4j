@@ -12,7 +12,7 @@ import java.util.UUID;
 public class RequestAllVideoInfosCmd
         extends RCommand<RequestAllVideoInfosCmd.Request, RequestAllVideoInfosCmd.Response> {
 
-    public static final String Command = "request all information";
+    public static final String COMMAND = "request all information";
 
 
     public RequestAllVideoInfosCmd() {
@@ -27,7 +27,7 @@ public class RequestAllVideoInfosCmd
     public static class Request extends RRequest {
 
         public Request() {
-            super(Command, null);
+            super(COMMAND, null);
         }
 
         public String getCommand() {
@@ -67,7 +67,7 @@ public class RequestAllVideoInfosCmd
         private List<VideoInfo> videos;
 
         public Response(List<VideoInfo> videos) {
-            super(Command, null);
+            super(COMMAND, null);
             this.videos = List.copyOf(videos);
 
         }

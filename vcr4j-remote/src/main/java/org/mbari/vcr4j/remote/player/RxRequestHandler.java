@@ -78,6 +78,11 @@ public abstract class RxRequestHandler implements RequestHandler, Closeable {
     }
 
     @Override
+    public PingCmd.Response handlePing(PingCmd.Request request) {
+        return new PingCmd.Response();
+    }
+
+    @Override
     public PlayCmd.Response handlePlay(PlayCmd.Request request) {
         var rate = request.getRate() == null ? 1.0 : request.getRate();
         var ok = videoController.play(request.getUuid(), rate);

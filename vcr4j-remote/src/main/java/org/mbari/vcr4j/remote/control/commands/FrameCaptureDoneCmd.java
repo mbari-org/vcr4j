@@ -8,7 +8,7 @@ import java.util.UUID;
  */
 public class FrameCaptureDoneCmd extends RCommand<FrameCaptureDoneCmd.Request, FrameCaptureDoneCmd.Response> {
 
-    public static final String Command = "frame capture done";
+    public static final String COMMAND = "frame capture done";
 
     public FrameCaptureDoneCmd(Request value) {
         super(value);
@@ -56,7 +56,7 @@ public class FrameCaptureDoneCmd extends RCommand<FrameCaptureDoneCmd.Request, F
                        String imageLocation,
                        Long elapsedTimeMillis,
                        String status) {
-            super(Command, uuid);
+            super(COMMAND, uuid);
             this.imageReferenceUuid = imageReferenceUuid;
             this.imageLocation = imageLocation;
             this.elapsedTimeMillis = elapsedTimeMillis;
@@ -83,7 +83,7 @@ public class FrameCaptureDoneCmd extends RCommand<FrameCaptureDoneCmd.Request, F
 
     public static class Response extends RResponse {
         public Response(String status) {
-            super(Command, status);
+            super(COMMAND, status);
         }
 
         @Override

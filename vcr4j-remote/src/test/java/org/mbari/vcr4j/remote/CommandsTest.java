@@ -69,6 +69,7 @@ public class CommandsTest {
                 RemoteCommands.REQUEST_ALL_VIDEO_INFOS,
                 RemoteCommands.REQUEST_VIDEO_INFO,
                 RemoteCommands.SHOW,
+                RemoteCommands.PING,
                 new PlayCmd(uuid, -2.0),
                 new PlayCmd(uuid, -2.0),
                 new ShuttleCmd(0.02),

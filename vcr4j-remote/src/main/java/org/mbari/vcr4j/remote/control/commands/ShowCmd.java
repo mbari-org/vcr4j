@@ -8,7 +8,7 @@ import java.util.UUID;
  * @since 2022-08-08
  */
 public class ShowCmd extends RCommand<ShowCmd.Request, ShowCmd.Response> {
-    public static final String Command = "show";
+    public static final String COMMAND = "show";
 
     public ShowCmd(Request value) {
         super(value);
@@ -20,14 +20,14 @@ public class ShowCmd extends RCommand<ShowCmd.Request, ShowCmd.Response> {
 
     public static class Request extends RRequest {
         public Request(UUID uuid) {
-            super(Command, uuid);
+            super(COMMAND, uuid);
         }
     }
 
     // Ack
     public static class Response extends RResponse {
         public Response(String status) {
-            super(Command, status);
+            super(COMMAND, status);
         }
 
         @Override

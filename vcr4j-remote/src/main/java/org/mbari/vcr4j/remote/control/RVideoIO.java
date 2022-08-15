@@ -123,6 +123,7 @@ public class RVideoIO implements VideoIO<RState, RError> {
                 .map(c ->
                     switch (c) {
                         case CLOSE -> new SizedRequest(new CloseCmd(uuid), 1024);
+                        case PING -> new SizedRequest(new PingCmd(), 1024);
                         case FRAMEADVANCE -> new SizedRequest(new FrameAdvanceCmd(uuid), 1024);
                         case REQUEST_ALL_VIDEO_INFOS -> new SizedRequest(new RequestAllVideoInfosCmd(), 10240);
                         case REQUEST_VIDEO_INFO -> new SizedRequest(new RequestVideoInfoCmd(), 10240);

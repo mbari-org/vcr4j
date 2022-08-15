@@ -1,6 +1,5 @@
 package org.mbari.vcr4j.remote.control.commands.loc;
 
-import org.mbari.vcr4j.remote.control.commands.RRequest;
 import org.mbari.vcr4j.remote.control.commands.RResponse;
 
 import java.util.List;
@@ -12,7 +11,7 @@ import java.util.UUID;
  * @since 2022-08-08
  */
 public class RemoveLocalizationsCmd extends LocalizationsPayloadCmd<UUID, RemoveLocalizationsCmd.Request, RemoveLocalizationsCmd.Response> {
-    public static final String Command = "remove localizations";
+    public static final String COMMAND = "remove localizations";
 
     public RemoveLocalizationsCmd(Request value) {
         super(value);
@@ -34,14 +33,14 @@ public class RemoveLocalizationsCmd extends LocalizationsPayloadCmd<UUID, Remove
     public static class Request extends LocalizationRequest<UUID> {
 
         public Request(UUID uuid, List<UUID> localizations) {
-            super(Command, uuid, localizations);
+            super(COMMAND, uuid, localizations);
         }
 
     }
 
     public static class Response extends RResponse {
         public Response(String status) {
-            super(Command, status);
+            super(COMMAND, status);
         }
 
         @Override

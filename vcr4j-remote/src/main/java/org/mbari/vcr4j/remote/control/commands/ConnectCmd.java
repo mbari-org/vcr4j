@@ -1,7 +1,5 @@
 package org.mbari.vcr4j.remote.control.commands;
 
-import org.mbari.vcr4j.VideoCommand;
-
 import java.util.UUID;
 
 /**
@@ -14,7 +12,7 @@ import java.util.UUID;
  */
 public class ConnectCmd extends RCommand<ConnectCmd.Request, ConnectCmd.Response> {
 
-    public static final String Command = "connect";
+    public static final String COMMAND = "connect";
 
     public ConnectCmd(int port) {
         this(port, "localhost");
@@ -48,7 +46,7 @@ public class ConnectCmd extends RCommand<ConnectCmd.Request, ConnectCmd.Response
         }
 
         public Request(int port, String host, UUID uuid) {
-            super(Command, uuid);
+            super(COMMAND, uuid);
             this.port = port;
             this.host = host;
         }
@@ -64,7 +62,7 @@ public class ConnectCmd extends RCommand<ConnectCmd.Request, ConnectCmd.Response
 
     public static class Response extends RResponse {
         public Response(String status) {
-            super(Command, status);
+            super(COMMAND, status);
         }
 
         @Override

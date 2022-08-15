@@ -9,7 +9,7 @@ import java.util.UUID;
  */
 public class PauseCmd extends RCommand<PauseCmd.Request, PauseCmd.Response> {
 
-    public static final String Command = "pause";
+    public static final String COMMAND = "pause";
 
     public PauseCmd(Request value) {
         super(value);
@@ -21,13 +21,13 @@ public class PauseCmd extends RCommand<PauseCmd.Request, PauseCmd.Response> {
 
     public static class Request extends RRequest {
         public Request(UUID uuid) {
-            super(Command, uuid);
+            super(COMMAND, uuid);
         }
     }
 
     public static class Response extends RResponse {
         public Response(String status) {
-            super(Command, status);
+            super(COMMAND, status);
         }
 
         @Override

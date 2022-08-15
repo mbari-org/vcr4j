@@ -13,7 +13,7 @@ import java.util.UUID;
  */
 public class RequestElapsedTimeCmd
         extends RCommand<RequestElapsedTimeCmd.Request, RequestElapsedTimeCmd.Response> {
-    public static final String Command = "request elapsed time";
+    public static final String COMMAND = "request elapsed time";
 
     public RequestElapsedTimeCmd(Request value) {
         super(value);
@@ -25,7 +25,7 @@ public class RequestElapsedTimeCmd
 
     public static class Request extends RRequest {
         public Request(UUID uuid) {
-            super(Command, uuid);
+            super(COMMAND, uuid);
         }
     }
 
@@ -33,12 +33,12 @@ public class RequestElapsedTimeCmd
         private Long elapsedTimeMillis;
 
         public Response(Long elapsedTimeMillis) {
-            super(Command, RResponse.OK);
+            super(COMMAND, RResponse.OK);
             this.elapsedTimeMillis = elapsedTimeMillis;
         }
 
         public Response() {
-            super(Command, RResponse.FAILED);
+            super(COMMAND, RResponse.FAILED);
         }
 
         public Long getElapsedTimeMillis() {

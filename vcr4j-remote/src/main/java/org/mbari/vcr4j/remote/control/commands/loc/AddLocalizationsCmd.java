@@ -1,7 +1,5 @@
 package org.mbari.vcr4j.remote.control.commands.loc;
 
-import org.mbari.vcr4j.remote.control.commands.RCommand;
-import org.mbari.vcr4j.remote.control.commands.RRequest;
 import org.mbari.vcr4j.remote.control.commands.RResponse;
 
 import java.util.List;
@@ -14,7 +12,7 @@ import java.util.UUID;
  */
 public class AddLocalizationsCmd extends LocalizationsPayloadCmd<Localization, AddLocalizationsCmd.Request, AddLocalizationsCmd.Response> {
 
-    public static final String Command = "add localizations";
+    public static final String COMMAND = "add localizations";
 
     public AddLocalizationsCmd(Request value) {
         super(value);
@@ -32,14 +30,14 @@ public class AddLocalizationsCmd extends LocalizationsPayloadCmd<Localization, A
     public static class Request extends LocalizationRequest<Localization> {
 
         public Request(UUID uuid, List<Localization> localizations) {
-            super(Command, uuid, localizations);
+            super(COMMAND, uuid, localizations);
         }
 
     }
 
     public static class Response extends RResponse {
         public Response(String status) {
-            super(Command, status);
+            super(COMMAND, status);
         }
 
         @Override

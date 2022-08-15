@@ -10,7 +10,7 @@ import java.util.UUID;
 public class RSeekElapsedTimeCmd
         extends RCommand<RSeekElapsedTimeCmd.Request, RSeekElapsedTimeCmd.Response> {
 
-    public static final String Command = "seek elapsed time";
+    public static final String COMMAND = "seek elapsed time";
 
     public RSeekElapsedTimeCmd(Request value) {
         super(value);
@@ -25,7 +25,7 @@ public class RSeekElapsedTimeCmd
         private Long elapsedTimeMillis;
 
         public Request(UUID uuid, Long elapsedTimeMillis) {
-            super(Command, uuid);
+            super(COMMAND, uuid);
             this.elapsedTimeMillis = elapsedTimeMillis;
         }
 
@@ -37,7 +37,7 @@ public class RSeekElapsedTimeCmd
     // Ack
     public static class Response extends RResponse {
         public Response(String status) {
-            super(Command, status);
+            super(COMMAND, status);
         }
 
         @Override

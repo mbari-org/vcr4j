@@ -10,7 +10,7 @@ import java.util.UUID;
  * @since 2022-08-08
  */
 public class PlayCmd extends RCommand<PlayCmd.Request, PlayCmd.Response> {
-    public static final String Command = "play";
+    public static final String COMMAND = "play";
 
     public PlayCmd(UUID uuid, Double rate) {
         this(new Request(uuid, rate));
@@ -29,7 +29,7 @@ public class PlayCmd extends RCommand<PlayCmd.Request, PlayCmd.Response> {
         private Double rate;
 
         public Request(UUID uuid, Double rate) {
-            super(Command, uuid);
+            super(COMMAND, uuid);
             this.rate = rate;
         }
 
@@ -44,7 +44,7 @@ public class PlayCmd extends RCommand<PlayCmd.Request, PlayCmd.Response> {
 
     public static class Response extends RResponse {
         public Response(String status) {
-            super(Command, status);
+            super(COMMAND, status);
         }
 
         @Override

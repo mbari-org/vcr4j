@@ -11,6 +11,8 @@ public enum RemoteCommands implements VideoCommand<Void> {
 
     FRAMEADVANCE("frame advance"),
 
+    PING("ping"),
+
     REQUEST_ALL_VIDEO_INFOS("request all video information"),
 
     REQUEST_VIDEO_INFO("request video information"),

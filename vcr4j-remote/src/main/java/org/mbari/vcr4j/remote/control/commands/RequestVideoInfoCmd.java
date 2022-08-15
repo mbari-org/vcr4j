@@ -10,7 +10,7 @@ import java.util.UUID;
  */
 public class RequestVideoInfoCmd extends RCommand<RequestVideoInfoCmd.Request, RequestVideoInfoCmd.Response> {
 
-    public static final String Command = "request information";
+    public static final String COMMAND = "request information";
 
     public RequestVideoInfoCmd() {
         super(new Request());
@@ -25,7 +25,7 @@ public class RequestVideoInfoCmd extends RCommand<RequestVideoInfoCmd.Request, R
     public static class Request extends RRequest {
 
         public Request() {
-            super(Command, null);
+            super(COMMAND, null);
         }
     }
 
@@ -37,7 +37,7 @@ public class RequestVideoInfoCmd extends RCommand<RequestVideoInfoCmd.Request, R
         private Double frameRate;
 
         public Response(UUID uuid, URL url, Long durationMillis, Double frameRate) {
-            super(Command, null);
+            super(COMMAND, null);
             this.uuid = uuid;
             this.url = url;
             this.durationMillis = durationMillis;
@@ -45,7 +45,7 @@ public class RequestVideoInfoCmd extends RCommand<RequestVideoInfoCmd.Request, R
         }
 
         public Response() {
-            super(Command, RResponse.FAILED);
+            super(COMMAND, RResponse.FAILED);
         }
 
 

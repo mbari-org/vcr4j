@@ -11,7 +11,7 @@ import java.util.UUID;
  */
 public class RequestStatusCmd extends RCommand<RequestStatusCmd.Request, RequestStatusCmd.Response> {
 
-    public static final String Command = "request status";
+    public static final String COMMAND = "request status";
 
     public RequestStatusCmd(Request value) {
         super(value);
@@ -23,7 +23,7 @@ public class RequestStatusCmd extends RCommand<RequestStatusCmd.Request, Request
 
     public static class Request extends RRequest {
         public Request(UUID uuid) {
-            super(Command, uuid);
+            super(COMMAND, uuid);
         }
     }
 
@@ -31,7 +31,7 @@ public class RequestStatusCmd extends RCommand<RequestStatusCmd.Request, Request
 
         private transient String state;
         public Response(String status) {
-            super(Command, status);
+            super(COMMAND, status);
             this.state = status;
         }
 

@@ -6,7 +6,7 @@ import java.util.UUID;
  * Command to close the remote video
  */
 public class CloseCmd extends RCommand<CloseCmd.Request, CloseCmd.Response> {
-    public static final String Command = "close";
+    public static final String COMMAND = "close";
 
     public CloseCmd(CloseCmd.Request value) {
         super(value);
@@ -18,14 +18,14 @@ public class CloseCmd extends RCommand<CloseCmd.Request, CloseCmd.Response> {
 
     public static class Request extends RRequest {
         public Request(UUID uuid) {
-            super(Command, uuid);
+            super(COMMAND, uuid);
         }
     }
 
     // Ack
     public static class Response extends RResponse {
         public Response(String status) {
-            super(Command, status);
+            super(COMMAND, status);
         }
 
         @Override

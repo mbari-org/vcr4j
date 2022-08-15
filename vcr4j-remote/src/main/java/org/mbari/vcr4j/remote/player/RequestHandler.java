@@ -27,24 +27,25 @@ public interface RequestHandler {
 
     default RResponse composeResponse(SimpleRequest simpleRequest) {
         return switch (simpleRequest.getCommand()) {
-            case CloseCmd.Command -> handle(simpleRequest, CloseCmd.Request.class, this::handleClose);
-            case ConnectCmd.Command -> handle(simpleRequest, ConnectCmd.Request.class, this::handleConnect);
-            case FrameAdvanceCmd.Command -> handle(simpleRequest, FrameAdvanceCmd.Request.class, this::handleFrameAdvance);
-            case OpenCmd.Command -> handle(simpleRequest, OpenCmd.Request.class, this::handleOpen);
-            case PauseCmd.Command -> handle(simpleRequest, PauseCmd.Request.class, this::handlePause);
-            case PlayCmd.Command -> handle(simpleRequest, PlayCmd.Request.class, this::handlePlay);
-            case RSeekElapsedTimeCmd.Command -> handle(simpleRequest, RSeekElapsedTimeCmd.Request.class, this::handleSeek);
-            case RequestAllVideoInfosCmd.Command -> handle(simpleRequest, RequestAllVideoInfosCmd.Request.class, this::handleRequestAllVideoInfos);
-            case RequestElapsedTimeCmd.Command -> handle(simpleRequest, RequestElapsedTimeCmd.Request.class, this::handleElapsedTime);
-            case RequestStatusCmd.Command -> handle(simpleRequest, RequestStatusCmd.Request.class, this::handleStatus);
-            case RequestVideoInfoCmd.Command -> handle(simpleRequest, RequestVideoInfoCmd.Request.class, this::handleRequestVideoInfo);
-            case ShowCmd.Command -> handle(simpleRequest, ShowCmd.Request.class, this::handleShow);
-            case FrameCaptureCmd.Command ->  handle(simpleRequest, FrameCaptureCmd.Request.class, this::handleFrameCaptureRequest);
-            case FrameCaptureDoneCmd.Command -> handle(simpleRequest, FrameCaptureDoneCmd.Request.class, this::handleFrameCaptureDoneRequest);
-            case AddLocalizationsCmd.Command -> handle(simpleRequest, AddLocalizationsCmd.Request.class, this::handleAddLocalizationsRequest);
-            case ClearLocalizationsCmd.Command -> handle(simpleRequest, ClearLocalizationsCmd.Request.class, this::handleClearLocalizationsRequest);
-            case RemoveLocalizationsCmd.Command -> handle(simpleRequest, RemoveLocalizationsCmd.Request.class, this::handleRemoveLocalizationsRequest);
-            case UpdateLocalizationsCmd.Command -> handle(simpleRequest, UpdateLocalizationsCmd.Request.class, this::handleUpdateLocalizationsRequest);
+            case CloseCmd.COMMAND -> handle(simpleRequest, CloseCmd.Request.class, this::handleClose);
+            case ConnectCmd.COMMAND -> handle(simpleRequest, ConnectCmd.Request.class, this::handleConnect);
+            case FrameAdvanceCmd.COMMAND -> handle(simpleRequest, FrameAdvanceCmd.Request.class, this::handleFrameAdvance);
+            case OpenCmd.COMMAND -> handle(simpleRequest, OpenCmd.Request.class, this::handleOpen);
+            case PauseCmd.COMMAND -> handle(simpleRequest, PauseCmd.Request.class, this::handlePause);
+            case PlayCmd.COMMAND -> handle(simpleRequest, PlayCmd.Request.class, this::handlePlay);
+            case PingCmd.COMMAND -> handle(simpleRequest, PingCmd.Request.class, this::handlePing);
+            case RSeekElapsedTimeCmd.COMMAND -> handle(simpleRequest, RSeekElapsedTimeCmd.Request.class, this::handleSeek);
+            case RequestAllVideoInfosCmd.COMMAND -> handle(simpleRequest, RequestAllVideoInfosCmd.Request.class, this::handleRequestAllVideoInfos);
+            case RequestElapsedTimeCmd.COMMAND -> handle(simpleRequest, RequestElapsedTimeCmd.Request.class, this::handleElapsedTime);
+            case RequestStatusCmd.COMMAND -> handle(simpleRequest, RequestStatusCmd.Request.class, this::handleStatus);
+            case RequestVideoInfoCmd.COMMAND -> handle(simpleRequest, RequestVideoInfoCmd.Request.class, this::handleRequestVideoInfo);
+            case ShowCmd.COMMAND -> handle(simpleRequest, ShowCmd.Request.class, this::handleShow);
+            case FrameCaptureCmd.COMMAND ->  handle(simpleRequest, FrameCaptureCmd.Request.class, this::handleFrameCaptureRequest);
+            case FrameCaptureDoneCmd.COMMAND -> handle(simpleRequest, FrameCaptureDoneCmd.Request.class, this::handleFrameCaptureDoneRequest);
+            case AddLocalizationsCmd.COMMAND -> handle(simpleRequest, AddLocalizationsCmd.Request.class, this::handleAddLocalizationsRequest);
+            case ClearLocalizationsCmd.COMMAND -> handle(simpleRequest, ClearLocalizationsCmd.Request.class, this::handleClearLocalizationsRequest);
+            case RemoveLocalizationsCmd.COMMAND -> handle(simpleRequest, RemoveLocalizationsCmd.Request.class, this::handleRemoveLocalizationsRequest);
+            case UpdateLocalizationsCmd.COMMAND -> handle(simpleRequest, UpdateLocalizationsCmd.Request.class, this::handleUpdateLocalizationsRequest);
             default -> handleError(simpleRequest);
         };
     }
@@ -59,6 +60,7 @@ public interface RequestHandler {
 
     RequestAllVideoInfosCmd.Response handleRequestAllVideoInfos(RequestAllVideoInfosCmd.Request request);
 
+    PingCmd.Response handlePing(PingCmd.Request request);
     PlayCmd.Response handlePlay(PlayCmd.Request request);
 
     PauseCmd.Response handlePause(PauseCmd.Request request);

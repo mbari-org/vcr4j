@@ -9,7 +9,7 @@ import java.util.UUID;
  */
 public class FrameAdvanceCmd extends RCommand<FrameAdvanceCmd.Request, FrameAdvanceCmd.Response> {
 
-    public static final String Command = "frame advance";
+    public static final String COMMAND = "frame advance";
 
     public FrameAdvanceCmd(FrameAdvanceCmd.Request value) {
         super(value);
@@ -22,14 +22,14 @@ public class FrameAdvanceCmd extends RCommand<FrameAdvanceCmd.Request, FrameAdva
     public static class Request extends RRequest {
 
         public Request(UUID uuid) {
-            super(Command, uuid);
+            super(COMMAND, uuid);
         }
     }
 
     // Ack
     public static class Response extends RResponse {
         public Response(String status) {
-            super(Command, status);
+            super(COMMAND, status);
         }
 
         @Override
