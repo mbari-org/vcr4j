@@ -30,9 +30,16 @@ public class RequestStatusCmd extends RCommand<RequestStatusCmd.Request, Request
     public static class Response extends RResponse {
 
         private transient String state;
-        public Response(String status) {
+
+        private Double rate;
+        public Response(String status, Double rate) {
             super(COMMAND, status);
             this.state = status;
+            this.rate = rate;
+        }
+
+        public Response(String status) {
+            this(status, null);
         }
 
         public String getState() {

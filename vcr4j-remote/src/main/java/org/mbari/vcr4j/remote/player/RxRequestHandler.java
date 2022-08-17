@@ -109,7 +109,7 @@ public abstract class RxRequestHandler implements RequestHandler, Closeable {
     public RequestStatusCmd.Response handleStatus(RequestStatusCmd.Request request) {
         var opt = videoController.requestRate(request.getUuid());
         return opt
-                .map(r -> new RequestStatusCmd.Response(RState.fromRate(r).getName()))
+                .map(r -> new RequestStatusCmd.Response(RState.fromRate(r).getName(), r))
                 .orElse(new RequestStatusCmd.Response(RState.State.NOT_FOUND.getName()));
     }
 
@@ -153,5 +153,11 @@ public abstract class RxRequestHandler implements RequestHandler, Closeable {
     public ClearLocalizationsCmd.Response handleClearLocalizationsRequest(ClearLocalizationsCmd.Request request) {
         localizationsCmdSubject.onNext(new ClearLocalizationsCmd(request));
         return new ClearLocalizationsCmd.Response(RResponse.OK);
+    }
+
+    @Override
+    public SelectLocalizationsCmd.Response handleSelectLocalizationsRequest(SelectLocalizationsCmd.Request request) {
+        localizationsCmdSubject.onNext(new SelectLocalizationsCmd(request));
+        return new SelectLocalizationsCmd.Response(RResponse.OK);
     }
 }

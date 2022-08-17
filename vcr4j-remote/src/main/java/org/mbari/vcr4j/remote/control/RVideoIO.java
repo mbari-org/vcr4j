@@ -157,7 +157,6 @@ public class RVideoIO implements VideoIO<RState, RError> {
 
         a = commandSubject.ofType(LocalizationsCmd.class)
                 .forEach(this::doLocalizationsCommand);
-        // TODO break up localizations into size limited requests?
         disposables.add(a);
 
         try {
@@ -186,6 +185,9 @@ public class RVideoIO implements VideoIO<RState, RError> {
     private void doLocalizationsCommand(LocalizationsCmd<?, ?> command) {
 
         if (command instanceof ClearLocalizationsCmd cmd) {
+            doCommand(cmd);
+        }
+        else if (command instanceof SelectLocalizationsCmd cmd) {
             doCommand(cmd);
         }
         else if (command instanceof AddLocalizationsCmd cmd){

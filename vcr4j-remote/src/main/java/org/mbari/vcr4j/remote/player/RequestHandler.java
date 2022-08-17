@@ -2,10 +2,7 @@ package org.mbari.vcr4j.remote.player;
 
 import org.mbari.vcr4j.remote.control.RVideoIO;
 import org.mbari.vcr4j.remote.control.commands.*;
-import org.mbari.vcr4j.remote.control.commands.loc.AddLocalizationsCmd;
-import org.mbari.vcr4j.remote.control.commands.loc.ClearLocalizationsCmd;
-import org.mbari.vcr4j.remote.control.commands.loc.RemoveLocalizationsCmd;
-import org.mbari.vcr4j.remote.control.commands.loc.UpdateLocalizationsCmd;
+import org.mbari.vcr4j.remote.control.commands.loc.*;
 
 import java.util.function.Function;
 
@@ -46,6 +43,7 @@ public interface RequestHandler {
             case ClearLocalizationsCmd.COMMAND -> handle(simpleRequest, ClearLocalizationsCmd.Request.class, this::handleClearLocalizationsRequest);
             case RemoveLocalizationsCmd.COMMAND -> handle(simpleRequest, RemoveLocalizationsCmd.Request.class, this::handleRemoveLocalizationsRequest);
             case UpdateLocalizationsCmd.COMMAND -> handle(simpleRequest, UpdateLocalizationsCmd.Request.class, this::handleUpdateLocalizationsRequest);
+            case SelectLocalizationsCmd.COMMAND -> handle(simpleRequest, SelectLocalizationsCmd.Request.class, this::handleSelectLocalizationsRequest);
             default -> handleError(simpleRequest);
         };
     }
@@ -97,6 +95,8 @@ public interface RequestHandler {
     UpdateLocalizationsCmd.Response handleUpdateLocalizationsRequest(UpdateLocalizationsCmd.Request request);
 
     ClearLocalizationsCmd.Response handleClearLocalizationsRequest(ClearLocalizationsCmd.Request request);
+
+    SelectLocalizationsCmd.Response handleSelectLocalizationsRequest(SelectLocalizationsCmd.Request request);
 
     default NoopCmd.Response handleError(SimpleRequest request, Exception e) {
         return new NoopCmd.Response(request.getCommand(), "failed", e.getClass() + ": " + e.getMessage());

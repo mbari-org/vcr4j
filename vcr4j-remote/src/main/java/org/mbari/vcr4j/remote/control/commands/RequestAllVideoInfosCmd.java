@@ -39,9 +39,19 @@ public class RequestAllVideoInfosCmd
         private UUID uuid;
         private URL url;
 
+        private Long durationMillis;
+
+        private Double frameRate;
+
         public Video(UUID uuid, URL url) {
+            this(uuid, url, null, null);
+        }
+
+        public Video(UUID uuid, URL url, Long durationMillis, Double frameRate) {
             this.uuid = uuid;
             this.url = url;
+            this.durationMillis = durationMillis;
+            this.frameRate = frameRate;
         }
 
         public UUID getUuid() {
@@ -54,12 +64,12 @@ public class RequestAllVideoInfosCmd
 
         @Override
         public Long getDurationMillis() {
-            return null;
+            return durationMillis;
         }
 
         @Override
         public Double getFrameRate() {
-            return null;
+            return frameRate;
         }
     }
 
