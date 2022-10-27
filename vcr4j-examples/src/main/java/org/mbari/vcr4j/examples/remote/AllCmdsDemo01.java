@@ -18,12 +18,13 @@ import java.util.UUID;
 public class AllCmdsDemo01 {
 
     public static void main(String[] args) throws Exception {
-        String prog = SimpleDemo01.class.getName();
-        String doc = "Usage: " + prog + " <url>\n" +
+        String prog = AllCmdsDemo01.class.getName();
+        String doc = "Usage: " + prog + " <port> <url>\n" +
                 "Options:\n" +
                 "  -h, --help";
 
         Map<String, Object> opts = new Docopt(doc).parse(args);
+        var port = Integer.parseInt((String) opts.get("<port>"));
         URL url = new URL((String) opts.get("<url>"));
 
         var uuid = UUID.randomUUID();
@@ -59,15 +60,16 @@ public class AllCmdsDemo01 {
                 RemoteCommands.CLOSE);
 
         var ports = List.of(5000, 5555);
-        for (var port: ports) {
+        for (var listenPort: ports) {
 
             var io = new RemoteControl.Builder(uuid)
-                    .port(port)
-                    .remotePort(8888)
+                    .port(listenPort)
+                    .remotePort(port)
                     .remoteHost("localhost")
-                    .withLogging(true)
                     .build()
                     .get();
+
+            Thread.sleep(1000);
 
             for (var cmd: commands) {
                 io.getVideoIO().send(cmd);
@@ -75,5 +77,7 @@ public class AllCmdsDemo01 {
             }
             Thread.sleep(1000);
         }
+
+        System.exit(0);
     }
 }

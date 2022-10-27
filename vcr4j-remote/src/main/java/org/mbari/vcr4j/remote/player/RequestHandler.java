@@ -34,7 +34,7 @@ public interface RequestHandler {
             case RSeekElapsedTimeCmd.COMMAND -> handle(simpleRequest, RSeekElapsedTimeCmd.Request.class, this::handleSeek);
             case RequestAllVideoInfosCmd.COMMAND -> handle(simpleRequest, RequestAllVideoInfosCmd.Request.class, this::handleRequestAllVideoInfos);
             case RequestElapsedTimeCmd.COMMAND -> handle(simpleRequest, RequestElapsedTimeCmd.Request.class, this::handleElapsedTime);
-            case RequestStatusCmd.COMMAND -> handle(simpleRequest, RequestStatusCmd.Request.class, this::handleStatus);
+            case RequestPlayerStateCmd.COMMAND -> handle(simpleRequest, RequestPlayerStateCmd.Request.class, this::handleStatus);
             case RequestVideoInfoCmd.COMMAND -> handle(simpleRequest, RequestVideoInfoCmd.Request.class, this::handleRequestVideoInfo);
             case ShowCmd.COMMAND -> handle(simpleRequest, ShowCmd.Request.class, this::handleShow);
             case FrameCaptureCmd.COMMAND ->  handle(simpleRequest, FrameCaptureCmd.Request.class, this::handleFrameCaptureRequest);
@@ -65,7 +65,7 @@ public interface RequestHandler {
 
     RequestElapsedTimeCmd.Response handleElapsedTime(RequestElapsedTimeCmd.Request request);
 
-    RequestStatusCmd.Response handleStatus(RequestStatusCmd.Request request);
+    RequestPlayerStateCmd.Response handleStatus(RequestPlayerStateCmd.Request request);
 
     RSeekElapsedTimeCmd.Response handleSeek(RSeekElapsedTimeCmd.Request request);
 

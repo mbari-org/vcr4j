@@ -13,10 +13,17 @@ public abstract class RResponse {
     public static final String FAILED = "failed";
     private final String response;
     private final String status;
+    private final String cause; // Cause of failure. Optional
 
     public RResponse(String response, String status) {
+        this(response, status, null);
+
+    }
+
+    public RResponse(String response, String status, String cause) {
         this.response = response;
         this.status = status;
+        this.cause = cause;
     }
 
     public String getResponse() {
@@ -25,6 +32,10 @@ public abstract class RResponse {
 
     public String getStatus() {
         return status;
+    }
+
+    public String getCause() {
+        return cause;
     }
 
     public boolean isOk() {

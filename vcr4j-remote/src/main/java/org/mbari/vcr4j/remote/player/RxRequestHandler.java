@@ -106,11 +106,11 @@ public abstract class RxRequestHandler implements RequestHandler, Closeable {
     }
 
     @Override
-    public RequestStatusCmd.Response handleStatus(RequestStatusCmd.Request request) {
+    public RequestPlayerStateCmd.Response handleStatus(RequestPlayerStateCmd.Request request) {
         var opt = videoController.requestRate(request.getUuid());
         return opt
-                .map(r -> new RequestStatusCmd.Response(RState.fromRate(r).getName(), r))
-                .orElse(new RequestStatusCmd.Response(RState.State.NOT_FOUND.getName()));
+                .map(r -> new RequestPlayerStateCmd.Response(RState.fromRate(r).getName(), r))
+                .orElse(new RequestPlayerStateCmd.Response(RState.State.NOT_FOUND.getName()));
     }
 
     @Override

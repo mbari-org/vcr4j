@@ -73,7 +73,7 @@ public class RResponseParser {
      */
     public <B extends RResponse> void handle(RCommand<?, B> command, String msg) {
         parse(command, msg).ifPresent(response -> {
-            if (response instanceof RequestStatusCmd.Response r) {
+            if (response instanceof RequestPlayerStateCmd.Response r) {
                 stateSubject.onNext(r.state());
             }
             else if (response instanceof RequestElapsedTimeCmd.Response r) {

@@ -2,7 +2,6 @@ package org.mbari.vcr4j.remote.control;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.subjects.PublishSubject;
@@ -16,7 +15,6 @@ import org.mbari.vcr4j.commands.ShuttleCmd;
 import org.mbari.vcr4j.commands.VideoCommands;
 import org.mbari.vcr4j.remote.control.commands.*;
 import org.mbari.vcr4j.remote.control.commands.loc.*;
-import org.mbari.vcr4j.util.CollectionUtils;
 import org.mbari.vcr4j.util.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -112,7 +110,7 @@ public class RVideoIO implements VideoIO<RState, RError> {
                         case PAUSE, STOP -> new PauseCmd(uuid);
                         case PLAY -> new PlayCmd(uuid);
                         case REQUEST_ELAPSED_TIME, REQUEST_INDEX -> new RequestElapsedTimeCmd(uuid);
-                        case REQUEST_STATUS -> new RequestStatusCmd(uuid);
+                        case REQUEST_STATUS -> new RequestPlayerStateCmd(uuid);
                         case REWIND -> new PlayCmd(uuid, -DEFAULT_SHUTTLE_RATE);
                         case REQUEST_DEVICE_TYPE, REQUEST_TIMECODE, REQUEST_TIMESTAMP -> new NoopCmd();
                     })

@@ -9,15 +9,15 @@ import java.util.UUID;
  * @author Brian Schlining
  * @since 2022-08-08
  */
-public class RequestStatusCmd extends RCommand<RequestStatusCmd.Request, RequestStatusCmd.Response> {
+public class RequestPlayerStateCmd extends RCommand<RequestPlayerStateCmd.Request, RequestPlayerStateCmd.Response> {
 
-    public static final String COMMAND = "request status";
+    public static final String COMMAND = "request player state";
 
-    public RequestStatusCmd(Request value) {
+    public RequestPlayerStateCmd(Request value) {
         super(value);
     }
 
-    public RequestStatusCmd(UUID uuid) {
+    public RequestPlayerStateCmd(UUID uuid) {
         this(new Request(uuid));
     }
 
@@ -32,6 +32,7 @@ public class RequestStatusCmd extends RCommand<RequestStatusCmd.Request, Request
         private transient String state;
 
         private Double rate;
+
         public Response(String status, Double rate) {
             super(COMMAND, status);
             this.state = status;
