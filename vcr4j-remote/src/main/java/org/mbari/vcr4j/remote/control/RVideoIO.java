@@ -274,29 +274,27 @@ public class RVideoIO implements VideoIO<RState, RError> {
                                           int sizeBytes, RCommand<?, ?> command) {
         try {
             int timeout = (command instanceof OpenCmd) ? 20000 : 1000;
-            byte[] msg = new byte[sizeBytes];
-            DatagramPacket incomingPacket = new DatagramPacket(msg, msg.length);
+            var incomingBytes = new byte[sizeBytes];
+            var incomingPacket = new DatagramPacket(incomingBytes, incomingBytes.length);
 
-            DatagramSocket s = socket;
-            s.setSoTimeout(timeout);
-            s.send(packet);
+//            DatagramSocket socket = this.socket;
+            socket.setSoTimeout(timeout);
+            socket.send(packet);
 
             if (log.isDebugEnabled()) {
                 log.debug(connectionId + " - Sending command >>> " + new String(packet.getData()));
             }
 
-            s.receive(incomingPacket);    // blocks until returned on timeout
+            socket.receive(incomingPacket);    // blocks until returned on timeout
 
             int numBytes = incomingPacket.getLength();
-            byte[] response = new byte[numBytes];
-            System.arraycopy(incomingPacket.getData(), 0, response, 0, numBytes);
-            var responseMsg = new String(response, StandardCharsets.UTF_8);
+            var response = new String(incomingBytes, 0, numBytes, StandardCharsets.UTF_8);
 
             if (log.isDebugEnabled()) {
-                log.debug(connectionId + " - Received response <<< " + responseMsg);
+                log.debug(connectionId + " - Received response <<< " + response);
             }
 
-            responseParser.handle(command, responseMsg);
+            responseParser.handle(command, response);
         } catch (Exception e) {
             // response will be null
             if (log.isErrorEnabled()) {
