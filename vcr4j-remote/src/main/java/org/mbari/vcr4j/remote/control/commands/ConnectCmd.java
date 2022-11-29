@@ -46,7 +46,7 @@ public class ConnectCmd extends RCommand<ConnectCmd.Request, ConnectCmd.Response
         }
 
         public Request(int port, String host, UUID uuid) {
-            super(COMMAND, uuid);
+            super(COMMAND, null); // we don't need the uuid in the connect command
             this.port = port;
             this.host = host;
         }
