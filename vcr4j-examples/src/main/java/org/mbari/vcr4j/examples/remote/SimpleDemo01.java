@@ -25,7 +25,7 @@ public class SimpleDemo01 {
         var uuid = UUID.randomUUID();
         var io = new RemoteControl.Builder(uuid)
                 .port(5000)
-                .remotePort(8888)
+                .remotePort(port)
                 .remoteHost("localhost")
                 .withMonitoring(true)
                 .build()

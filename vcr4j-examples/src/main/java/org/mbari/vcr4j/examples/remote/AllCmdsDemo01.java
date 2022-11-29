@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+// mvn exec:java -Dexec.mainClass=org.mbari.vcr4j.examples.remote.AllCmdsDemo01 -Dexec.args="8800 file:/Users/brian/Downloads/V4003_20170301T210458.233Z_t4s4_1280_tc03560915_h264.mp4" -pl vcr4j-examples
 public class AllCmdsDemo01 {
 
     public static void main(String[] args) throws Exception {
