@@ -156,7 +156,7 @@ public class RemoteControl implements Closeable {
                     new StatusDecorator<>(videoIo);
                 }
 
-                videoIo.send(new ConnectCmd(port, selfHost));
+                videoIo.send(new ConnectCmd(port, selfHost, uuid));
                 return Optional.of(remoteControl);
             }
             catch (Exception e) {

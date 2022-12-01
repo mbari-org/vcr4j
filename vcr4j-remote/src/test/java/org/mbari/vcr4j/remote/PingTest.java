@@ -4,6 +4,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mbari.vcr4j.remote.control.RemoteControl;
+import org.mbari.vcr4j.remote.control.commands.ConnectCmd;
 import org.mbari.vcr4j.remote.control.commands.RemoteCommands;
 import org.mbari.vcr4j.remote.player.VideoControl;
 

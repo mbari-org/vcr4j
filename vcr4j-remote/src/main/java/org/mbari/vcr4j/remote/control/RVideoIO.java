@@ -50,7 +50,9 @@ public class RVideoIO implements VideoIO<RState, RError> {
     private final int port;
     private final InetAddress inetAddress;
     private final UUID uuid;
-    private DatagramSocket socket;
+
+    // FIX https://github.com/dingosky/Sharktopoda/issues/4
+    // private DatagramSocket socket;
 
     private final Subject<List<VideoInfo>> videoInfoSubject;
     private final Subject<RState> stateSubject;
@@ -67,12 +69,13 @@ public class RVideoIO implements VideoIO<RState, RError> {
 
     private final String connectionId;
 
+    private boolean closed = false;
+
     public RVideoIO(UUID uuid, String host, int port) throws UnknownHostException, SocketException {
-        Preconditions.checkArgument(uuid != null, "UUID is required");
+//        Preconditions.checkArgument(uuid != null, "UUID is required");
         this.uuid = uuid;
         this.port = port;
         inetAddress = InetAddress.getByName(host);
-
 
         PublishSubject<List<VideoInfo>> s1 = PublishSubject.create();
         videoInfoSubject = s1.toSerialized();
@@ -128,7 +131,7 @@ public class RVideoIO implements VideoIO<RState, RError> {
                         case SHOW -> new SizedRequest(new ShowCmd(uuid), 1024);
                     })
                 .forEach(sizedRequest -> doCommand(sizedRequest.cmd, sizedRequest.size));
-
+        disposables.add(a);
 
         a = commandSubject.ofType(ShuttleCmd.class)
                 .map(c -> new PlayCmd(uuid, c.getValue() * MAX_SHUTTLE_RATE))
@@ -157,15 +160,16 @@ public class RVideoIO implements VideoIO<RState, RError> {
                 .forEach(this::doLocalizationsCommand);
         disposables.add(a);
 
-        try {
-            socket = new DatagramSocket(0);
-            socket.connect(inetAddress, port);
-            socket.setSoTimeout(8000);
-            log.atInfo().log( "Connected to " + connectionId);
-        }
-        catch (Exception e) {
-            errorSubject.onNext(new RError(true, false, false, null, null, e));
-        }
+        // FIX https://github.com/dingosky/Sharktopoda/issues/4
+        // try {
+        //     socket = new DatagramSocket(0);
+        //     socket.connect(inetAddress, port);
+        //     socket.setSoTimeout(8000);
+        //     log.atInfo().log( "Connected to " + connectionId);
+        // }
+        // catch (Exception e) {
+        //     errorSubject.onNext(new RError(true, false, false, null, null, e));
+        // }
     }
 
 
@@ -230,21 +234,26 @@ public class RVideoIO implements VideoIO<RState, RError> {
 
     @Override
     public String getConnectionID() {
-        return uuid.toString() + "@" + inetAddress.getCanonicalHostName() + ":" + port ;
+        var id = uuid == null ? "server" : uuid.toString();
+        return id + "@" + inetAddress.getCanonicalHostName() + ":" + port ;
     }
 
     @Override
     public void close() {
-        if (socket != null && (!socket.isClosed() || socket.isConnected())) {
-            log.atInfo().log("Disconnecting from " + connectionId );
-            socket.close();
-        }
+        // FIX https://github.com/dingosky/Sharktopoda/issues/4
+//        if (socket != null && (!socket.isClosed() || socket.isConnected())) {
+        //     log.atInfo().log("Disconnecting from " + connectionId );
+        //     socket.close();
+        // }
         disposables.forEach(Disposable::dispose);
-        socket = null;
+        // socket = null;
+        closed = true;
     }
 
     public boolean isClosed() {
-        return socket == null || socket.isClosed();
+        // FIX https://github.com/dingosky/Sharktopoda/issues/4
+        // return socket == null || socket.isClosed();
+        return closed;
     }
 
     @Override
@@ -272,13 +281,16 @@ public class RVideoIO implements VideoIO<RState, RError> {
 
     private synchronized void sendCommand(DatagramPacket packet,
                                           int sizeBytes, RCommand<?, ?> command) {
-        try {
+                                            
+        // FIX https://github.com/dingosky/Sharktopoda/issues/4                       
+        try(var socket = new DatagramSocket()) {
+        // try {
             int timeout = (command instanceof OpenCmd) ? 20000 : 1000;
+            socket.setSoTimeout(timeout);
+
             var incomingBytes = new byte[sizeBytes];
             var incomingPacket = new DatagramPacket(incomingBytes, incomingBytes.length);
 
-//            DatagramSocket socket = this.socket;
-            socket.setSoTimeout(timeout);
             socket.send(packet);
 
             if (log.isDebugEnabled()) {

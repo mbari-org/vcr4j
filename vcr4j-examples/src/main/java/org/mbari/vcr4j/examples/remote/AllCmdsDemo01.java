@@ -77,6 +77,7 @@ public class AllCmdsDemo01 {
                 Thread.sleep(1000);
             }
             Thread.sleep(1000);
+            io.close();
         }
 
         System.exit(0);

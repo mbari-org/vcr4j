@@ -65,7 +65,7 @@ public class PlayerIO {
         var bytes = msg.getBytes();
         var responsePacket = new DatagramPacket(bytes, bytes.length, address, port);
         if (log.isDebugEnabled()) {
-            log.debug("Responding >>> " + msg);
+            log.debug(connectionId + " - Responding >>> " + msg);
         }
         server.send(responsePacket);
     }

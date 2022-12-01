@@ -41,7 +41,7 @@ public class LocalizationTest {
 
     @Test
     public void testDifferentSizeAddRequestsR2V() throws  Exception {
-        for (var n : List.of(1, 10, 100, 567)) {
+        for (var n : List.of(1, 10, 100, 567, 5011)) {
             var locs = TestUtil.newLocalizations(n);
             var countDown = new AtomicInteger(locs.size());
 
@@ -62,7 +62,7 @@ public class LocalizationTest {
 
     @Test
     public void testDifferentSizeAddRequestsV2R() throws  Exception {
-        for (var n : List.of(1, 10, 100, 567)) {
+        for (var n : List.of(1, 10, 100, 567, 5011)) {
             var locs = TestUtil.newLocalizations(n);
             var countDown = new AtomicInteger(locs.size());
 
@@ -87,7 +87,7 @@ public class LocalizationTest {
 
     @Test
     public void testDifferentSizeRemoveRequestsR2V() throws  Exception {
-        for (var n : List.of(1, 10, 100, 567)) {
+        for (var n : List.of(1, 10, 100, 567, 5011)) {
             var locs = TestUtil.newLocalizations(n);
             var countDown = new AtomicInteger(locs.size());
 
@@ -107,7 +107,7 @@ public class LocalizationTest {
 
     @Test
     public void testDifferentSizeRemoveRequestsV2R() throws  Exception {
-        for (var n : List.of(1, 10, 100, 567)) {
+        for (var n : List.of(1, 10, 100, 567, 5011)) {
             var locs = TestUtil.newLocalizations(n);
             var countDown = new AtomicInteger(locs.size());
 
@@ -130,7 +130,7 @@ public class LocalizationTest {
 
     @Test
     public void testDifferentSizeUpdateRequestsR2V() throws  Exception {
-        for (var n : List.of(1, 10, 100, 567)) {
+        for (var n : List.of(1, 10, 100, 567, 5011)) {
             var locs = TestUtil.newLocalizations(n);
             var countDown = new AtomicInteger(locs.size());
 
@@ -150,7 +150,7 @@ public class LocalizationTest {
 
     @Test
     public void testDifferentSizeUpdateRequestsV2R() throws  Exception {
-        for (var n : List.of(1, 10, 100, 567)) {
+        for (var n : List.of(1, 10, 100, 567, 5011)) {
             var locs = TestUtil.newLocalizations(n);
             var countDown = new AtomicInteger(locs.size());
 
