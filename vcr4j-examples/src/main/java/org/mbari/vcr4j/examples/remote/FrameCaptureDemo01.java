@@ -30,26 +30,28 @@ public class FrameCaptureDemo01 {
         var uuid = UUID.randomUUID();
         var io = new RemoteControl.Builder(uuid)
                 .port(5000)
-                .remotePort(8888)
+                .remotePort(port)
                 .remoteHost("localhost")
+                .whenFrameCaptureIsDone(cmd -> System.out.println(cmd))
                 .build()
                 .get();
 
         var videoIo = io.getVideoIO();
 
-        var png = File.createTempFile("trashme", ".png");
-        png.deleteOnExit();
+//        var png = File.createTempFile("trashme", ".png");
+//        png.deleteOnExit();
+        var png = new File("trashme.png");
         videoIo.send(new OpenCmd(uuid, url));
         Thread.sleep(500);
         videoIo.send(new SeekElapsedTimeCmd(Duration.ofMillis(10000)));
-        videoIo.send(VideoCommands.PLAY);
-        videoIo.send(VideoCommands.PAUSE);
+//        videoIo.send(VideoCommands.PLAY);
+//        videoIo.send(VideoCommands.PAUSE);
         videoIo.send(new FrameCaptureCmd(uuid, UUID.randomUUID(), png.getAbsolutePath()));
-        Thread.sleep(500);
+        Thread.sleep(5000);
         videoIo.send(RemoteCommands.CLOSE);
         io.close();
 
-
+        System.exit(0);
 
     }
 }

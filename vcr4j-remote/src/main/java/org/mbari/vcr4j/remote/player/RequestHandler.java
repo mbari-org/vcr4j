@@ -28,6 +28,7 @@ public interface RequestHandler {
             case ConnectCmd.COMMAND -> handle(simpleRequest, ConnectCmd.Request.class, this::handleConnect);
             case FrameAdvanceCmd.COMMAND -> handle(simpleRequest, FrameAdvanceCmd.Request.class, this::handleFrameAdvance);
             case OpenCmd.COMMAND -> handle(simpleRequest, OpenCmd.Request.class, this::handleOpen);
+            case OpenDoneCmd.COMMAND -> handle(simpleRequest, OpenDoneCmd.Request.class, this::handleOpenDone);
             case PauseCmd.COMMAND -> handle(simpleRequest, PauseCmd.Request.class, this::handlePause);
             case PlayCmd.COMMAND -> handle(simpleRequest, PlayCmd.Request.class, this::handlePlay);
             case PingCmd.COMMAND -> handle(simpleRequest, PingCmd.Request.class, this::handlePing);
@@ -49,6 +50,8 @@ public interface RequestHandler {
     }
 
     OpenCmd.Response handleOpen(OpenCmd.Request request);
+
+    OpenDoneCmd.Response handleOpenDone(OpenDoneCmd.Request request);
 
     CloseCmd.Response handleClose(CloseCmd.Request request);
 

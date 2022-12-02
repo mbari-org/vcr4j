@@ -50,6 +50,11 @@ public abstract class RxRequestHandler implements RequestHandler, Closeable {
     }
 
     @Override
+    public OpenDoneCmd.Response handleOpenDone(OpenDoneCmd.Request request) {
+        return new OpenDoneCmd.Response();
+    }
+
+    @Override
     public CloseCmd.Response handleClose(CloseCmd.Request request) {
         var ok = videoController.close(request.getUuid());
         var s = ok ? RResponse.OK : RResponse.FAILED;
