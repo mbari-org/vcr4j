@@ -196,7 +196,11 @@ public class SharktopodaVideoIO implements VideoIO<SharktopodaState, Sharktopoda
 
     @Override
     public void close() {
-        
+        commandSubject.onComplete();
+        videoInfoSubject.onComplete();
+        errorSubject.onComplete();
+        indexSubject.onComplete();
+        stateSubject.onComplete();
     }
 
     @Override

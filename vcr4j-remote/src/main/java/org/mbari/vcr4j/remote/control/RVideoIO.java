@@ -245,8 +245,13 @@ public class RVideoIO implements VideoIO<RState, RError> {
         //     log.atInfo().log("Disconnecting from " + connectionId );
         //     socket.close();
         // }
-        disposables.forEach(Disposable::dispose);
         // socket = null;
+        disposables.forEach(Disposable::dispose);
+        commandSubject.onComplete();
+        indexSubject.onComplete();
+        errorSubject.onComplete();
+        stateSubject.onComplete();
+        videoInfoSubject.onComplete();
         closed = true;
     }
 
