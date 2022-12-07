@@ -1,6 +1,6 @@
 package org.mbari.vcr4j.remote;
 
-import org.mbari.vcr4j.remote.control.commands.loc.Localization;
+import org.mbari.vcr4j.remote.control.commands.localization.Localization;
 
 import java.util.ArrayList;
 import java.util.List;

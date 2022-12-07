@@ -14,8 +14,7 @@ import org.mbari.vcr4j.commands.SeekElapsedTimeCmd;
 import org.mbari.vcr4j.commands.ShuttleCmd;
 import org.mbari.vcr4j.commands.VideoCommands;
 import org.mbari.vcr4j.remote.control.commands.*;
-import org.mbari.vcr4j.remote.control.commands.loc.*;
-import org.mbari.vcr4j.util.Preconditions;
+import org.mbari.vcr4j.remote.control.commands.localization.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,7 +53,7 @@ public class RVideoIO implements VideoIO<RState, RError> {
     // FIX https://github.com/dingosky/Sharktopoda/issues/4
     // private DatagramSocket socket;
 
-    private final Subject<List<VideoInfo>> videoInfoSubject;
+    private final Subject<List<? extends VideoInfo>> videoInfoSubject;
     private final Subject<RState> stateSubject;
     private final Subject<RError> errorSubject;
     /**
@@ -62,6 +61,7 @@ public class RVideoIO implements VideoIO<RState, RError> {
      */
     private final Subject<VideoIndex> indexSubject;
     private final Subject<VideoCommand<?>> commandSubject;
+    private final Subject<CommandResponse> responseSubject;
 
     private final RResponseParser responseParser;
 
@@ -77,7 +77,7 @@ public class RVideoIO implements VideoIO<RState, RError> {
         this.port = port;
         inetAddress = InetAddress.getByName(host);
 
-        PublishSubject<List<VideoInfo>> s1 = PublishSubject.create();
+        PublishSubject<List<? extends VideoInfo>> s1 = PublishSubject.create();
         videoInfoSubject = s1.toSerialized();
         PublishSubject<RState> s2 = PublishSubject.create();
         stateSubject = s2.toSerialized();
@@ -87,6 +87,8 @@ public class RVideoIO implements VideoIO<RState, RError> {
         indexSubject = s4.toSerialized();
         PublishSubject<VideoCommand<?>> s5 = PublishSubject.create();
         commandSubject = s5.toSerialized();
+        PublishSubject<CommandResponse> s6 = PublishSubject.create();
+        responseSubject = s6.toSerialized();
         responseParser = new RResponseParser(uuid, stateSubject, errorSubject, indexSubject, videoInfoSubject);
         connectionId = getConnectionID();
         init();
@@ -280,8 +282,12 @@ public class RVideoIO implements VideoIO<RState, RError> {
         return indexSubject;
     }
 
-    public Observable<List<VideoInfo>> getVideoInfoObservable() {
+    public Observable<List<? extends VideoInfo>> getVideoInfoObservable() {
         return videoInfoSubject;
+    }
+
+    public Observable<CommandResponse> getResponseSubject() {
+        return responseSubject;
     }
 
     private synchronized void sendCommand(DatagramPacket packet,
@@ -311,7 +317,9 @@ public class RVideoIO implements VideoIO<RState, RError> {
                 log.debug(connectionId + " - Received response <<< " + response);
             }
 
-            responseParser.handle(command, response);
+            var opt = responseParser.handle(command, response);
+            opt.map(r -> new CommandResponse(command, r))
+                    .ifPresent(responseSubject::onNext);
         } catch (Exception e) {
             // response will be null
             if (log.isErrorEnabled()) {

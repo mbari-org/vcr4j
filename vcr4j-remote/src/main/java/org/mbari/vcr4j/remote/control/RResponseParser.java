@@ -23,7 +23,8 @@ public class RResponseParser {
     private final Subject<RState> stateSubject;
     private final Subject<RError> errorSubject;
     private final Subject<VideoIndex> indexSubject;
-    private final Subject<List<VideoInfo>> videoInfoSubject;
+    private final Subject<List<? extends VideoInfo>> videoInfoSubject;
+
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     /**
@@ -38,7 +39,7 @@ public class RResponseParser {
                            Subject<RState> stateSubject,
                            Subject<RError> errorSubject,
                            Subject<VideoIndex> indexSubject,
-                           Subject<List<VideoInfo>> videoInfoSubject) {
+                           Subject<List<? extends VideoInfo>> videoInfoSubject) {
 
         this.uuid = uuid;
         this.stateSubject = stateSubject;
@@ -59,7 +60,7 @@ public class RResponseParser {
             return Optional.of(response);
         }
         catch (Exception ex) {
-            var e = new RError(false, true, false, command);
+            var e = new RError(false, true, false, command, "An exception was throw while parsing the reponse", ex);
             errorSubject.onNext(e);
             return Optional.empty();
         }
@@ -71,8 +72,9 @@ public class RResponseParser {
      * @param msg The raw response to the command from the remote video.
      * @param <B> The type of the response
      */
-    public <B extends RResponse> void handle(RCommand<?, B> command, String msg) {
-        parse(command, msg).ifPresent(response -> {
+    public <B extends RResponse> Optional<B> handle(RCommand<?, B> command, String msg) {
+        var opt = parse(command, msg);
+        opt.ifPresent(response -> {
             if (response instanceof RequestPlayerStateCmd.Response r) {
                 stateSubject.onNext(r.state());
             }
@@ -86,6 +88,7 @@ public class RResponseParser {
                 videoInfoSubject.onNext(r.getVideos());
             }
         });
+        return opt;
     }
 
 

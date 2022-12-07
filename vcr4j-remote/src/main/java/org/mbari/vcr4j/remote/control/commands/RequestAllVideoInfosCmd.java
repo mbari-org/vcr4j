@@ -35,55 +35,19 @@ public class RequestAllVideoInfosCmd
         }
     }
 
-    public static class Video implements VideoInfo {
-        private UUID uuid;
-        private URL url;
-
-        private Long durationMillis;
-
-        private Double frameRate;
-
-        public Video(UUID uuid, URL url) {
-            this(uuid, url, null, null);
-        }
-
-        public Video(UUID uuid, URL url, Long durationMillis, Double frameRate) {
-            this.uuid = uuid;
-            this.url = url;
-            this.durationMillis = durationMillis;
-            this.frameRate = frameRate;
-        }
-
-        public UUID getUuid() {
-            return uuid;
-        }
-
-        public URL getUrl() {
-            return url;
-        }
-
-        @Override
-        public Long getDurationMillis() {
-            return durationMillis;
-        }
-
-        @Override
-        public Double getFrameRate() {
-            return frameRate;
-        }
-    }
 
     public static class Response extends RResponse {
-        private List<VideoInfo> videos;
+        private List<VideoInfoBean> videos;
 
         public Response(List<VideoInfo> videos) {
             super(COMMAND, null);
-            this.videos = List.copyOf(videos);
+            this.videos = videos.stream()
+                    .map(VideoInfoBean::from)
+                    .toList();
 
         }
 
-
-        public List<VideoInfo> getVideos() {
+        public List<VideoInfoBean> getVideos() {
             return videos;
         }
 

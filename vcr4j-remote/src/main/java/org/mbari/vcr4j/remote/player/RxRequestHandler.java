@@ -5,7 +5,7 @@ import io.reactivex.rxjava3.subjects.PublishSubject;
 import io.reactivex.rxjava3.subjects.Subject;
 import org.mbari.vcr4j.remote.control.RState;
 import org.mbari.vcr4j.remote.control.commands.*;
-import org.mbari.vcr4j.remote.control.commands.loc.*;
+import org.mbari.vcr4j.remote.control.commands.localization.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

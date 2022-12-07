@@ -35,6 +35,7 @@ public class RequestVideoInfoCmd extends RCommand<RequestVideoInfoCmd.Request, R
         private URL url;
         private Long durationMillis;
         private Double frameRate;
+        private Boolean isKey;
 
         public Response(UUID uuid, URL url, Long durationMillis, Double frameRate) {
             super(COMMAND, null);
@@ -51,20 +52,29 @@ public class RequestVideoInfoCmd extends RCommand<RequestVideoInfoCmd.Request, R
 
         @Override
         public UUID getUuid() {
-            return null;
+            return uuid;
         }
 
+        @Override
         public URL getUrl() {
             return url;
         }
 
+        @Override
         public Long getDurationMillis() {
             return durationMillis;
         }
 
+        @Override
         public Double getFrameRate() {
             return frameRate;
         }
+
+        @Override
+        public Boolean isKey() {
+            return isKey;
+        }
+
         @Override
         public boolean success() {
             return getUuid() != null && durationMillis != null && frameRate != null;

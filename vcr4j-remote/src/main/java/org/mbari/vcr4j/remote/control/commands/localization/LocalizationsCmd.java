@@ -1,4 +1,4 @@
-package org.mbari.vcr4j.remote.control.commands.loc;
+package org.mbari.vcr4j.remote.control.commands.localization;
 
 import org.mbari.vcr4j.remote.control.commands.RCommand;
 import org.mbari.vcr4j.remote.control.commands.RRequest;

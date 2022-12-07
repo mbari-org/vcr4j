@@ -29,9 +29,14 @@ public class RequestPlayerStateCmd extends RCommand<RequestPlayerStateCmd.Reques
 
     public static class Response extends RResponse {
 
-        private transient String state;
+        private String state;
 
         private Double rate;
+
+        // OK, this is a bit of a hack. GSOn assigns this value when parsing but we
+        // don't include it in the constructor to respect how VideoControl normally requests state
+        // via a call to requestRate ( a holdover from VCR support)
+        private Long elapsedTimeMillis;
 
         public Response(String status, Double rate) {
             super(COMMAND, status);
@@ -49,6 +54,14 @@ public class RequestPlayerStateCmd extends RCommand<RequestPlayerStateCmd.Reques
 
         public RState state() {
             return RState.parse(state);
+        }
+
+        public Double getRate() {
+            return rate;
+        }
+
+        public Long getElapsedTimeMillis() {
+            return elapsedTimeMillis;
         }
 
         @Override

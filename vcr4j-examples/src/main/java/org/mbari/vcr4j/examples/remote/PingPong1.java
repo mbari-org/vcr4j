@@ -3,8 +3,8 @@ package org.mbari.vcr4j.examples.remote;
 import org.mbari.vcr4j.commands.VideoCommands;
 import org.mbari.vcr4j.remote.control.RemoteControl;
 import org.mbari.vcr4j.remote.control.commands.OpenCmd;
-import org.mbari.vcr4j.remote.control.commands.loc.AddLocalizationsCmd;
-import org.mbari.vcr4j.remote.control.commands.loc.Localization;
+import org.mbari.vcr4j.remote.control.commands.localization.AddLocalizationsCmd;
+import org.mbari.vcr4j.remote.control.commands.localization.Localization;
 import org.mbari.vcr4j.remote.player.VideoControl;
 
 import java.net.URL;

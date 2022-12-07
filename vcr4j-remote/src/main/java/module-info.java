@@ -8,9 +8,9 @@ module vcr4j.remote {
   exports org.mbari.vcr4j.remote.player;
   exports org.mbari.vcr4j.remote.control;
   exports org.mbari.vcr4j.remote.control.commands;
-  exports org.mbari.vcr4j.remote.control.commands.loc;
+  exports org.mbari.vcr4j.remote.control.commands.localization;
 
   opens org.mbari.vcr4j.remote.player to com.google.gson;
   opens org.mbari.vcr4j.remote.control.commands to com.google.gson;
-  opens org.mbari.vcr4j.remote.control.commands.loc to com.google.gson;
+  opens org.mbari.vcr4j.remote.control.commands.localization to com.google.gson;
 }

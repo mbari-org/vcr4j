@@ -2,7 +2,7 @@ package org.mbari.vcr4j.remote.player;
 
 import org.mbari.vcr4j.remote.control.RVideoIO;
 import org.mbari.vcr4j.remote.control.commands.*;
-import org.mbari.vcr4j.remote.control.commands.loc.*;
+import org.mbari.vcr4j.remote.control.commands.localization.*;
 
 import java.util.function.Function;
 

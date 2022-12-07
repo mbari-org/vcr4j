@@ -5,9 +5,9 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mbari.vcr4j.remote.control.RemoteControl;
-import org.mbari.vcr4j.remote.control.commands.loc.AddLocalizationsCmd;
-import org.mbari.vcr4j.remote.control.commands.loc.RemoveLocalizationsCmd;
-import org.mbari.vcr4j.remote.control.commands.loc.UpdateLocalizationsCmd;
+import org.mbari.vcr4j.remote.control.commands.localization.AddLocalizationsCmd;
+import org.mbari.vcr4j.remote.control.commands.localization.RemoveLocalizationsCmd;
+import org.mbari.vcr4j.remote.control.commands.localization.UpdateLocalizationsCmd;
 import org.mbari.vcr4j.remote.player.VideoControl;
 
 import java.util.List;

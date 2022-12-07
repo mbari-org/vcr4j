@@ -71,4 +71,16 @@ public class RError implements VideoError {
     public Optional<String> getMessage() {
         return Optional.ofNullable(message);
     }
+
+    @Override
+    public String toString() {
+        return "RError{" +
+                "connectionError=" + connectionError +
+                ", parserError=" + parserError +
+                ", unknownError=" + unknownError +
+                ", videoCommand=" + videoCommand +
+                ", message='" + message + '\'' +
+                ", exception=" + exception +
+                '}';
+    }
 }
