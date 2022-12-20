@@ -5,6 +5,7 @@ import org.mbari.vcr4j.remote.control.commands.OpenCmd;
 import org.mbari.vcr4j.remote.control.commands.localization.AddLocalizationsCmd;
 import org.mbari.vcr4j.remote.control.commands.localization.Localization;
 import org.mbari.vcr4j.remote.control.commands.localization.SelectLocalizationsCmd;
+import org.mbari.vcr4j.remote.control.commands.localization.UpdateLocalizationsCmd;
 
 import java.time.Duration;
 import java.util.List;
@@ -32,6 +33,15 @@ public class Issue19 {
 
         Thread.sleep(2000);
         cmds.forEach(io::send);
+
+
+        Thread.sleep(5000);
+        var updatedLoc = new Localization(loc.getUuid(),
+                "Brian is now over here",
+                elapsedTimeMillis, 0L, 500, 500, 300, 400, "#FF3434");
+        io.send(new UpdateLocalizationsCmd(uuid, List.of(updatedLoc)));
+        Thread.sleep(2000);
+//        io.send(new SelectLocalizationsCmd(uuid, locs.stream().map(Localization::getUuid).toList()));
 
     }
 }
