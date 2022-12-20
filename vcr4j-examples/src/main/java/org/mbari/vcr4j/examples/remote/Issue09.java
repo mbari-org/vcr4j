@@ -9,7 +9,7 @@ import java.util.UUID;
 public class Issue09 {
 
     public static void main(String[] args) throws Exception {
-        var appArgs = AppArgs.parse(args, TestCommands01.class.getName());
+        var appArgs = AppArgs.parse(args, Issue09.class.getName());
         var io = appArgs.remoteControl();
         var uuid = appArgs.getVideoUuid();
         var url = appArgs.url();
@@ -19,7 +19,6 @@ public class Issue09 {
         var commands = List.of(new OpenCmd(uuid, url),
                 new OpenCmd(uuid2, url),
                 RemoteCommands.REQUEST_ALL_VIDEO_INFOS);
-
 
         Thread.sleep(1000);
 

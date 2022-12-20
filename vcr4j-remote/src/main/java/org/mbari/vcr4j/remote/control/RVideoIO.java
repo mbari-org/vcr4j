@@ -135,6 +135,10 @@ public class RVideoIO implements VideoIO<RState, RError> {
                 .forEach(sizedRequest -> doCommand(sizedRequest.cmd, sizedRequest.size));
         disposables.add(a);
 
+        a = commandSubject.ofType(FrameAdvanceCmd.class)
+                .forEach(c -> doCommand(c, 1024));
+        disposables.add(a);
+
         a = commandSubject.ofType(ShuttleCmd.class)
                 .map(c -> new PlayCmd(uuid, c.getValue() * MAX_SHUTTLE_RATE))
                 .forEach(this::doCommand);
