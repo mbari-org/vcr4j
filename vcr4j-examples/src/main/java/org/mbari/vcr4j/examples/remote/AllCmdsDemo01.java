@@ -52,15 +52,15 @@ public class AllCmdsDemo01 {
                 new ShuttleCmd(-0.02),
                 new SeekElapsedTimeCmd(Duration.ofMillis(1000)),
                 new PlayCmd(uuid, 0.01),
-                new SeekElapsedTimeCmd(Duration.ofMillis(10000)),
+                new SeekElapsedTimeCmd(Duration.ofMillis(50000)),
                 new PlayCmd(uuid, 0.01),
-                new FrameCaptureCmd(uuid, UUID.randomUUID(), File.createTempFile("trashme", ".png").getAbsolutePath()),
-                new SeekElapsedTimeCmd(Duration.ofMillis(1000)),
+                new FrameCaptureCmd(uuid, UUID.randomUUID(), (new File("trashme-" + UUID.randomUUID() + ".png").getAbsolutePath())),
+                new SeekElapsedTimeCmd(Duration.ofMillis(10000)),
                 new PlayCmd(uuid, 0.01),
                 new OpenCmd(uuid, url),
                 RemoteCommands.CLOSE);
 
-        var ports = List.of(5000, 5555);
+        var ports = List.of(5000);
         for (var listenPort: ports) {
 
             var io = new RemoteControl.Builder(uuid)

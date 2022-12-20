@@ -1,48 +1,24 @@
 package org.mbari.vcr4j.examples.remote;
 
-import org.docopt.Docopt;
 import org.mbari.vcr4j.commands.SeekElapsedTimeCmd;
 import org.mbari.vcr4j.commands.ShuttleCmd;
 import org.mbari.vcr4j.commands.VideoCommands;
-import org.mbari.vcr4j.remote.control.RVideoIO;
-import org.mbari.vcr4j.remote.control.RemoteControl;
 import org.mbari.vcr4j.remote.control.commands.*;
 
 import java.io.File;
-import java.net.URL;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 public class TestCommands01 {
 
 
     public static void main(String[] args) throws Exception {
-        var prog = TestCommands01.class.getName();
-        var doc = """
-                Usage: %s <port> <url>
-                Options:
-                  -h, --help
-                """.formatted(prog);
-
-        Map<String, Object> opts = new Docopt(doc).parse(args);
-
-        var port = Integer.parseInt((String) opts.get("<port>"));
-        var url = new URL((String) opts.get("<url>"));
-        var uuid = UUID.randomUUID();
-
-
-        var io = new RemoteControl.Builder(uuid)
-                .port(5555)
-                .remotePort(port)
-                .remoteHost("localhost")
-                .build()
-                .get();
-
-        io.getVideoIO().getErrorObservable().subscribe(e -> System.out.printf("ERROR: %s%n", e));
-
+        var appArgs = AppArgs.parse(args, TestCommands01.class.getName());
+        var io = appArgs.remoteControl();
+        var uuid = appArgs.getVideoUuid();
+        var url = appArgs.url();
 
         io.getVideoIO().getResponseSubject()
                 .subscribe(cr -> {

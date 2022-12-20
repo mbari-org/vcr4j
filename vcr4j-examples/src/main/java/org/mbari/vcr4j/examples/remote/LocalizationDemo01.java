@@ -65,7 +65,7 @@ public class LocalizationDemo01 {
 
         for (var cmd: commands) {
             io.getVideoIO().send(cmd);
-            Thread.sleep(1000);
+            Thread.sleep(5000);
         }
         Thread.sleep(1000);
         io.close();
@@ -78,8 +78,8 @@ public class LocalizationDemo01 {
             var loc = new Localization(UUID.randomUUID(), "foo" + n,
                     random.nextLong(0, 800000),
                     0L,
-                    random.nextInt(0, 3840),
-                    random.nextInt(0, 2160),
+                    random.nextInt(0, 3739),
+                    random.nextInt(0, 2059),
                     random.nextInt(0, 100),
                     random.nextInt(0, 100),
                     "#00FFFF");
