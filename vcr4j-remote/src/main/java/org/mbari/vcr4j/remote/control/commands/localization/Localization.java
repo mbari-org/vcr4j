@@ -43,7 +43,6 @@ public class Localization {
     public Localization() {
     }
 
-
     public UUID getUuid() {
         return uuid;
     }
