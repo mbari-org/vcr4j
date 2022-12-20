@@ -2,13 +2,13 @@ package org.mbari.vcr4j.examples.remote;
 
 import org.docopt.Docopt;
 import org.mbari.vcr4j.remote.control.RemoteControl;
+import org.mbari.vcr4j.remote.control.commands.localization.Localization;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
 import java.net.URL;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public record AppArgs(RemoteControl remoteControl, URL url) {
 
@@ -45,6 +45,27 @@ public record AppArgs(RemoteControl remoteControl, URL url) {
                 .subscribe(e -> log.atWarn().log("ERROR: " + e));
 
         return new AppArgs(io, url);
+    }
+
+    public static List<Localization> buildLocalizations(int n,
+                                                         long durationMillis,
+                                                         int width,
+                                                         int height) {
+        var random = new Random();
+        var locs = new ArrayList<Localization>();
+        for (var i = 0; i < n; i++) {
+            var color = String.format("#%06x", random.nextInt(0xFFFFFF + 1));
+            var loc = new Localization(UUID.randomUUID(), "foo-" + i,
+                    random.nextLong(0, durationMillis),
+                    0L,
+                    random.nextInt(0, width - 100),
+                    random.nextInt(0, height - 100),
+                    random.nextInt(0, 100),
+                    random.nextInt(0, 100),
+                    color);
+            locs.add(loc);
+        }
+        return locs;
     }
 
 

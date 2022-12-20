@@ -54,6 +54,8 @@ public class LocalizationDemo01 {
                         err -> log.atError().setCause(err).log("ERROR"),
                         () -> log.atInfo().log("DONE"));
 
+
+
         var locs = buildLocs(10000);
 
         var commands = List.of(new OpenCmd(uuid, url),
