@@ -36,10 +36,10 @@ public class Issue21 {
 
                         var targetSpace = pwd.resolve("trashme " + et + ".png");
                         io.send(new FrameCaptureCmd(uuid, UUID.randomUUID(), targetSpace.toString()));
-                        Thread.sleep(500);
+                        Thread.sleep(2000);
 
-                        var targetNoSpace = pwd.resolve("trashme-" + et + ".png");
-                        io.send(new FrameCaptureCmd(uuid, UUID.randomUUID(), targetNoSpace.toString()));
+//                        var targetNoSpace = pwd.resolve("trashme-" + et + ".png");
+//                        io.send(new FrameCaptureCmd(uuid, UUID.randomUUID(), targetNoSpace.toString()));
 
 
                     }

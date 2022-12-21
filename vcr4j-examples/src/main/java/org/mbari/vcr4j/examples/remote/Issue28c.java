@@ -31,10 +31,11 @@ public class Issue28c {
                 .get();
 
         var io = remoteControl.getVideoIO();
+        var rh = remoteControl.getRequestHandler();
 
         var dateFormat = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmssXXX");
 
-        remoteControl.getRequestHandler().getLocalizationsCmdObservable()
+        rh.getLocalizationsCmdObservable()
                 .ofType(AddLocalizationsCmd.class)
                 .observeOn(Schedulers.io())
                 .subscribe(cmd -> {
