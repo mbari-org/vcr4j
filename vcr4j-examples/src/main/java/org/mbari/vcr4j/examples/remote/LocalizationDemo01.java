@@ -56,7 +56,7 @@ public class LocalizationDemo01 {
 
 
 
-        var locs = buildLocs(10000);
+        var locs = AppArgs.buildLocalizations(20000, 60000, 1920, 1080);
 
         var commands = List.of(new OpenCmd(uuid, url),
                 new AddLocalizationsCmd(uuid, locs),
@@ -73,20 +73,5 @@ public class LocalizationDemo01 {
         io.close();
     }
 
-    private static List<Localization> buildLocs(int n) {
-        var random = new Random();
-        var locs = new ArrayList<Localization>();
-        for (var i = 0; i < n; i++) {
-            var loc = new Localization(UUID.randomUUID(), "foo" + n,
-                    random.nextLong(0, 800000),
-                    0L,
-                    random.nextInt(0, 3739),
-                    random.nextInt(0, 2059),
-                    random.nextInt(0, 100),
-                    random.nextInt(0, 100),
-                    "#00FFFF");
-            locs.add(loc);
-        }
-        return locs;
-    }
+
 }
