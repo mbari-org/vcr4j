@@ -24,7 +24,7 @@ public class RS422State implements VideoState {
 
     /**
      * Bit representing direction, 1 = reverse, 0= forward Sony documentation states
-     * STS_DIRECTION = 0x0040000L. However we found it is STS_DIRECTION = 0x0000004L
+     * STS_DIRECTION = 0x0040000L. However, we found it is STS_DIRECTION = 0x0000004L
      */
     public final static long STS_DIRECTION = 0x0000004L;
 

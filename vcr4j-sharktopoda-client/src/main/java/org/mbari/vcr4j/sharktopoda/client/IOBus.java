@@ -1,7 +1,7 @@
 package org.mbari.vcr4j.sharktopoda.client;
 
-import io.reactivex.subjects.PublishSubject;
-import io.reactivex.subjects.Subject;
+import io.reactivex.rxjava3.subjects.PublishSubject;
+import io.reactivex.rxjava3.subjects.Subject;
 
 /**
  * @author Brian Schlining

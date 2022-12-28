@@ -1,6 +1,5 @@
 package org.mbari.vcr4j.sharktopoda.model.request;
 
-import java.net.URL;
 import java.util.UUID;
 
 /**

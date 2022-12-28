@@ -16,7 +16,7 @@ public class LoggerHelper {
         this.log = log;
     }
 
-    public void logCommand(byte[] bytes, VideoCommand videoCommand) {
+    public void logCommand(byte[] bytes, VideoCommand<?> videoCommand) {
         if (log.isDebugEnabled()) {
             log.debug("[0x" + NumberUtilities.toHexString(bytes) + "] >>> VCR (" + videoCommand.getName() + ")");
         }

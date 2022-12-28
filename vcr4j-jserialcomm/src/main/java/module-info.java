@@ -4,7 +4,7 @@
  */
 module vcr4j.jserialcomm {
     requires com.fazecast.jSerialComm;
-    requires io.reactivex.rxjava2;
+    requires io.reactivex.rxjava3;
     requires vcr4j.rs422;
     requires vcr4j.core;
     requires org.slf4j;

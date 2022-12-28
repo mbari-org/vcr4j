@@ -14,8 +14,8 @@ package org.mbari.vcr4j.rs422;
 
 import java.util.Arrays;
 
-import io.reactivex.subjects.PublishSubject;
-import io.reactivex.subjects.Subject;
+import io.reactivex.rxjava3.subjects.PublishSubject;
+import io.reactivex.rxjava3.subjects.Subject;
 import mbarix4j.util.NumberUtilities;
 import org.mbari.vcr4j.VideoCommand;
 

@@ -2,8 +2,7 @@ package org.mbari.vcr4j.sharktopoda.client.udp;
 
 import com.google.gson.Gson;
 
-import io.reactivex.subjects.Subject;
-
+import io.reactivex.rxjava3.subjects.Subject;
 import org.mbari.vcr4j.sharktopoda.client.ClientController;
 import org.mbari.vcr4j.sharktopoda.client.model.GenericCommand;
 import org.mbari.vcr4j.sharktopoda.client.model.GenericResponse;

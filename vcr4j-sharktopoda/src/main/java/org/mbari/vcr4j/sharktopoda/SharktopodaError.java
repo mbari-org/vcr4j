@@ -11,7 +11,7 @@ import java.util.Optional;
  */
 public class SharktopodaError implements VideoError {
 
-    private final Optional<VideoCommand> videoCommand;
+    private final Optional<VideoCommand<?>> videoCommand;
     private final boolean connectionError;
     private final boolean parserError;
     private final boolean unknownError;
@@ -19,7 +19,7 @@ public class SharktopodaError implements VideoError {
     public SharktopodaError(boolean connectionError,
             boolean parserError,
             boolean unknownError,
-            Optional<VideoCommand> videoCommand) {
+            Optional<VideoCommand<?>> videoCommand) {
         this.connectionError = connectionError;
         this.parserError = parserError;
         this.unknownError = unknownError;
@@ -27,7 +27,7 @@ public class SharktopodaError implements VideoError {
     }
 
     @Override
-    public Optional<VideoCommand> getVideoCommand() {
+    public Optional<VideoCommand<?>> getVideoCommand() {
         return videoCommand;
     }
 

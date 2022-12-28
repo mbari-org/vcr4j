@@ -1,7 +1,7 @@
 package org.mbari.vcr4j.udp;
 
-import io.reactivex.subjects.PublishSubject;
-import io.reactivex.subjects.Subject;
+import io.reactivex.rxjava3.subjects.PublishSubject;
+import io.reactivex.rxjava3.subjects.Subject;
 import org.mbari.vcr4j.VideoCommand;
 import org.mbari.vcr4j.commands.VideoCommands;
 import org.mbari.vcr4j.time.Timecode;
@@ -34,7 +34,7 @@ public class UDPResponseParser {
         errorObservable = s2.toSerialized();
     }
 
-    public void update(byte[] response, Optional<VideoCommand> videoCommand) {
+    public void update(byte[] response, Optional<VideoCommand<?>> videoCommand) {
         videoCommand.ifPresent(vc -> {
             if (vc.equals(VideoCommands.REQUEST_TIMECODE) || vc.equals(VideoCommands.REQUEST_TIMESTAMP)) {
                 responseToTimecode(response, videoCommand)
@@ -51,7 +51,7 @@ public class UDPResponseParser {
         return timecodeObservable;
     }
 
-    private Optional<Timecode> responseToTimecode(byte[] response, Optional<VideoCommand> videoCommand) {
+    private Optional<Timecode> responseToTimecode(byte[] response, Optional<VideoCommand<?>> videoCommand) {
          /*
          * Parse the timecode response.
          */

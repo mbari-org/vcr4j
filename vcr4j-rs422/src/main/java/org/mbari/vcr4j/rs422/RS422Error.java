@@ -31,14 +31,14 @@ public class RS422Error implements VideoError {
     public static final int              UNDEFINED_COMMAND = 0x01;
     private final int                    error;
     private final String message;
-    private final VideoCommand videoCommand;
+    private final VideoCommand<?> videoCommand;
 
 
     public RS422Error(int error) {
         this(error, null, null);
     }
 
-    public RS422Error(int error, VideoCommand videoCommand) {
+    public RS422Error(int error, VideoCommand<?> videoCommand) {
         this(error, null, videoCommand);
     }
 
@@ -46,11 +46,11 @@ public class RS422Error implements VideoError {
         this(OTHER_ERROR, errorMsg, null);
     }
 
-    public RS422Error(String errorMsg, VideoCommand videoCommand) {
+    public RS422Error(String errorMsg, VideoCommand<?> videoCommand) {
         this(OTHER_ERROR, errorMsg, videoCommand);
     }
 
-    public RS422Error(int error, String errorMsg, VideoCommand videoCommand) {
+    public RS422Error(int error, String errorMsg, VideoCommand<?> videoCommand) {
         this.error = error;
         this.message = errorMsg;
         this.videoCommand = videoCommand;
@@ -104,7 +104,7 @@ public class RS422Error implements VideoError {
      * @return The command that triggered the error
      */
     @Override
-    public Optional<VideoCommand> getVideoCommand() {
+    public Optional<VideoCommand<?>> getVideoCommand() {
         return Optional.ofNullable(videoCommand);
     }
 

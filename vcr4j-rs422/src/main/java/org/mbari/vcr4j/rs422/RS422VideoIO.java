@@ -19,9 +19,9 @@ import java.time.Instant;
 import java.util.Arrays;
 import java.util.Optional;
 
-import io.reactivex.Observable;
-import io.reactivex.subjects.PublishSubject;
-import io.reactivex.subjects.Subject;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.subjects.PublishSubject;
+import io.reactivex.rxjava3.subjects.Subject;
 import mbarix4j.util.NumberUtilities;
 import org.mbari.vcr4j.VideoCommand;
 import org.mbari.vcr4j.VideoIndex;
@@ -44,7 +44,7 @@ public abstract class RS422VideoIO implements VCRVideoIO {
     private final Logger log = LoggerFactory.getLogger(getClass());
     private final LoggerHelper loggerHelper = new LoggerHelper(log);
     private final RS422ResponseParser responseParser = new RS422ResponseParser();
-    private final Subject<VideoCommand> commandSubject;
+    private final Subject<VideoCommand<?>> commandSubject;
     private OutputStream outputStream;    // Sends commands to VCR
     private InputStream inputStream;      // Reads responses from VCR
     private final Observable<VideoIndex> indexObservable = Observable
@@ -78,7 +78,7 @@ public abstract class RS422VideoIO implements VCRVideoIO {
         this.outputStream = outputStream;
         this.ioDelay = ioDelay;
 
-        PublishSubject<VideoCommand> s1 = PublishSubject.create();
+        PublishSubject<VideoCommand<?>> s1 = PublishSubject.create();
         commandSubject = s1.toSerialized();
 
         commandSubject.subscribe(vc -> {
@@ -161,7 +161,7 @@ public abstract class RS422VideoIO implements VCRVideoIO {
     }
 
     @Override
-    public <A extends VideoCommand> void send(A videoCommand) {
+    public <A extends VideoCommand<?>> void send(A videoCommand) {
         commandSubject.onNext(videoCommand);
     }
 
@@ -169,7 +169,7 @@ public abstract class RS422VideoIO implements VCRVideoIO {
      * Sends a command, in the format of a byte[], to the VCR.
      * @param command The command to send to the VCR
      */
-    protected synchronized void sendCommand(byte[] command, VideoCommand videoCommand) {
+    protected synchronized void sendCommand(byte[] command, VideoCommand<?> videoCommand) {
 
         // Add the checksum
         byte checksum = RS422ResponseParser.calculateChecksum(command);
@@ -194,7 +194,7 @@ public abstract class RS422VideoIO implements VCRVideoIO {
     }
 
     @Override
-    public Subject<VideoCommand> getCommandSubject() {
+    public Subject<VideoCommand<?>> getCommandSubject() {
         return commandSubject;
     }
 

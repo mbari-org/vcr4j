@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.mbari.vcr4j</groupId>
         <artifactId>vcr4j</artifactId>
-        <version>4.5.0.jre11-SNAPSHOT</version>
+        <version>5.0.0.jre17-SNAPSHOT</version>
     </parent>
     <artifactId>vcr4j-examples</artifactId>
     <name>vcr4j-examples</name>
@@ -15,32 +15,7 @@
     <dependencies>
         <dependency>
             <groupId>org.mbari.vcr4j</groupId>
-            <artifactId>vcr4j-rxtx</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.mbari.vcr4j</groupId>
-            <artifactId>vcr4j-purejavacomm</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.mbari.vcr4j</groupId>
-            <artifactId>vcr4j-jssc</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.mbari.vcr4j</groupId>
             <artifactId>vcr4j-udp</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.mbari.vcr4j</groupId>
-            <artifactId>vcr4j-kipro</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.mbari.vcr4j</groupId>
-            <artifactId>vcr4j-jserialcomm</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -50,7 +25,7 @@
         </dependency>
         <dependency>
             <groupId>org.mbari.vcr4j</groupId>
-            <artifactId>vcr4j-vlc-http</artifactId>
+            <artifactId>vcr4j-remote</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -64,4 +39,30 @@
             <version>${logback.version}</version>
         </dependency>
     </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>org.mbari.vcr4j.examples.remote.LocalizationDemo01</mainClass>
+                        </manifest>
+                    </archive>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id> <!-- this is used for inheritance merges -->
+                        <phase>package</phase> <!-- bind to the packaging phase -->
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

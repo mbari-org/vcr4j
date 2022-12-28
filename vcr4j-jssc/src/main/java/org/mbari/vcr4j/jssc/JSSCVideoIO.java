@@ -1,8 +1,8 @@
 package org.mbari.vcr4j.jssc;
 
-import io.reactivex.Observable;
-import io.reactivex.subjects.PublishSubject;
-import io.reactivex.subjects.Subject;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.subjects.PublishSubject;
+import io.reactivex.rxjava3.subjects.Subject;
 import jssc.SerialPort;
 import jssc.SerialPortException;
 import jssc.SerialPortTimeoutException;
@@ -42,7 +42,7 @@ public class JSSCVideoIO implements VCRVideoIO {
     private final long ioDelay;
 
     private final RS422ResponseParser responseParser = new RS422ResponseParser();
-    private final Subject<VideoCommand> commandSubject;
+    private final Subject<VideoCommand<?>> commandSubject;
 
     /**
      * Maximum receive timeout in millisecs
@@ -57,7 +57,7 @@ public class JSSCVideoIO implements VCRVideoIO {
         this.serialPort = serialPort;
         this.ioDelay = ioDelay;
 
-        PublishSubject<VideoCommand> s1 = PublishSubject.create();
+        PublishSubject<VideoCommand<?>> s1 = PublishSubject.create();
         commandSubject = s1.toSerialized();
 
         commandSubject.subscribe(vc -> {
@@ -85,7 +85,7 @@ public class JSSCVideoIO implements VCRVideoIO {
     }
 
     @Override
-    public <A extends VideoCommand> void send(A videoCommand) {
+    public <A extends VideoCommand<?>> void send(A videoCommand) {
         commandSubject.onNext(videoCommand);
     }
 
@@ -94,7 +94,7 @@ public class JSSCVideoIO implements VCRVideoIO {
      * @param command The command to send to the VCR
      * @param videoCommand The corresponding videoCommand sent to the vcr
      */
-    protected synchronized void sendCommand(byte[] command, VideoCommand videoCommand) {
+    protected synchronized void sendCommand(byte[] command, VideoCommand<?> videoCommand) {
 
         // Add the checksum
         byte checksum = RS422ResponseParser.calculateChecksum(command);
@@ -202,7 +202,7 @@ public class JSSCVideoIO implements VCRVideoIO {
     }
 
     @Override
-    public Subject<VideoCommand> getCommandSubject() {
+    public Subject<VideoCommand<?>> getCommandSubject() {
         return commandSubject;
     }
 

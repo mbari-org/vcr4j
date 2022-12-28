@@ -1,7 +1,6 @@
 package org.mbari.vcr4j.sharktopoda.commands;
 
 import org.mbari.vcr4j.VideoCommand;
-import org.mbari.vcr4j.sharktopoda.model.request.Connect;
 
 /**
  * @author Brian Schlining

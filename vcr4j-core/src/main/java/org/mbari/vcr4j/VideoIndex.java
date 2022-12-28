@@ -89,4 +89,16 @@ public class VideoIndex {
         Instant tsThis = timestamp.orElse(Instant.MIN);
         return ((tcThis.hashCode() * 31) + ecThis.hashCode() * 31) + tsThis.hashCode();
     }
+
+    @Override
+    public String toString() {
+        var ts = timestamp.map(Object::toString).orElse("null");
+        var et = elapsedTime.map(Object::toString).orElse("null");
+        var tc = timecode.map(Object::toString).orElse("null");
+        return "VideoIndex{" +
+                "timestamp=" + ts +
+                ", elapsedTime=" + et +
+                ", timecode=" + tc +
+                '}';
+    }
 }

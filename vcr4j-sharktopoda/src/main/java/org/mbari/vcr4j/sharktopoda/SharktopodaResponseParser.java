@@ -1,6 +1,6 @@
 package org.mbari.vcr4j.sharktopoda;
 
-import io.reactivex.subjects.Subject;
+import io.reactivex.rxjava3.subjects.Subject;
 import org.mbari.vcr4j.VideoCommand;
 import org.mbari.vcr4j.VideoIndex;
 import org.mbari.vcr4j.commands.VideoCommands;
@@ -51,7 +51,7 @@ public class SharktopodaResponseParser {
         this.videoInfoSubject = videoInfoSubject;
     }
 
-    public void parse(VideoCommand command, byte[] response) {
+    public void parse(VideoCommand<?> command, byte[] response) {
         String msg = new String(response);
         log.debug("Parsing " + command + " <<< " + msg);
         // --- route to correct subject
@@ -74,14 +74,14 @@ public class SharktopodaResponseParser {
 
     private void handleOpen(String msg) {
         OpenResponse r = Constants.GSON.fromJson(msg, OpenResponse.class);
+        SharktopodaState state;
         if (r.getStatus().equalsIgnoreCase("ok")) {
-            SharktopodaState state = new SharktopodaState(SharktopodaState.State.PAUSED);
-            stateSubject.onNext(state);
+            state = new SharktopodaState(SharktopodaState.State.PAUSED);
         }
         else {
-            SharktopodaState state = new SharktopodaState(SharktopodaState.State.NOT_FOUND);
-            stateSubject.onNext(state);
+            state = new SharktopodaState(SharktopodaState.State.NOT_FOUND);
         }
+        stateSubject.onNext(state);
     }
 
     private void handleRequestStatus(String msg) {
@@ -99,8 +99,6 @@ public class SharktopodaResponseParser {
             stateSubject.onNext(state);
         }
         else {
-            // SharktopodaState state = new SharktopodaState(SharktopodaState.State.UNKNOWN_ERROR);
-            // stateSubject.onNext(state);
             SharktopodaError error = new SharktopodaError(false, true, true, Optional.of(VideoCommands.PLAY));
             errorSubject.onNext(error);
         }

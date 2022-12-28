@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.mbari.vcr4j</groupId>
     <artifactId>vcr4j</artifactId>
-    <version>4.5.0.jre11-SNAPSHOT</version>
+    <version>5.0.0.jre17-SNAPSHOT</version>
   </parent>
   <artifactId>vcr4j-udp</artifactId>
   <name>vcr4j-udp</name>
@@ -14,6 +14,11 @@
       <groupId>org.mbari.vcr4j</groupId>
       <artifactId>vcr4j-core</artifactId>
       <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.reactivex.rxjava3</groupId>
+      <artifactId>rxjava</artifactId>
+      <version>${rx.version}</version>
     </dependency>
   </dependencies>
 </project>

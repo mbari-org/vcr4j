@@ -1,7 +1,7 @@
 package org.mbari.vcr4j;
 
 
-import io.reactivex.Observable;
+import io.reactivex.rxjava3.core.Observable;
 import org.mbari.vcr4j.commands.SeekElapsedTimeCmd;
 import org.mbari.vcr4j.commands.SeekTimecodeCmd;
 import org.mbari.vcr4j.commands.SeekTimestampCmd;

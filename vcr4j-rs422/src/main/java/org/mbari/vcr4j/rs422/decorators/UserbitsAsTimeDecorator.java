@@ -1,9 +1,9 @@
 package org.mbari.vcr4j.rs422.decorators;
 
-import io.reactivex.Observable;
-import io.reactivex.Observer;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.subjects.Subject;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.subjects.Subject;
 import mbarix4j.util.NumberUtilities;
 import org.mbari.vcr4j.VideoCommand;
 import org.mbari.vcr4j.VideoIndex;
@@ -41,9 +41,9 @@ public class UserbitsAsTimeDecorator implements Decorator {
 
     public UserbitsAsTimeDecorator(VCRVideoIO io) {
 
-        final Subject<VideoCommand> commandSubject = io.getCommandSubject();
+        final Subject<VideoCommand<?>> commandSubject = io.getCommandSubject();
 
-        commandObserver = new Observer<VideoCommand>() {
+        commandObserver = new Observer<>() {
             @Override
             public void onComplete() {}
 

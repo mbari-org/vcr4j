@@ -38,7 +38,7 @@ public class VARSDemo01 {
         Integer port = Integer.parseInt((String) opts.get("<port>"));
         URL url = new URL((String) opts.get("<url>"));
 
-        Logger log = LoggerFactory.getLogger(org.mbari.vcr4j.examples.rxtx.VARSDemo01.class);
+        Logger log = LoggerFactory.getLogger(VARSDemo01.class);
 
         // --- Open Video
         io = new SharktopodaVideoIO(UUID.randomUUID(), "localhost", port);

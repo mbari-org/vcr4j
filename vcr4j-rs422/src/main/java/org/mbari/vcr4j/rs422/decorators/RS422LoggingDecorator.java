@@ -1,7 +1,8 @@
 package org.mbari.vcr4j.rs422.decorators;
 
-import io.reactivex.Observer;
-import io.reactivex.disposables.Disposable;
+
+import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.disposables.Disposable;
 import org.mbari.vcr4j.decorators.LoggingDecorator;
 import org.mbari.vcr4j.rs422.VCRVideoIO;
 import org.mbari.vcr4j.rs422.RS422Error;
@@ -17,7 +18,7 @@ public class RS422LoggingDecorator extends LoggingDecorator<RS422State, RS422Err
 
     private Disposable disposable;
 
-    private Observer<RS422Timecode> timecodeSubscriber = new Observer<RS422Timecode>() {
+    private Observer<RS422Timecode> timecodeSubscriber = new Observer<>() {
         @Override
         public void onComplete() {
             log.debug("Timecode observable is closed");

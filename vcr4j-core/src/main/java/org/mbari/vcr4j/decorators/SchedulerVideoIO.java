@@ -1,12 +1,12 @@
 package org.mbari.vcr4j.decorators;
 
-import io.reactivex.Observable;
-import io.reactivex.Observer;
-import io.reactivex.Scheduler;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
-import io.reactivex.subjects.PublishSubject;
-import io.reactivex.subjects.Subject;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.core.Scheduler;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
+import io.reactivex.rxjava3.subjects.PublishSubject;
+import io.reactivex.rxjava3.subjects.Subject;
 import org.mbari.vcr4j.VideoCommand;
 import org.mbari.vcr4j.VideoError;
 import org.mbari.vcr4j.VideoIO;
@@ -39,9 +39,9 @@ public class SchedulerVideoIO<S extends VideoState, E extends VideoError> implem
     private final Observable<S> stateObservable;
     private final Observable<VideoIndex> indexObservable;
     private final CommandQueue commandQueue = new CommandQueue();
-    private final Subject<VideoCommand> commandSubject;
+    private final Subject<VideoCommand<?>> commandSubject;
     private final Scheduler scheduler;
-    private final Observer<VideoCommand> commandObserver;
+    private final Observer<VideoCommand<?>> commandObserver;
     private final List<Disposable> disposables = new ArrayList<>();
     private final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -57,7 +57,7 @@ public class SchedulerVideoIO<S extends VideoState, E extends VideoError> implem
         indexObservable = io.getIndexObservable().observeOn(scheduler);
 
 
-        commandObserver = new Observer<VideoCommand>() {
+        commandObserver = new Observer<>() {
             @Override
             public void onComplete() {
                 io.getCommandSubject().onComplete();
@@ -79,7 +79,7 @@ public class SchedulerVideoIO<S extends VideoState, E extends VideoError> implem
             }
         };
 
-        PublishSubject<VideoCommand> subject = PublishSubject.create();
+        PublishSubject<VideoCommand<?>> subject = PublishSubject.create();
         commandSubject = subject.toSerialized();
         commandSubject.subscribe(commandObserver);
 
@@ -100,7 +100,7 @@ public class SchedulerVideoIO<S extends VideoState, E extends VideoError> implem
     }
 
     @Override
-    public Subject<VideoCommand> getCommandSubject() {
+    public Subject<VideoCommand<?>> getCommandSubject() {
         return commandSubject;
     }
 

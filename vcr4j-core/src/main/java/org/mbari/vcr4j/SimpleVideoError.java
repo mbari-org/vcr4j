@@ -8,10 +8,10 @@ import java.util.Optional;
  */
 public class SimpleVideoError implements VideoError {
 
-    private final Optional<VideoCommand> videoCommand;
+    private final Optional<VideoCommand<?>> videoCommand;
     private final boolean error;
 
-    public SimpleVideoError(boolean error, VideoCommand videoCommand) {
+    public SimpleVideoError(boolean error, VideoCommand<?> videoCommand) {
         this.error = error;
         this.videoCommand = Optional.ofNullable(videoCommand);
     }
@@ -21,7 +21,7 @@ public class SimpleVideoError implements VideoError {
     }
 
     @Override
-    public Optional<VideoCommand> getVideoCommand() {
+    public Optional<VideoCommand<?>> getVideoCommand() {
         return videoCommand;
     }
 
