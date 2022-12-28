@@ -56,7 +56,7 @@ public class LocalizationDemo01 {
 
 
 
-        var locs = AppArgs.buildLocalizations(20000, 60000, 1920, 1080);
+        var locs = AppArgs.buildLocalizations(200, 1200000, 1920, 1080);
 
         var commands = List.of(new OpenCmd(uuid, url),
                 new AddLocalizationsCmd(uuid, locs),

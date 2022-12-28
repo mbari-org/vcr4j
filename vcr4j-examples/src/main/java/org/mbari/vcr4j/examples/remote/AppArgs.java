@@ -57,7 +57,7 @@ public record AppArgs(RemoteControl remoteControl, URL url) {
             var color = String.format("#%06x", random.nextInt(0xFFFFFF + 1));
             var loc = new Localization(UUID.randomUUID(), "foo-" + i,
                     random.nextLong(0, durationMillis),
-                    0L,
+                    random.nextLong(0, 30000),
                     random.nextInt(0, width - 100),
                     random.nextInt(0, height - 100),
                     random.nextInt(0, 100),
