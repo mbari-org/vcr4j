@@ -52,6 +52,10 @@
         <module>vcr4j-sharktopoda-client</module>
         <module>vcr4j-remote</module>
         <module>vcr4j-javafx</module>
+        <module>vcr4j-rs422</module>
+        <module>vcr4j-jserialcomm</module>
+        <module>vcr4j-jssc</module>
+        <module>vcr4j-purejavacomm</module>
         <module>vcr4j-examples</module>
     </modules>
     <build>
