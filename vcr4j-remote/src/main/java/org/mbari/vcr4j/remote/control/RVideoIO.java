@@ -308,7 +308,7 @@ public class RVideoIO implements VideoIO<RState, RError> {
 
             socket.send(packet);
 
-            if (log.isDebugEnabled() && command.getName().contains("localization")) {
+            if (log.isDebugEnabled()) { // && command.getName().contains("localization")) {
                 log.debug(connectionId + " - Sending command >>> " + new String(packet.getData()));
             }
 
@@ -317,7 +317,7 @@ public class RVideoIO implements VideoIO<RState, RError> {
             int numBytes = incomingPacket.getLength();
             var response = new String(incomingBytes, 0, numBytes, StandardCharsets.UTF_8);
 
-            if (log.isDebugEnabled() && command.getName().contains("localization")) {
+            if (log.isDebugEnabled()) { // && command.getName().contains("localization")) {
                 log.debug(connectionId + " - Received response <<< " + response);
             }
 
