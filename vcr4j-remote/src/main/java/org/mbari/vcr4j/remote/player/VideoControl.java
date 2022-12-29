@@ -46,12 +46,12 @@ public class VideoControl implements Closeable {
 
     /**
      * Builder for constructing a VideoControl.
-     * {@snippet :
+     * <pre>
      *   var videoControl = new VideoControl.Builder(8888)
      *     .withLogging(false)
      *     .videoController(new NoopVideoController())
      *     .build();
-     * }
+     * </pre>
      */
     public static class Builder {
 

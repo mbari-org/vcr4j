@@ -57,7 +57,7 @@ public class RemoteControl implements Closeable {
 
     /**
      * Builder for constructing a RemoteControl.
-     * {@snippet :
+     * <pre>
      *   var remoteControl = new RemoteControl.Builder()
      *     .remotePort(8888)                // The port the video player is listening to. Default is 8888
      *     .port(5000)                      // The port the video player can send its commands to. Default is 8899
@@ -66,7 +66,7 @@ public class RemoteControl implements Closeable {
      *     .withStatus(true)                // Send status command when a command is sent that can change state. Default is false
      *     .whenFrameCaptureIsDone(cmd -> {}); // What to do when a frame grab has been taken
      *     .build()
-     * }
+     * </pre>
      */
     public static class Builder {
 
