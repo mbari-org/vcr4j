@@ -123,7 +123,7 @@ public class JSSCVideoIO implements VCRVideoIO {
      * Reads the response to a command from the serial port connected to the VCR.
      * @param mostRecentCommand The bytes representing the last command sent to the VCR
      * @param videoCommand The command last sent to the vcr
-     * @throws IOException bad exception
+     * @throws SerialPortException bad exception
      * @throws RS422Exception ugly exception
      * @throws InterruptedException rude exception
      * @throws SerialPortTimeoutException bored exception
