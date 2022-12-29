@@ -5,10 +5,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
 import org.mbari.vcr4j.sharktopoda.client.IOBus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.time.Duration;
 import java.util.*;
 
 /**
@@ -29,7 +26,7 @@ public class LocalizationController extends IOBus {
                     elapsedTimeComparator);
 
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private static final System.Logger log = System.getLogger(LocalizationController.class.getName());
 
     public LocalizationController() {
 
@@ -39,13 +36,13 @@ public class LocalizationController extends IOBus {
                 .filter(msg -> Message.ACTION_ADD.equalsIgnoreCase(msg.getAction()))
                 .map(Message::getLocalizations)
                 .subscribe(this::addOrReplaceLocalizationsInternal,
-                    e -> log.warn("An error occurred on the incoming localization bus", e));
+                    e -> log.log(System.Logger.Level.WARNING, "An error occurred on the incoming localization bus", e));
 
         msgObservable
                 .filter(msg -> Message.ACTION_REMOVE.equalsIgnoreCase(msg.getAction()))
                 .map(Message::getLocalizations)
                 .subscribe(this::removeLocalizationsInternal,
-                        e -> log.warn("An error occurred on the incoming localization bus", e));
+                        e -> log.log(System.Logger.Level.WARNING, "An error occurred on the incoming localization bus", e));
 
         msgObservable
                 .filter(msg -> Message.ACTION_CLEAR.equalsIgnoreCase(msg.getAction()))
@@ -81,7 +78,7 @@ public class LocalizationController extends IOBus {
             try {
                 addOrReplaceLocalizationInternal(x);
             } catch (IllegalArgumentException e) {
-                log.warn("Failed to add a localization that was missing required values.", e);
+                log.log(System.Logger.Level.WARNING, "Failed to add a localization that was missing required values.", e);
             }
         }
     }
@@ -98,14 +95,14 @@ public class LocalizationController extends IOBus {
         for (int i = 0; i< localizations.size(); i++) {
             Localization b = localizations.get(i);
             if (b.getLocalizationUuid().equals(a.getLocalizationUuid())) {
-                log.debug("Replacing localization (uuid = " + a.getLocalizationUuid() + ")");
+                log.log(System.Logger.Level.DEBUG, "Replacing localization (uuid = " + a.getLocalizationUuid() + ")");
                 localizations.set(i, a);
                 exists = true;
                 break;
             }
         }
         if (!exists) {
-            log.debug("Adding localization (uuid = " + a.getLocalizationUuid() + ")");
+            log.log(System.Logger.Level.DEBUG, "Adding localization (uuid = " + a.getLocalizationUuid() + ")");
             localizations.add(a);
         }
     }
@@ -197,7 +194,7 @@ public class LocalizationController extends IOBus {
                 removeLocalizationInternal(x);
             }
             catch (IllegalArgumentException e) {
-                log.warn("Failed to remove a localization that was missing required values.", e);
+                log.log(System.Logger.Level.WARNING, "Failed to remove a localization that was missing required values.", e);
             }
         }
     }
@@ -214,11 +211,11 @@ public class LocalizationController extends IOBus {
             }
         }
         if (!exists) {
-            log.debug("A localization with UUID of " + localization.getLocalizationUuid() +
+            log.log(System.Logger.Level.DEBUG, "A localization with UUID of " + localization.getLocalizationUuid() +
                     " was not found. Unable to remove.");
         }
         if (msg != null) {
-            log.debug("Removing localization (uuid = " + localization.getLocalizationUuid() +
+            log.log(System.Logger.Level.DEBUG, "Removing localization (uuid = " + localization.getLocalizationUuid() +
                     ")");
         }
     }

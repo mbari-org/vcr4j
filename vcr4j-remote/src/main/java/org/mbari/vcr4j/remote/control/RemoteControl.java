@@ -2,15 +2,13 @@ package org.mbari.vcr4j.remote.control;
 
 import org.mbari.vcr4j.decorators.LoggingDecorator;
 import org.mbari.vcr4j.decorators.StatusDecorator;
-import org.mbari.vcr4j.decorators.VCRSyncDecorator;
 import org.mbari.vcr4j.decorators.VideoSyncDecorator;
 import org.mbari.vcr4j.remote.control.commands.ConnectCmd;
 import org.mbari.vcr4j.remote.control.commands.FrameCaptureDoneCmd;
 import org.mbari.vcr4j.remote.player.PlayerIO;
 import org.mbari.vcr4j.remote.player.RxControlRequestHandler;
 import org.mbari.vcr4j.util.Preconditions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 
 import java.io.Closeable;
 import java.net.InetAddress;
@@ -72,7 +70,7 @@ public class RemoteControl implements Closeable {
      */
     public static class Builder {
 
-        private static final Logger log = LoggerFactory.getLogger(Builder.class);
+        private static final System.Logger log = System.getLogger(Builder.class.getName());
 
         private final UUID uuid;
         private int remotePort = 8888;
@@ -135,8 +133,8 @@ public class RemoteControl implements Closeable {
 
         public Optional<RemoteControl> build() {
 
-            log.atDebug()
-                    .log(() -> "Building. Listening on port " + port + ". Sending commands to " +
+            log.log(System.Logger.Level.DEBUG,
+                    () -> "Building. Listening on port " + port + ". Sending commands to " +
                             remoteHost + ":" + remotePort);
 
             try {
@@ -160,9 +158,7 @@ public class RemoteControl implements Closeable {
                 return Optional.of(remoteControl);
             }
             catch (Exception e) {
-                log.atWarn()
-                        .setCause(e)
-                        .log("Failed to build RemoteControl");
+                log.log(System.Logger.Level.WARNING, "Failed to build RemoteControl", e);
                 return Optional.empty();
             }
 

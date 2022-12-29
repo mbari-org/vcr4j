@@ -20,8 +20,6 @@ import org.mbari.vcr4j.rs422.RS422Userbits;
 import org.mbari.vcr4j.rs422.commands.CommandToBytes;
 import org.mbari.vcr4j.rs422.commands.RS422ByteCommands;
 import org.mbari.vcr4j.rs422.commands.RS422VideoCommands;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.time.Instant;
@@ -49,7 +47,8 @@ public class JSSCVideoIO implements VCRVideoIO {
      */
     public final static int RECEIVE_TIMEOUT = 500;
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+//    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final System.Logger log = System.getLogger(getClass().getName());
     private final LoggerHelper loggerHelper = new LoggerHelper(log);
     private SerialPort serialPort;    // Serial port connected to VCR
 
@@ -108,14 +107,14 @@ public class JSSCVideoIO implements VCRVideoIO {
             readResponse(command, videoCommand);
         }
         catch (SerialPortException | RS422Exception e) {
-            log.error("Failed to send a command to the VCR", e);
+            log.log(System.Logger.Level.ERROR, "Failed to send a command to the VCR", e);
         }
         catch (InterruptedException e) {
-            log.error("Thread " + Thread.currentThread().getName() + " was interrupted", e);
+            log.log(System.Logger.Level.ERROR, "Thread " + Thread.currentThread().getName() + " was interrupted", e);
             Thread.currentThread().interrupt();
         }
         catch (SerialPortTimeoutException e) {
-            log.error("Serial port timed out", e);
+            log.log(System.Logger.Level.ERROR, "Serial port timed out", e);
         }
 
     }
@@ -176,7 +175,7 @@ public class JSSCVideoIO implements VCRVideoIO {
 
     @Override
     public void close() {
-        log.info("Closing serial port:" + serialPort.getPortName());
+        log.log(System.Logger.Level.INFO, "Closing serial port:" + serialPort.getPortName());
 
         try {
             getCommandSubject().onComplete();
@@ -189,9 +188,9 @@ public class JSSCVideoIO implements VCRVideoIO {
             serialPort = null;
         }
         catch (Exception e) {
-            if (log.isErrorEnabled()
+            if (log.isLoggable(System.Logger.Level.ERROR)
                     && (serialPort != null)) {
-                log.error("Problem occured when closing serial port communications on " + serialPort.getPortName());
+                log.log(System.Logger.Level.ERROR, "Problem occured when closing serial port communications on " + serialPort.getPortName());
             }
         }
     }

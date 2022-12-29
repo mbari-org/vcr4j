@@ -4,8 +4,6 @@ import io.reactivex.rxjava3.subjects.Subject;
 import org.mbari.vcr4j.VideoIndex;
 
 import org.mbari.vcr4j.remote.control.commands.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,8 +22,6 @@ public class RResponseParser {
     private final Subject<RError> errorSubject;
     private final Subject<VideoIndex> indexSubject;
     private final Subject<List<? extends VideoInfo>> videoInfoSubject;
-
-    private final Logger log = LoggerFactory.getLogger(getClass());
 
     /**
      * Constructor

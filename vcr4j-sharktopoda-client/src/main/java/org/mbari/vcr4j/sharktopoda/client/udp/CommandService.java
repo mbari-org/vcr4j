@@ -7,11 +7,8 @@ import org.mbari.vcr4j.sharktopoda.client.ClientController;
 import org.mbari.vcr4j.sharktopoda.client.model.GenericCommand;
 import org.mbari.vcr4j.sharktopoda.client.model.GenericResponse;
 import org.mbari.vcr4j.sharktopoda.client.model.Video;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
@@ -27,7 +24,7 @@ class CommandService {
 
     private final ClientController clientController;
     private final Subject<GenericResponse> responseSubject;
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private static final System.Logger log = System.getLogger(CommandService.class.getName());
     private final Gson gson = UdpIO.newGson();
     private final FramecaptureUdpIO framecaptureIO;
 
@@ -99,7 +96,7 @@ class CommandService {
             String statusMessage = status ? "ok" : "failed";
             r.setStatus(statusMessage);
         } else {
-            log.warn("Bad command: {}", gson.toJson(cmd));
+            log.log(System.Logger.Level.WARNING, "Bad command: %s", gson.toJson(cmd));
             r.setStatus("failed");
         }
         responseSubject.onNext(r);
@@ -218,7 +215,7 @@ class CommandService {
             }
             catch (Exception e) {
                 r.setStatus("failed");
-                log.warn("Failed to execute " + gson.toJson(cmd), e);
+                log.log(System.Logger.Level.WARNING, "Failed to execute " + gson.toJson(cmd), e);
             }
         }
         else {
@@ -247,7 +244,7 @@ class CommandService {
                             r.setImageLocation(url);
                         }
                         catch (MalformedURLException e) {
-                            log.warn("Unable to parse " + fc.getSaveLocation() + " as a URL");
+                            log.log(System.Logger.Level.WARNING, "Unable to parse " + fc.getSaveLocation() + " as a URL");
                             r.setImageLocation(fc.getSaveLocation().toString());
                         }
                         r.setElapsedTime(fc.getSnapTime());

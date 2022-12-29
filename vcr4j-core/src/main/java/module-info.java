@@ -10,5 +10,4 @@ module vcr4j.core {
     exports org.mbari.vcr4j.util;
     requires io.reactivex.rxjava3;
     requires org.reactivestreams;
-    requires org.slf4j;
 }

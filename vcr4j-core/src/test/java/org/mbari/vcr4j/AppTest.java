@@ -31,8 +31,8 @@ public class AppTest
     /**
      * Rigourous Test :-)
      */
-    public void testApp()
-    {
+    public void testApp() {
+        System.getLogger(AppTest.class.getName()).log(System.Logger.Level.WARNING, "This log message should be seen during testing");
         assertTrue( true );
     }
 }

@@ -21,18 +21,18 @@ public class RS422LoggingDecorator extends LoggingDecorator<RS422State, RS422Err
     private Observer<RS422Timecode> timecodeSubscriber = new Observer<>() {
         @Override
         public void onComplete() {
-            log.debug("Timecode observable is closed");
+            log.log(System.Logger.Level.DEBUG, "Timecode observable is closed");
         }
 
         @Override
         public void onError(Throwable throwable) {
-            log.debug("An error occurred in the timecode observable", throwable);
+            log.log(System.Logger.Level.DEBUG, "An error occurred in the timecode observable", throwable);
         }
 
         @Override
         public void onNext(RS422Timecode timecode) {
-            if (log.isDebugEnabled()) {
-                log.debug("Received: " + new RS422TimecodeAsString(timecode).toString());
+            if (log.isLoggable(System.Logger.Level.DEBUG)) {
+                log.log(System.Logger.Level.DEBUG, "Received: " + new RS422TimecodeAsString(timecode).toString());
             }
         }
 

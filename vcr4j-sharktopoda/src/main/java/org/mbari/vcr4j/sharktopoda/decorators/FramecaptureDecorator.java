@@ -15,8 +15,6 @@ import org.mbari.vcr4j.sharktopoda.commands.SharkCommands;
 import org.mbari.vcr4j.sharktopoda.model.request.Connect;
 import org.mbari.vcr4j.sharktopoda.model.request.Framecapture;
 import org.mbari.vcr4j.sharktopoda.model.response.FramecaptureResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.DatagramPacket;
@@ -38,7 +36,7 @@ public class FramecaptureDecorator implements Decorator {
 
     private final byte[] lock = new byte[]{1};
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private static final System.Logger log = System.getLogger(FramecaptureDecorator.class.getName());
     private final Subject<FramecaptureResponse> framecaptureSubject;
     private Disposable disposable;
     private volatile boolean ok = true;
@@ -64,12 +62,12 @@ public class FramecaptureDecorator implements Decorator {
                 try {
                     getServer().receive(packet);
                     String msg = new String(packet.getData(), 0, packet.getLength());
-                    log.debug("Received <<< " + msg);
+                    log.log(System.Logger.Level.DEBUG, "Received <<< " + msg);
                     FramecaptureResponse r = Constants.GSON.fromJson(msg, FramecaptureResponse.class);
                     framecaptureSubject.onNext(r);
                 }
                 catch (Exception e) {
-                    log.info("Error while reading UDP datagram", e);
+                    log.log(System.Logger.Level.INFO, "Error while reading UDP datagram", e);
                     io.getErrorSubject()
                         .onNext(new SharktopodaError(true, true, false, Optional.empty()));
 
@@ -85,7 +83,7 @@ public class FramecaptureDecorator implements Decorator {
             if (server != null) {
                 server.close();
             }
-            log.info("Shutting down UDP server that listens to Sharktopoda for framegrabs");
+            log.log(System.Logger.Level.INFO, "Shutting down UDP server that listens to Sharktopoda for framegrabs");
 
         });
 
@@ -152,7 +150,7 @@ public class FramecaptureDecorator implements Decorator {
             io.sendCommand(packet, cmd);
         }
         catch (MalformedURLException e) {
-            log.info("Unable to convert file path to URL", e);
+            log.log(System.Logger.Level.INFO, "Unable to convert file path to URL", e);
         }
     }
 

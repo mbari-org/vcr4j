@@ -1,8 +1,7 @@
 package org.mbari.vcr4j.rs422;
 
 import org.mbari.vcr4j.VideoState;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 
 import java.util.Arrays;
 
@@ -142,7 +141,7 @@ public class RS422State implements VideoState {
      * </ol>
      */
     public final static long STS_VARSPEED = 0x0080000L;
-    private static final Logger log = LoggerFactory.getLogger(RS422State.class);
+    private static final System.Logger log = System.getLogger(RS422State.class.getName());
     public static final RS422State STOPPED = new RS422State(STS_STOP);
 
     private final long status;
@@ -323,7 +322,7 @@ public class RS422State implements VideoState {
 
     private void logStatus() {
 
-        if (log.isDebugEnabled()) {
+        if (log.isLoggable(System.Logger.Level.DEBUG)) {
             StringBuilder msg = new StringBuilder("VCR Status >> (");
 
             if (isBadCommunication()) {
@@ -408,7 +407,7 @@ public class RS422State implements VideoState {
 
             msg.delete(msg.length() - 1, msg.length());
             msg.append(")");
-            log.debug(msg.toString());
+            log.log(System.Logger.Level.DEBUG, msg.toString());
         }
     }
 

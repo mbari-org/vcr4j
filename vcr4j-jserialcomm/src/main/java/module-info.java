@@ -7,6 +7,5 @@ module vcr4j.jserialcomm {
     requires io.reactivex.rxjava3;
     requires vcr4j.rs422;
     requires vcr4j.core;
-    requires org.slf4j;
     exports org.mbari.vcr4j.jserialcomm;
 }

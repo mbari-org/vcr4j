@@ -6,12 +6,9 @@ import org.mbari.vcr4j.remote.control.commands.FrameCaptureCmd;
 import org.mbari.vcr4j.remote.control.commands.FrameCaptureDoneCmd;
 
 import org.mbari.vcr4j.remote.control.commands.RResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.function.Consumer;
 
 /**
  * THis is an implementation for the video player. It is created by
@@ -21,7 +18,7 @@ import java.util.function.Consumer;
  */
 public class RxPlayerRequestHandler extends RxRequestHandler {
 
-    private static final Logger log = LoggerFactory.getLogger(RxControlRequestHandler.class);
+    private static final System.Logger log = System.getLogger(RxControlRequestHandler.class.getName());
 
     private final RVideoIOLifeCycle lifeCycle;
 
@@ -55,13 +52,11 @@ public class RxPlayerRequestHandler extends RxRequestHandler {
         var path = Paths.get(request.getImageLocation());
         var response = new FrameCaptureCmd.Response(RResponse.OK);
         if (!Files.isWritable(path)) {
-            log.atWarn()
-                    .log(path + " is not writable. Unable to write frame-grab to that location.");
+            log.log(System.Logger.Level.WARNING, path + " is not writable. Unable to write frame-grab to that location.");
             response = new FrameCaptureCmd.Response(RResponse.FAILED);
         }
         else if (Files.exists(path)) {
-            log.atWarn()
-                    .log(path + " already exist. Overwriting existing file");
+            log.log(System.Logger.Level.WARNING, path + " already exist. Overwriting existing file");
         }
         getVideoController()
                 .framecapture(request.getUuid(), request.getImageReferenceUuid(), path)
@@ -69,10 +64,9 @@ public class RxPlayerRequestHandler extends RxRequestHandler {
                     var resp = (fc == null || ex != null) ?
                             FrameCaptureDoneCmd.fail(request) :
                             FrameCaptureDoneCmd.success(fc);
-                    if (log.isDebugEnabled()) {
+                    if (log.isLoggable(System.Logger.Level.DEBUG)) {
                         var msg = RVideoIO.GSON.toJson(resp);
-                        log.atDebug()
-                                .log("Framecapture is done. Sending: \n" + msg);
+                        log.log(System.Logger.Level.DEBUG, "Framecapture is done. Sending: \n" + msg);
                     }
                     lifeCycle.get().ifPresent(io -> io.send(resp));
                     return null;

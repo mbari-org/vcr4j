@@ -11,16 +11,11 @@ import io.reactivex.rxjava3.subjects.Subject;
 import org.mbari.vcr4j.sharktopoda.client.gson.DurationConverter;
 import org.mbari.vcr4j.sharktopoda.client.model.GenericCommand;
 import org.mbari.vcr4j.sharktopoda.client.model.GenericResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -31,7 +26,7 @@ import java.util.concurrent.Executors;
 class UdpIO {
     private final int port;
     private DatagramSocket server;
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private static final System.Logger log = System.getLogger(UdpIO.class.getName());
     private final Thread receiverThread;
     private final Subject<GenericCommand> commandSubject;
     private final Subject<GenericResponse> responseSubject;
@@ -69,14 +64,14 @@ class UdpIO {
             try {
                 DatagramSocket s = getServer();
                 byte[] b = gson.toJson(response).getBytes();
-                log.debug("Sending >>> " + new String(b));
+                log.log(System.Logger.Level.DEBUG, "Sending >>> " + new String(b));
                 DatagramPacket packet = new DatagramPacket(b,
                         b.length,
                         response.getPacketAddress(),
                         response.getPacketPort());
                 s.send(packet);
             } catch (Exception e) {
-                log.error("UDP response failed", e);
+                log.log(System.Logger.Level.ERROR, "UDP response failed", e);
             }
         }
     }
@@ -89,14 +84,14 @@ class UdpIO {
                 try {
                     getServer().receive(packet);
                     String msg = new String(packet.getData(), 0, packet.getLength());
-                    log.debug("Received <<< " + msg);
+                    log.log(System.Logger.Level.DEBUG, "Received <<< " + msg);
                     GenericCommand r = gson.fromJson(msg, GenericCommand.class);
                     r.setPacketAddress(packet.getAddress());
                     r.setPacketPort(packet.getPort());
                     commandSubject.onNext(r);
                 }
                 catch (Exception e) {
-                    log.info("Error while reading UDP datagram", e);
+                    log.log(System.Logger.Level.INFO, "Error while reading UDP datagram", e);
                     if (!server.isClosed()) {
                         server.close();
                     }
@@ -109,7 +104,7 @@ class UdpIO {
             if (server != null) {
                 server.close();
             }
-            log.info("Shutting down UDP server");
+            log.log(System.Logger.Level.INFO, "Shutting down UDP server");
 
         });
     }

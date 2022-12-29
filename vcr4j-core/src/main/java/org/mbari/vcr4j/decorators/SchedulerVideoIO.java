@@ -12,8 +12,6 @@ import org.mbari.vcr4j.VideoError;
 import org.mbari.vcr4j.VideoIO;
 import org.mbari.vcr4j.VideoIndex;
 import org.mbari.vcr4j.VideoState;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +41,6 @@ public class SchedulerVideoIO<S extends VideoState, E extends VideoError> implem
     private final Scheduler scheduler;
     private final Observer<VideoCommand<?>> commandObserver;
     private final List<Disposable> disposables = new ArrayList<>();
-    private final Logger log = LoggerFactory.getLogger(getClass());
 
     public SchedulerVideoIO(VideoIO<S, E> io, Executor executor) {
         this(io, Schedulers.from(executor));

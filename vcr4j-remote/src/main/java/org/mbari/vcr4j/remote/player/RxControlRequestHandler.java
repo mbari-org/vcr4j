@@ -5,8 +5,6 @@ import org.mbari.vcr4j.remote.control.commands.ConnectCmd;
 import org.mbari.vcr4j.remote.control.commands.FrameCaptureCmd;
 import org.mbari.vcr4j.remote.control.commands.FrameCaptureDoneCmd;
 import org.mbari.vcr4j.remote.control.commands.RResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.function.Consumer;
 
@@ -18,7 +16,7 @@ import java.util.function.Consumer;
  */
 public class RxControlRequestHandler extends RxRequestHandler {
 
-    private static final Logger log = LoggerFactory.getLogger(RxControlRequestHandler.class);
+    private static final System.Logger log = System.getLogger(RxControlRequestHandler.class.getName());
 
     private final Consumer<FrameCaptureDoneCmd> frameCaptureDoneFn;
 
@@ -37,8 +35,7 @@ public class RxControlRequestHandler extends RxRequestHandler {
 
     @Override
     public ConnectCmd.Response handleConnect(ConnectCmd.Request request) {
-        log.atWarn()
-                .log("The handleConnect method is not supported in the controller app");
+        log.log(System.Logger.Level.WARNING, "The handleConnect method is not supported in the controller app");
         return new ConnectCmd.Response(RResponse.FAILED);
     }
 
@@ -56,8 +53,7 @@ public class RxControlRequestHandler extends RxRequestHandler {
     @Override
     public FrameCaptureCmd.Response handleFrameCaptureRequest(FrameCaptureCmd.Request request) {
         //throw new UnsupportedOperationException("This method is not implemented in the controller application");
-        log.atWarn()
-                .log("The handleFrameCaptureRequest method is not supported in the controller app");
+        log.log(System.Logger.Level.WARNING, "The handleFrameCaptureRequest method is not supported in the controller app");
         return new FrameCaptureCmd.Response(RResponse.FAILED);
     }
 

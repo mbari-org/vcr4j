@@ -8,8 +8,6 @@ import org.mbari.vcr4j.VideoIO;
 import org.mbari.vcr4j.VideoIndex;
 import org.mbari.vcr4j.VideoState;
 import org.mbari.vcr4j.VideoCommand;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,26 +20,25 @@ import java.util.List;
  */
 public class LoggingDecorator<S extends VideoState, E extends VideoError> implements Decorator {
 
-    protected final Logger log = LoggerFactory.getLogger(getClass());
+//    protected final Logger log = LoggerFactory.getLogger(getClass());
+    protected final System.Logger log = System.getLogger(getClass().getName());
 
     List<Disposable> disposables = new ArrayList<>();
 
-    protected final Observer<E> errorSubscriber = new Observer<E>() {
+    protected final Observer<E> errorSubscriber = new Observer<>() {
         @Override
         public void onComplete() {
-            log.debug("Error observable is closed");
+            log.log(System.Logger.Level.DEBUG, "Error observable is closed");
         }
 
         @Override
         public void onError(Throwable throwable) {
-            log.debug("An error occurred in the error observable", throwable);
+            log.log(System.Logger.Level.DEBUG, "An error occurred in the error observable", throwable);
         }
 
         @Override
         public void onNext(E error) {
-            if (log.isDebugEnabled()) {
-                log.debug("Received: " + new VideoErrorAsString(error).toString());
-            }
+            log.log(System.Logger.Level.DEBUG, () -> "Received: " + new VideoErrorAsString(error));
         }
 
         @Override
@@ -50,22 +47,20 @@ public class LoggingDecorator<S extends VideoState, E extends VideoError> implem
         }
     };
 
-    protected final Observer<VideoIndex> indexSubscriber = new Observer<VideoIndex>() {
+    protected final Observer<VideoIndex> indexSubscriber = new Observer<>() {
         @Override
         public void onComplete() {
-            log.debug("Index observable is closed");
+            log.log(System.Logger.Level.DEBUG, "Index observable is closed");
         }
 
         @Override
         public void onError(Throwable throwable) {
-            log.debug("An error occurred in the index observable", throwable);
+            log.log(System.Logger.Level.DEBUG, "An error occurred in the index observable", throwable);
         }
 
         @Override
         public void onNext(VideoIndex index) {
-            if (log.isDebugEnabled()) {
-                log.debug("Received: " + new VideoIndexAsString(index).toString());
-            }
+            log.log(System.Logger.Level.DEBUG, () -> "Received: " + new VideoIndexAsString(index));
         }
 
         @Override
@@ -74,22 +69,20 @@ public class LoggingDecorator<S extends VideoState, E extends VideoError> implem
         }
     };
 
-    protected final Observer<S> stateSubscriber = new Observer<S>() {
+    protected final Observer<S> stateSubscriber = new Observer<>() {
         @Override
         public void onComplete() {
-            log.debug("State observable is closed");
+            log.log(System.Logger.Level.DEBUG, "State observable is closed");
         }
 
         @Override
         public void onError(Throwable throwable) {
-            log.debug("An error occurred in the state observable", throwable);
+            log.log(System.Logger.Level.DEBUG, "An error occurred in the state observable", throwable);
         }
 
         @Override
         public void onNext(S state) {
-            if (log.isDebugEnabled()) {
-                log.debug("Received: " + new VideoStateAsString(state).toString());
-            }
+            log.log(System.Logger.Level.DEBUG, () -> "Received: " + new VideoStateAsString(state));
         }
 
         @Override
@@ -101,19 +94,17 @@ public class LoggingDecorator<S extends VideoState, E extends VideoError> implem
     protected final Observer<VideoCommand> commandSubscriber = new Observer<VideoCommand>() {
         @Override
         public void onComplete() {
-            log.debug("State observable is closed");
+            log.log(System.Logger.Level.DEBUG, "State observable is closed");
         }
 
         @Override
         public void onError(Throwable throwable) {
-            log.debug("An error occurred in the state observable", throwable);
+            log.log(System.Logger.Level.DEBUG, "An error occurred in the state observable", throwable);
         }
 
         @Override
         public void onNext(VideoCommand command) {
-            if (log.isDebugEnabled()) {
-                log.debug("Sending: " + new VideoCommandAsString(command).toString());
-            }
+            log.log(System.Logger.Level.DEBUG, () -> "Sending: " + new VideoCommandAsString(command).toString());
         }
 
         @Override

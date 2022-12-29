@@ -3,7 +3,6 @@ package org.mbari.vcr4j.sharktopoda.client.udp;
 import org.junit.Test;
 import org.mbari.vcr4j.commands.SeekElapsedTimeCmd;
 import org.mbari.vcr4j.commands.VideoCommands;
-import org.mbari.vcr4j.decorators.LoggingDecorator;
 import org.mbari.vcr4j.sharktopoda.SharktopodaVideoIO;
 import org.mbari.vcr4j.sharktopoda.commands.ConnectCmd;
 import org.mbari.vcr4j.sharktopoda.commands.FramecaptureCmd;

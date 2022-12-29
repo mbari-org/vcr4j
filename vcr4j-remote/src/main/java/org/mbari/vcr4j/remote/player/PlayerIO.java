@@ -4,8 +4,6 @@ import com.google.gson.Gson;
 
 import org.mbari.vcr4j.remote.control.RVideoIO;
 import org.mbari.vcr4j.remote.control.commands.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -20,7 +18,7 @@ import java.net.InetAddress;
  */
 public class PlayerIO {
 
-    private static final Logger log = LoggerFactory.getLogger(PlayerIO.class);
+    private static final System.Logger log = System.getLogger(PlayerIO.class.getName());
     private static final Gson gson = RVideoIO.GSON;
 
     private final int port;
@@ -49,12 +47,10 @@ public class PlayerIO {
             receiverThread = buildReceiverThread();
             receiverThread.setDaemon(true);
             receiverThread.start();
-            log.atDebug().log(connectionId + " - Started server's receiver thread: " + receiverThread.getName());
+            log.log(System.Logger.Level.DEBUG, connectionId + " - Started server's receiver thread: " + receiverThread.getName());
         }
         catch (Exception e) {
-            log.atError()
-                    .setCause(e)
-                    .log("Failed to initialize UDP socket");
+            log.log(System.Logger.Level.ERROR, "Failed to initialize UDP socket", e);
         }
 
     }
@@ -64,8 +60,8 @@ public class PlayerIO {
         var msg = gson.toJson(response);
         var bytes = msg.getBytes();
         var responsePacket = new DatagramPacket(bytes, bytes.length, address, port);
-        if (log.isDebugEnabled()) {
-            log.debug(connectionId + " - Responding >>> " + msg);
+        if (log.isLoggable(System.Logger.Level.DEBUG)) {
+            log.log(System.Logger.Level.DEBUG,connectionId + " - Responding >>> " + msg);
         }
         server.send(responsePacket);
     }
@@ -89,9 +85,7 @@ public class PlayerIO {
         try {
             respond(response, address, port);
         } catch (IOException e) {
-            log.atError()
-                    .setCause(e)
-                    .log(connectionId + " - Unable to send an error response for request: " + simpleRequest.getRaw());
+            log.log(System.Logger.Level.ERROR, connectionId + " - Unable to send an error response for request: " + simpleRequest.getRaw(), e);
         }
     }
 
@@ -108,20 +102,20 @@ public class PlayerIO {
                 try {
                     server.receive(packet);
                     String msg = new String(packet.getData(), 0, packet.getLength());
-                    log.debug(connectionId + " - Received command <<< " + msg);
+                    log.log(System.Logger.Level.DEBUG, connectionId + " - Received command <<< " + msg);
                     var simpleRequest = RVideoIO.GSON.fromJson(msg, SimpleRequest.class);
                     simpleRequest.setRaw(msg);
                     handleRequest(simpleRequest, packet.getAddress(), packet.getPort());
                 }
                 catch (Exception e) {
-                    log.debug(connectionId + " - Error while reading UDP datagram", e);
+                    log.log(System.Logger.Level.DEBUG, connectionId + " - Error while reading UDP datagram", e);
                 }
             }
             if (server != null && !server.isClosed()) {
                 server.close();
                 server = null;
             }
-            log.info(connectionId + " - Shutting down UDP server");
+            log.log(System.Logger.Level.INFO, connectionId + " - Shutting down UDP server");
         });
     }
 

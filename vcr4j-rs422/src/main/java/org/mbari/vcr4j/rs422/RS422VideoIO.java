@@ -30,8 +30,7 @@ import org.mbari.vcr4j.rs422.commands.RS422ByteCommands;
 import org.mbari.vcr4j.rs422.commands.RS422VideoCommands;
 import org.mbari.vcr4j.rs422.util.NumberUtilities;
 import org.mbari.vcr4j.util.Preconditions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 
 /**
  * @author Brian Schlining
@@ -41,7 +40,7 @@ public abstract class RS422VideoIO implements VCRVideoIO {
 
 
     private final long ioDelay;
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private static final System.Logger log = System.getLogger(RS422State.class.getName());
     private final LoggerHelper loggerHelper = new LoggerHelper(log);
     private final RS422ResponseParser responseParser = new RS422ResponseParser();
     private final Subject<VideoCommand<?>> commandSubject;
@@ -185,10 +184,10 @@ public abstract class RS422VideoIO implements VCRVideoIO {
         catch (IOException | RS422Exception e) {
             responseParser.getErrorObservable()
                     .onNext(new RS422Error(RS422Error.UNDEFINED_COMMAND, videoCommand));
-            log.error("Failed to send a command to the VCR", e);
+            log.log(System.Logger.Level.ERROR, "Failed to send a command to the VCR", e);
         }
         catch (InterruptedException e) {
-            log.error("Thread " + Thread.currentThread().getName() + " was interrupted", e);
+            log.log(System.Logger.Level.ERROR, "Thread " + Thread.currentThread().getName() + " was interrupted", e);
             Thread.currentThread().interrupt();
         }
     }

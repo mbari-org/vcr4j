@@ -4,8 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.mbari.vcr4j.sharktopoda.client.gson.DurationConverter;
 import org.mbari.vcr4j.util.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.zeromq.SocketType;
 import org.zeromq.ZContext;
 import org.zeromq.ZMQ;
@@ -22,7 +20,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class IO {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private static final System.Logger log = System.getLogger(IO.class.getName());
     private ZContext context = new ZContext();
     private final int incomingPort;
     private final int outgoingPort;
@@ -55,7 +53,7 @@ public class IO {
         // publisher
         outgoingThread = new Thread(() -> {
             String address = "tcp://*:" + outgoingPort;
-            log.info("ZeroMQ Publishing to {} using topic '{}'", address, outgoingTopic);
+            log.log(System.Logger.Level.INFO, () -> "ZeroMQ Publishing to " + address + " using topic '" + outgoingTopic + "'");
             Socket publisher = context.createSocket(SocketType.PUB);
             publisher.bind(address);
             // This sleep is critical to give ZMQ time to bind and setup
@@ -64,27 +62,27 @@ public class IO {
                 Thread.sleep(1000);
             }
             catch (InterruptedException e) {
-                log.warn("ZeroMQ publisher thread was interrupted", e);
+                log.log(System.Logger.Level.WARNING, "ZeroMQ publisher thread was interrupted", e);
             }
             while (ok && !Thread.currentThread().isInterrupted()) {
                 try {
                     Message msg = queue.poll(1L, TimeUnit.SECONDS);
                     if (msg != null) {
                         String json = gson.toJson(msg);
-                        log.debug("Publishing to '{}': \n{}", outgoingTopic, json);
+                        log.log(System.Logger.Level.DEBUG, "Publishing to '" + outgoingTopic + "': \n" + json);
                         publisher.sendMore(outgoingTopic);
                         publisher.send(json);
                     }
                 }
                 catch (InterruptedException e) {
-                    log.warn("ZeroMQ Publisher thread was interrupted", e);
+                    log.log(System.Logger.Level.WARNING, "ZeroMQ Publisher thread was interrupted", e);
                     ok = false;
                 }
                 catch (Exception e) {
-                    log.warn("An exception was thrown will attempting to publish a localization", e);
+                    log.log(System.Logger.Level.WARNING, "An exception was thrown will attempting to publish a localization", e);
                 }
             }
-            log.info("Shutting down ZeroMQ publisher at {}", address);
+            log.log(System.Logger.Level.INFO, "Shutting down ZeroMQ publisher at " + address);
             publisher.close();
         });
         outgoingThread.setDaemon(true);
@@ -93,7 +91,7 @@ public class IO {
         // subscriber
         incomingThread = new Thread(() -> {
             String address = "tcp://localhost:" + incomingPort;
-            log.info("ZeroMQ Subscribing to {} using topic '{}'", address, incomingTopic);
+            log.log(System.Logger.Level.INFO, "ZeroMQ Subscribing to " + address + " using topic '" + outgoingTopic + "'");
             Socket socket = context.createSocket(SocketType.SUB);
             socket.connect(address);
             socket.subscribe(incomingTopic.getBytes(ZMQ.CHARSET));
@@ -101,7 +99,7 @@ public class IO {
                 try {
                     String topicAddress = socket.recvStr();
                     String contents = socket.recvStr();
-                    log.debug("Received on '{}': {}", topicAddress, contents);
+                    log.log(System.Logger.Level.DEBUG, () -> "Received on '" + topicAddress + "':" + contents);
                     Message message = gson.fromJson(contents, Message.class);
                     controller.getIncoming().onNext(message);
                 }
@@ -110,11 +108,11 @@ public class IO {
                         // do nothing
                     }
                     else {
-                        log.warn("An exception occurred while reading from remote app", e);
+                        log.log(System.Logger.Level.WARNING, "An exception occurred while reading from remote app", e);
                     }
                 }
                 catch (Exception e) {
-                    log.warn("An exception occurred while reading from remote app", e);
+                    log.log(System.Logger.Level.WARNING, "An exception occurred while reading from remote app", e);
                 }
             }
         });

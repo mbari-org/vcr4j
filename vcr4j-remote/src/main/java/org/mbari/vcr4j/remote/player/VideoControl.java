@@ -1,8 +1,6 @@
 package org.mbari.vcr4j.remote.player;
 
 import org.mbari.vcr4j.remote.control.RemoteControl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
 import java.util.Optional;
@@ -56,7 +54,8 @@ public class VideoControl implements Closeable {
      * }
      */
     public static class Builder {
-        private static final Logger log = LoggerFactory.getLogger(Builder.class);
+
+        private static final System.Logger log = System.getLogger(Builder.class.getName());
 
         private int port = 8888;
 
@@ -80,8 +79,7 @@ public class VideoControl implements Closeable {
         }
 
         public Optional<VideoControl> build() {
-            log.atDebug()
-                    .log(() -> "Building. Listening on port " + port + " using " + videoController);
+            log.log(System.Logger.Level.DEBUG, () -> "Building. Listening on port " + port + " using " + videoController);
             try {
                 var lifeCycle = new RVideoIOLifeCycle(withLogging);
                 var requestHandler = new RxPlayerRequestHandler(videoController, lifeCycle);
@@ -90,9 +88,7 @@ public class VideoControl implements Closeable {
                 return Optional.of(videoControl);
             }
             catch (Exception e) {
-                log.atWarn()
-                        .setCause(e)
-                        .log("Failed to build RemoteControl");
+                log.log(System.Logger.Level.WARNING, "Failed to build RemoteControl", e);
                 return Optional.empty();
             }
         }

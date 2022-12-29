@@ -7,7 +7,6 @@ module vcr4j.jssc {
     requires jssc;
     requires vcr4j.core;
     requires vcr4j.rs422;
-    requires org.slf4j;
     exports org.mbari.vcr4j.jssc;
 
 }

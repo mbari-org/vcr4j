@@ -9,8 +9,7 @@ import org.mbari.vcr4j.commands.VideoCommands;
 import org.mbari.vcr4j.rs422.util.NumberUtilities;
 import org.mbari.vcr4j.time.HMSF;
 import org.mbari.vcr4j.time.Timecode;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 
 
 /**
@@ -22,7 +21,8 @@ import org.slf4j.LoggerFactory;
  */
 public class  CommandToBytes {
 
-    private static final Logger log = LoggerFactory.getLogger(CommandToBytes.class);
+    private static final System.Logger log = System.getLogger(CommandToBytes.class.getName());
+
     private static final HMSF HMSF_ZERO = new HMSF(0, 0, 0, 0);
 
     private CommandToBytes() {
@@ -80,7 +80,7 @@ public class  CommandToBytes {
                 break;
             case REQUEST_ELAPSED_TIME:
                 // TODO not directly supported.
-                log.debug(String.format("'%s' is not supported.", cmd.getName()));
+                log.log(System.Logger.Level.DEBUG, String.format("'%s' is not supported.", cmd.getName()));
                 break;
             case REQUEST_INDEX:
                 bytes = RS422ByteCommands.GET_TIMECODE.getBytes();
@@ -124,7 +124,7 @@ public class  CommandToBytes {
 
     public static byte[] toBytes(SeekElapsedTimeCmd cmd) {
         // TODO not directly supported
-        log.debug(String.format("'%s' is not supported.", cmd.getName()));
+        log.log(System.Logger.Level.DEBUG, String.format("'%s' is not supported.", cmd.getName()));
         return RS422ByteCommands.UNDEFINED.getBytes();
     }
 
@@ -137,7 +137,7 @@ public class  CommandToBytes {
 
     public static byte[] toBytes(SeekTimestampCmd cmd) {
         // TODO not directly supported
-        log.debug(String.format("'%s' is not supported.", cmd.getName()));
+        log.log(System.Logger.Level.DEBUG, String.format("'%s' is not supported.", cmd.getName()));
         return RS422ByteCommands.UNDEFINED.getBytes();
     }
 

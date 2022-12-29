@@ -4,7 +4,6 @@
  */
 module vcr4j.rs422 {
     requires vcr4j.core;
-    requires org.slf4j;
     requires io.reactivex.rxjava3;
     exports org.mbari.vcr4j.rs422;
     exports org.mbari.vcr4j.rs422.commands;

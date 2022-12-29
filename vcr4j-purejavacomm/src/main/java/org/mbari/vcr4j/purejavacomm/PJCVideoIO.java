@@ -5,8 +5,6 @@ import org.mbari.vcr4j.rs422.RS422ResponseParser;
 import org.mbari.vcr4j.rs422.RS422State;
 import org.mbari.vcr4j.rs422.RS422VideoIO;
 import org.mbari.vcr4j.util.Preconditions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import purejavacomm.CommPortIdentifier;
 import purejavacomm.NoSuchPortException;
 import purejavacomm.PortInUseException;
@@ -33,7 +31,7 @@ public class PJCVideoIO extends RS422VideoIO {
      */
     public final static long RECEIVE_TIMEOUT = 400;
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final System.Logger log = System.getLogger(getClass().getName());
     private SerialPort serialPort;    // Serial port connected to VCR
 
     public PJCVideoIO(SerialPort serialPort, InputStream inputStream, OutputStream outputStream) {
@@ -44,7 +42,7 @@ public class PJCVideoIO extends RS422VideoIO {
 
     @Override
     public void close() {
-        log.info("Closing serial port:" + serialPort.getName());
+        log.log(System.Logger.Level.INFO, "Closing serial port:" + serialPort.getName());
 
         try {
             getCommandSubject().onComplete();
@@ -60,9 +58,9 @@ public class PJCVideoIO extends RS422VideoIO {
             serialPort = null;
         }
         catch (Exception e) {
-            if (log.isErrorEnabled()
+            if (log.isLoggable(System.Logger.Level.ERROR)
                     && (serialPort != null)) {
-                log.error("Problem occured when closing serial port communications on " + serialPort.getName());
+                log.log(System.Logger.Level.ERROR, "Problem occured when closing serial port communications on " + serialPort.getName());
             }
         }
     }

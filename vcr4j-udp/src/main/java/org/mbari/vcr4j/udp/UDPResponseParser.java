@@ -5,9 +5,6 @@ import io.reactivex.rxjava3.subjects.Subject;
 import org.mbari.vcr4j.VideoCommand;
 import org.mbari.vcr4j.commands.VideoCommands;
 import org.mbari.vcr4j.time.Timecode;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 
 import java.io.UnsupportedEncodingException;
 import java.util.Optional;
@@ -22,7 +19,7 @@ public class UDPResponseParser {
 
     private final Subject<UDPError> errorObservable;
     private final Subject<Timecode> timecodeObservable;
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private static final System.Logger log = System.getLogger(UDPResponseParser.class.getName());
 
     private static final Pattern pattern = Pattern.compile("[0-2][0-9]:[0-5][0-9]:[0-5][0-9]:[0-2][0-9]");
 
@@ -67,14 +64,14 @@ public class UDPResponseParser {
             }
             catch (UnsupportedEncodingException ex) {
                 // result = null
-                if (log.isErrorEnabled()) {
-                    log.error("Timecode over UDP is using an unknown encoding");
+                if (log.isLoggable(System.Logger.Level.ERROR)) {
+                    log.log(System.Logger.Level.ERROR, "Timecode over UDP is using an unknown encoding");
                     errorObservable.onNext(new UDPError(false, true, videoCommand));
                 }
             }
         }
         catch (Exception e) {
-            if (log.isErrorEnabled()) {
+            if (log.isLoggable(System.Logger.Level.ERROR)) {
                 errorObservable.onNext(new UDPError(false, true, videoCommand));
             }
         }
@@ -89,8 +86,8 @@ public class UDPResponseParser {
                 }
             }
             catch (Exception e) {
-                if (log.isErrorEnabled()) {
-                    log.error("Problem with parsing timecode '" + result + "'", e);
+                if (log.isLoggable(System.Logger.Level.ERROR)) {
+                    log.log(System.Logger.Level.ERROR, "Problem with parsing timecode '" + result + "'", e);
                     errorObservable.onNext(new UDPError(false, true, videoCommand));
                 }
             }

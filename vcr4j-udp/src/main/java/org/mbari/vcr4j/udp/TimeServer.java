@@ -1,8 +1,5 @@
 package org.mbari.vcr4j.udp;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -22,7 +19,7 @@ public class TimeServer {
     private final AtomicBoolean run = new AtomicBoolean(false);
     private volatile Thread serverThread;
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private static final System.Logger log = System.getLogger(TimeServer.class.getName());
 
     public TimeServer(int port) throws SocketException {
         socket = new DatagramSocket(port);
@@ -32,7 +29,7 @@ public class TimeServer {
     public void start() {
 
         if (!run.get()) {
-            log.debug("Starting time server");
+            log.log(System.Logger.Level.DEBUG, "Starting time server");
             run.set(true);
             Runnable runner = () -> {
                 byte[] buffer = new byte[4096];
@@ -62,7 +59,7 @@ public class TimeServer {
     }
 
     public void stop() {
-        log.debug("Stopping time server");
+        log.log(System.Logger.Level.DEBUG, "Stopping time server");
         run.set(false);
         serverThread = null;
     }

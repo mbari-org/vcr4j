@@ -8,9 +8,6 @@ import org.mbari.vcr4j.VideoIO;
 import org.mbari.vcr4j.VideoIndex;
 import org.mbari.vcr4j.commands.VideoCommands;
 import org.mbari.vcr4j.time.Timecode;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -33,7 +30,7 @@ public class UDPVideoIO implements VideoIO<UDPState, UDPError> {
     private DatagramSocket socket;
     private byte[] receiveMessage = new byte[1024];
     public static final byte[] GET_TIMECODE = "ltc.".getBytes();
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private static final System.Logger log = System.getLogger(UDPVideoIO.class.getName());
     private final Optional<VideoCommand<?>> timecodeRequest = Optional.of(VideoCommands.REQUEST_TIMECODE);
     UDPResponseParser responseParser = new UDPResponseParser();
     private final Subject<UDPState> stateSubject;
@@ -89,8 +86,8 @@ public class UDPVideoIO implements VideoIO<UDPState, UDPError> {
         }
         catch (Exception e) {
             // response will be null
-            if (log.isErrorEnabled()) {
-                log.error("UDP connection failed.", e);
+            if (log.isLoggable(System.Logger.Level.ERROR)) {
+                log.log(System.Logger.Level.ERROR, "UDP connection failed.", e);
                 responseParser.getErrorObservable()
                         .onNext(new UDPError(true, false, timecodeRequest));
             }
@@ -102,7 +99,7 @@ public class UDPVideoIO implements VideoIO<UDPState, UDPError> {
     public void close() {
 
         if (socket != null && !socket.isClosed()) {
-            log.info("Closing UDP port: " + getConnectionID());
+            log.log(System.Logger.Level.INFO, "Closing UDP port: " + getConnectionID());
             socket.close();
         }
         stateSubject.onNext(UDPState.STOPPED);
@@ -131,7 +128,7 @@ public class UDPVideoIO implements VideoIO<UDPState, UDPError> {
             connectionName = s.getInetAddress().getHostName() + ":" + s.getPort();
         }
         catch (SocketException ex) {
-            log.error("Failed to open a DatagramSocket", ex);
+            log.log(System.Logger.Level.ERROR, "Failed to open a DatagramSocket", ex);
             responseParser.getErrorObservable()
                     .onNext(new UDPError(true, false, Optional.empty()));
         }

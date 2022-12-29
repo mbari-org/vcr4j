@@ -13,9 +13,6 @@ import org.mbari.vcr4j.sharktopoda.commands.OpenCmd;
 import org.mbari.vcr4j.sharktopoda.commands.SharkCommands;
 import org.mbari.vcr4j.sharktopoda.model.VideoInformation;
 import org.mbari.vcr4j.sharktopoda.model.request.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -47,7 +44,7 @@ public class SharktopodaVideoIO implements VideoIO<SharktopodaState, Sharktopoda
      */
     private final Subject<VideoIndex> indexSubject;
     private final Subject<VideoCommand<?>> commandSubject;
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private static final System.Logger log = System.getLogger(SharktopodaVideoIO.class.getName());
 
     private final SharktopodaResponseParser responseParser;
 
@@ -140,8 +137,8 @@ public class SharktopodaVideoIO implements VideoIO<SharktopodaState, Sharktopoda
             s.setSoTimeout(timeout);
             s.send(packet);
 
-            if (log.isDebugEnabled()) {
-                log.debug(command.toString() + " >>> " + new String(packet.getData()));
+            if (log.isLoggable(System.Logger.Level.DEBUG)) {
+                log.log(System.Logger.Level.DEBUG, command.toString() + " >>> " + new String(packet.getData()));
             }
 
             s.receive(incomingPacket);    // blocks until returned on timeout
@@ -154,8 +151,8 @@ public class SharktopodaVideoIO implements VideoIO<SharktopodaState, Sharktopoda
         }
         catch (Exception e) {
             // response will be null
-            if (log.isErrorEnabled()) {
-                log.error("UDP connection failed.", e);
+            if (log.isLoggable(System.Logger.Level.ERROR)) {
+                log.log(System.Logger.Level.ERROR, "UDP connection failed.", e);
                 errorSubject.onNext(new SharktopodaError(true, false, false, Optional.of(command)));
             }
         }
@@ -166,14 +163,14 @@ public class SharktopodaVideoIO implements VideoIO<SharktopodaState, Sharktopoda
         try {
             DatagramSocket s = getSocket();
             s.send(packet);
-            if (log.isDebugEnabled()) {
-                log.debug(command.toString() + " -> " + new String(packet.getData()));
+            if (log.isLoggable(System.Logger.Level.DEBUG)) {
+                log.log(System.Logger.Level.DEBUG, command.toString() + " -> " + new String(packet.getData()));
             }
         }
         catch (Exception e) {
             // response will be null
-            if (log.isErrorEnabled()) {
-                log.error("UDP connection failed.", e);
+            if (log.isLoggable(System.Logger.Level.ERROR)) {
+                log.log(System.Logger.Level.ERROR, "UDP connection failed.", e);
                 errorSubject.onNext(new SharktopodaError(true, false, false, Optional.of(command)));
             }
         }

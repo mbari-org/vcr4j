@@ -15,8 +15,6 @@ import org.mbari.vcr4j.commands.ShuttleCmd;
 import org.mbari.vcr4j.commands.VideoCommands;
 import org.mbari.vcr4j.remote.control.commands.*;
 import org.mbari.vcr4j.remote.control.commands.localization.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.net.*;
 import java.nio.charset.StandardCharsets;
@@ -41,7 +39,7 @@ public class RVideoIO implements VideoIO<RState, RError> {
             .setDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
             .create();
 
-    private static final Logger log = LoggerFactory.getLogger(RVideoIO.class);
+    private static final System.Logger log = System.getLogger(RVideoIO.class.getName());
 
     public static final double MAX_SHUTTLE_RATE = 8.0;
     public static final double DEFAULT_SHUTTLE_RATE = 3.0;
@@ -308,8 +306,8 @@ public class RVideoIO implements VideoIO<RState, RError> {
 
             socket.send(packet);
 
-            if (log.isDebugEnabled()) { // && command.getName().contains("localization")) {
-                log.debug(connectionId + " - Sending command >>> " + new String(packet.getData()));
+            if (log.isLoggable(System.Logger.Level.DEBUG)) { // && command.getName().contains("localization")) {
+                log.log(System.Logger.Level.DEBUG, connectionId + " - Sending command >>> " + new String(packet.getData()));
             }
 
             socket.receive(incomingPacket);    // blocks until returned on timeout
@@ -317,8 +315,8 @@ public class RVideoIO implements VideoIO<RState, RError> {
             int numBytes = incomingPacket.getLength();
             var response = new String(incomingBytes, 0, numBytes, StandardCharsets.UTF_8);
 
-            if (log.isDebugEnabled()) { // && command.getName().contains("localization")) {
-                log.debug(connectionId + " - Received response <<< " + response);
+            if (log.isLoggable(System.Logger.Level.DEBUG)) { // && command.getName().contains("localization")) {
+                log.log(System.Logger.Level.DEBUG, connectionId + " - Received response <<< " + response);
             }
 
             var opt = responseParser.handle(command, response);
@@ -326,8 +324,8 @@ public class RVideoIO implements VideoIO<RState, RError> {
                     .ifPresent(responseSubject::onNext);
         } catch (Exception e) {
             // response will be null
-            if (log.isErrorEnabled()) {
-                log.error(connectionId + " - UDP connection failed", e);
+            if (log.isLoggable(System.Logger.Level.ERROR)) {
+                log.log(System.Logger.Level.ERROR, connectionId + " - UDP connection failed", e);
                 errorSubject.onNext(new RError(true, false, false, command));
             }
         }

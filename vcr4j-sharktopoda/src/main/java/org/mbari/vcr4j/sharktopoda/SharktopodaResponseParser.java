@@ -13,8 +13,6 @@ import org.mbari.vcr4j.sharktopoda.model.response.RequestAllVideoInfosReponse;
 import org.mbari.vcr4j.sharktopoda.model.response.RequestElapsedTimeResponse;
 import org.mbari.vcr4j.sharktopoda.model.response.RequestStatusResponse;
 import org.mbari.vcr4j.sharktopoda.model.response.RequestVideoInfoResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
 import java.util.Collections;
@@ -35,7 +33,7 @@ public class SharktopodaResponseParser {
     private final Subject<SharktopodaError> errorSubject;
     private final Subject<VideoIndex> indexSubject;
     private final Subject<VideoInformation> videoInfoSubject;
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private static final System.Logger log = System.getLogger(SharktopodaResponseParser.class.getName());
 
 
     public SharktopodaResponseParser(UUID uuid,
@@ -53,7 +51,7 @@ public class SharktopodaResponseParser {
 
     public void parse(VideoCommand<?> command, byte[] response) {
         String msg = new String(response);
-        log.debug("Parsing " + command + " <<< " + msg);
+        log.log(System.Logger.Level.DEBUG, "Parsing " + command + " <<< " + msg);
         // --- route to correct subject
         try {
             if (command instanceof OpenCmd) handleOpen(msg);

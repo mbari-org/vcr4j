@@ -6,8 +6,6 @@ import org.mbari.vcr4j.rs422.RS422ResponseParser;
 import org.mbari.vcr4j.rs422.RS422State;
 import org.mbari.vcr4j.rs422.RS422VideoIO;
 import org.mbari.vcr4j.util.Preconditions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -34,7 +32,8 @@ public class SerialCommVideoIO extends RS422VideoIO  {
     public final static long RECEIVE_TIMEOUT = 40;
 
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+//    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final System.Logger log = System.getLogger(getClass().getName());
     private SerialPort serialPort;    // Serial port connected to VCR
 
     public SerialCommVideoIO(SerialPort serialPort, InputStream inputStream, OutputStream outputStream) {
@@ -52,7 +51,7 @@ public class SerialCommVideoIO extends RS422VideoIO  {
     public void close() {
         // serial port will be null if we've already close it
         if (serialPort != null) {
-            log.info("Closing serial port:" + serialPort.getSystemPortName());
+            log.log(System.Logger.Level.INFO, "Closing serial port:" + serialPort.getSystemPortName());
 
             try {
                 getCommandSubject().onComplete();
@@ -69,17 +68,16 @@ public class SerialCommVideoIO extends RS422VideoIO  {
                 responseParser.getUserbitsObservable().onComplete();
                 serialPort = null;
             } catch (Exception e) {
-                if (log.isErrorEnabled()
-                        && (serialPort != null)) {
-                    log.error("Problem occured when closing serial port communications on " + serialPort.getSystemPortName());
+                if (serialPort != null) {
+                    log.log(System.Logger.Level.ERROR, () -> "Problem occured when closing serial port communications on " + serialPort.getSystemPortName());
                 }
             }
         }
     }
 
     public static SerialCommVideoIO open(String portName) {
-        Logger slog = LoggerFactory.getLogger(SerialCommVideoIO.class);
-        slog.info("Opening serial port: " + portName);
+        System.Logger slog = System.getLogger(SerialCommVideoIO.class.getName());
+        slog.log(System.Logger.Level.INFO, "Opening serial port: " + portName);
         SerialPort serialPort = null;
         try {
             serialPort = SerialPort.getCommPort(portName);
@@ -98,7 +96,7 @@ public class SerialCommVideoIO extends RS422VideoIO  {
             return new SerialCommVideoIO(serialPort, inputStream, outputStream);
         }
         catch (Exception e) {
-            slog.warn("Failed to open " + portName, e);
+            slog.log(System.Logger.Level.WARNING, "Failed to open " + portName, e);
             if (serialPort != null && serialPort.isOpen()) {
                 serialPort.closePort();
             }

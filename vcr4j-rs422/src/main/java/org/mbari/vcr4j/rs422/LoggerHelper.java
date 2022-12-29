@@ -2,7 +2,6 @@ package org.mbari.vcr4j.rs422;
 
 import org.mbari.vcr4j.VideoCommand;
 import org.mbari.vcr4j.rs422.util.NumberUtilities;
-import org.slf4j.Logger;
 
 /**
  * @author Brian Schlining
@@ -10,20 +9,18 @@ import org.slf4j.Logger;
  */
 public class LoggerHelper {
 
-    private final Logger log;
+    private final System.Logger log;
 
-    public LoggerHelper(Logger log) {
+    public LoggerHelper(System.Logger log) {
         this.log = log;
     }
 
     public void logCommand(byte[] bytes, VideoCommand<?> videoCommand) {
-        if (log.isDebugEnabled()) {
-            log.debug("[0x" + NumberUtilities.toHexString(bytes) + "] >>> VCR (" + videoCommand.getName() + ")");
-        }
+        log.log(System.Logger.Level.DEBUG, () -> "[0x" + NumberUtilities.toHexString(bytes) + "] >>> VCR (" + videoCommand.getName() + ")");
     }
 
     public void logResponse(byte[] cmd, byte[] data, byte[] checksum) {
-        if (log.isDebugEnabled()) {
+        if (log.isLoggable(System.Logger.Level.DEBUG)) {
 
             /*
              * Munge it all into a single byte array
@@ -39,7 +36,7 @@ public class LoggerHelper {
 
             c[c.length - 1] = checksum[0];
 
-            log.debug("[0x" + NumberUtilities.toHexString(c) + "] <<< VCR");
+            log.log(System.Logger.Level.DEBUG, "[0x" + NumberUtilities.toHexString(c) + "] <<< VCR");
         }
     }
 }

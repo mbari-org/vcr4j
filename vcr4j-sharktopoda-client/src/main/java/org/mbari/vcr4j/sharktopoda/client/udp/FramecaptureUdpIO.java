@@ -4,8 +4,6 @@ import com.google.gson.Gson;
 
 import io.reactivex.rxjava3.core.Observable;
 import org.mbari.vcr4j.sharktopoda.client.model.GenericCommand;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -21,7 +19,7 @@ class FramecaptureUdpIO {
     private volatile int remotePort;
     private final Observable<GenericCommand> commandObserver;
     private final CommandService commandService;
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private static final System.Logger log = System.getLogger(FramecaptureUdpIO.class.getName());
     private final Class prefNodeKey = getClass();
 
     public FramecaptureUdpIO(CommandService commandService, Observable<GenericCommand> commandObserver) {
@@ -46,7 +44,7 @@ class FramecaptureUdpIO {
             try {
                 prefs.flush();
             } catch (BackingStoreException e) {
-                log.warn("Failed to save framecapture port to preferences", e);
+                log.log(System.Logger.Level.WARNING, "Failed to save framecapture port to preferences", e);
             }
         }
     }
@@ -58,7 +56,7 @@ class FramecaptureUdpIO {
                         DatagramSocket socket = new DatagramSocket();
                         Gson gson = commandService.getGson();
                         byte[] data = gson.toJson(response).getBytes();
-                        log.debug("Sending >>> " + new String(data));
+                        log.log(System.Logger.Level.DEBUG, "Sending >>> " + new String(data));
                         DatagramPacket packet = new DatagramPacket(data,
                                 data.length,
                                 cmd.getPacketAddress(),
@@ -67,7 +65,7 @@ class FramecaptureUdpIO {
                         socket.close();
                     }
                     catch (Exception e) {
-                        log.warn("Failed to respond about framecapture", e);
+                        log.log(System.Logger.Level.WARNING, "Failed to respond about framecapture", e);
                     }
                 });
     }
