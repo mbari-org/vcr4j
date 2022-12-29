@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.mbari.vcr4j</groupId>
     <artifactId>vcr4j</artifactId>
-    <version>5.0.0.jre17-SNAPSHOT</version>
+    <version>5.0.0.jre17</version>
     <packaging>pom</packaging>
     <name>vcr4j</name>
     <url>https://github.com/hohonuuli/vcr4j</url>
