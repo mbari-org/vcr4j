@@ -1,6 +1,6 @@
 # VCR4J
 
-[![Build Status](https://travis-ci.org/mbari-media-management/vcr4j.svg?branch=master)](https://travis-ci.org/mbari-media-management/vcr4j)
+![Build Status](https://github.com/mbari-org/vcr4j/actions/workflows/maven.yml/badge.svg)
 
 Video controls for various devices. Used by MBARI's video annotation and reference system. The design of this library depends heavily on [ReactiveX](https://github.com/ReactiveX/RxJava) and can be summed up by:
 
