@@ -16,17 +16,12 @@
     <dependency>
       <groupId>org.scream3r</groupId>
       <artifactId>jssc</artifactId>
-      <version>2.8.0</version>
+      <version>${jssc.version}</version>
     </dependency>
     <dependency>
       <groupId>org.mbari.vcr4j</groupId>
       <artifactId>vcr4j-rs422</artifactId>
       <version>${version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.mbari</groupId>
-      <artifactId>mbarix4j</artifactId>
-      <version>${mbarix4j.version}</version>
     </dependency>
   </dependencies>
 </project>

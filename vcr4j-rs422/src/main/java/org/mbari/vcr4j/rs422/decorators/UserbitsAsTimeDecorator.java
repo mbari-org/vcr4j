@@ -4,7 +4,6 @@ import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Observer;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.subjects.Subject;
-import mbarix4j.util.NumberUtilities;
 import org.mbari.vcr4j.VideoCommand;
 import org.mbari.vcr4j.VideoIndex;
 import org.mbari.vcr4j.commands.VideoCommands;
@@ -12,6 +11,7 @@ import org.mbari.vcr4j.decorators.Decorator;
 import org.mbari.vcr4j.rs422.VCRVideoIO;
 import org.mbari.vcr4j.rs422.commands.RS422VideoCommands;
 import org.mbari.vcr4j.rs422.commands.RequestUserbitsAsTimeCmd;
+import org.mbari.vcr4j.rs422.util.NumberUtilities;
 
 import java.time.Instant;
 import java.util.Optional;

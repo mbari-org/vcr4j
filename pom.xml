@@ -13,10 +13,11 @@
         <java.version>17</java.version>
         <javafx.version>19</javafx.version>
         <jeromq.version>0.5.3</jeromq.version>
-        <junit.version>4.13.2</junit.version>
         <jserialcomm.version>2.9.3</jserialcomm.version>
+        <jssc.version>2.8.0</jssc.version>
+        <junit.version>4.13.2</junit.version>
         <logback.version>1.4.5</logback.version>
-        <mbarix4j.version>2.0.5.jre11</mbarix4j.version>
+        <purejavacomm.version>1.0.3</purejavacomm.version>
         <rx.version>3.1.5</rx.version>
         <slf4j.version>2.0.6</slf4j.version>
     </properties>

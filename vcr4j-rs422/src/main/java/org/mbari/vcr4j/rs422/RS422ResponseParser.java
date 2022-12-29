@@ -16,8 +16,8 @@ import java.util.Arrays;
 
 import io.reactivex.rxjava3.subjects.PublishSubject;
 import io.reactivex.rxjava3.subjects.Subject;
-import mbarix4j.util.NumberUtilities;
 import org.mbari.vcr4j.VideoCommand;
+import org.mbari.vcr4j.rs422.util.NumberUtilities;
 
 
 public class RS422ResponseParser {

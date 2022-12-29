@@ -1,7 +1,7 @@
 package org.mbari.vcr4j.rs422.decorators;
 
-import mbarix4j.util.NumberUtilities;
 import org.mbari.vcr4j.rs422.RS422Timecode;
+import org.mbari.vcr4j.rs422.util.NumberUtilities;
 
 /**
  * @author Brian Schlining

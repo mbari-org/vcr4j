@@ -19,10 +19,5 @@
       <artifactId>vcr4j-core</artifactId>
       <version>${version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.mbari</groupId>
-      <artifactId>mbarix4j</artifactId>
-      <version>${mbarix4j.version}</version>
-    </dependency>
   </dependencies>
 </project>

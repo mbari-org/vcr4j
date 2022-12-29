@@ -1,12 +1,12 @@
 package org.mbari.vcr4j.rs422.commands;
 
-import mbarix4j.util.NumberUtilities;
 import org.mbari.vcr4j.commands.SeekElapsedTimeCmd;
 import org.mbari.vcr4j.commands.SeekTimecodeCmd;
 import org.mbari.vcr4j.commands.SeekTimestampCmd;
 import org.mbari.vcr4j.commands.ShuttleCmd;
 import org.mbari.vcr4j.VideoCommand;
 import org.mbari.vcr4j.commands.VideoCommands;
+import org.mbari.vcr4j.rs422.util.NumberUtilities;
 import org.mbari.vcr4j.time.HMSF;
 import org.mbari.vcr4j.time.Timecode;
 import org.slf4j.Logger;
