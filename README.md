@@ -24,24 +24,12 @@ Example usage can be found in the `vcr4j-examples` module.
  
 
 ```xml
-
-<repositories>
-    <repository>
-        <snapshots>
-            <enabled>false</enabled>
-        </snapshots>
-            <id>bintray-org-mbari-maven</id>
-        <name>org-mbari</name>
-        <url>https://dl.bintray.com/org-mbari/maven</url>
-    </repository>
-</repositories>
-
 <dependencies>
     <!-- Here's an example for adding RXTX support for VCR's via RS422: -->
     <dependency>
         <groupId>org.mbari.vcr4j</groupId>
         <artifactId>vcr4j-rxtx</artifactId>
-        <version>${vcr4j.version}</version>
+        <version>5.1.0.jre17</version>
     </dependency>
 </dependencies>
 ```
