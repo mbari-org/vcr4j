@@ -29,7 +29,7 @@ Example usage can be found in the `vcr4j-examples` module.
     <dependency>
         <groupId>org.mbari.vcr4j</groupId>
         <artifactId>vcr4j-rxtx</artifactId>
-        <version>5.1.0.jre17</version>
+        <version>5.1.3.jre17</version>
     </dependency>
 </dependencies>
 ```
