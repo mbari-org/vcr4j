@@ -32,7 +32,6 @@ public record AppArgs(RemoteControl remoteControl, URL url) {
         var url = new URL((String) opts.get("<url>"));
         var uuid = UUID.randomUUID();
 
-
         var io = new RemoteControl.Builder(uuid)
                 .port(5555)
                 .remotePort(port)
@@ -46,6 +45,7 @@ public record AppArgs(RemoteControl remoteControl, URL url) {
 
         return new AppArgs(io, url);
     }
+
 
     public static List<Localization> buildLocalizations(int n,
                                                          long durationMillis,

@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 
 /**
@@ -24,7 +26,7 @@ public class PlayerIO {
     private final int port;
     private final RequestHandler requestHandler;
     private DatagramSocket server;
-    private Thread receiverThread;
+    private final ExecutorService serverExecutor = Executors.newSingleThreadExecutor();
     private volatile boolean ok = true;
 
     private String connectionId;
@@ -44,10 +46,9 @@ public class PlayerIO {
     private void init() {
         try {
             server = new DatagramSocket(port);
-            receiverThread = buildReceiverThread();
-            receiverThread.setDaemon(true);
-            receiverThread.start();
-            log.log(System.Logger.Level.DEBUG, connectionId + " - Started server's receiver thread: " + receiverThread.getName());
+            var serverRunnable = buildServerRunnable();
+            serverExecutor.submit(serverRunnable);
+            log.log(System.Logger.Level.DEBUG, connectionId + " - Started server's receiver using: " + serverExecutor);
         }
         catch (Exception e) {
             log.log(System.Logger.Level.ERROR, "Failed to initialize UDP socket", e);
@@ -90,8 +91,8 @@ public class PlayerIO {
     }
 
 
-    private Thread buildReceiverThread()  {
-        return new Thread(() -> {
+    private Runnable buildServerRunnable()  {
+        return () -> {
             byte[] buffer = new byte[4096];
             DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
             while(ok) {
@@ -116,11 +117,13 @@ public class PlayerIO {
                 server = null;
             }
             log.log(System.Logger.Level.INFO, connectionId + " - Shutting down UDP server");
-        });
+        };
     }
 
     public void close() {
         ok = false;
+        server.close();
+        serverExecutor.shutdown();
     }
 
     public RequestHandler getRequestHandler() {

@@ -295,38 +295,40 @@ public class RVideoIO implements VideoIO<RState, RError> {
     private synchronized void sendCommand(DatagramPacket packet,
                                           int sizeBytes, RCommand<?, ?> command) {
                                             
-        // FIX https://github.com/dingosky/Sharktopoda/issues/4                       
-        try(var socket = new DatagramSocket()) {
-        // try {
-            int timeout = (command instanceof OpenCmd) ? 20000 : 1000;
-            socket.setSoTimeout(timeout);
+        // FIX https://github.com/dingosky/Sharktopoda/issues/4
+        if (!closed) {
+            try (var socket = new DatagramSocket()) {
+                // try {
+                int timeout = (command instanceof OpenCmd) ? 20000 : 1000;
+                socket.setSoTimeout(timeout);
 
-            var incomingBytes = new byte[sizeBytes];
-            var incomingPacket = new DatagramPacket(incomingBytes, incomingBytes.length);
+                var incomingBytes = new byte[sizeBytes];
+                var incomingPacket = new DatagramPacket(incomingBytes, incomingBytes.length);
 
-            socket.send(packet);
+                socket.send(packet);
 
-            if (log.isLoggable(System.Logger.Level.DEBUG)) { // && command.getName().contains("localization")) {
-                log.log(System.Logger.Level.DEBUG, connectionId + " - Sending command >>> " + new String(packet.getData()));
-            }
+                if (log.isLoggable(System.Logger.Level.DEBUG)) { // && command.getName().contains("localization")) {
+                    log.log(System.Logger.Level.DEBUG, connectionId + " - Sending command >>> " + new String(packet.getData()));
+                }
 
-            socket.receive(incomingPacket);    // blocks until returned on timeout
+                socket.receive(incomingPacket);    // blocks until returned on timeout
 
-            int numBytes = incomingPacket.getLength();
-            var response = new String(incomingBytes, 0, numBytes, StandardCharsets.UTF_8);
+                int numBytes = incomingPacket.getLength();
+                var response = new String(incomingBytes, 0, numBytes, StandardCharsets.UTF_8);
 
-            if (log.isLoggable(System.Logger.Level.DEBUG)) { // && command.getName().contains("localization")) {
-                log.log(System.Logger.Level.DEBUG, connectionId + " - Received response <<< " + response);
-            }
+                if (log.isLoggable(System.Logger.Level.DEBUG)) { // && command.getName().contains("localization")) {
+                    log.log(System.Logger.Level.DEBUG, connectionId + " - Received response <<< " + response);
+                }
 
-            var opt = responseParser.handle(command, response);
-            opt.map(r -> new CommandResponse(command, r))
-                    .ifPresent(responseSubject::onNext);
-        } catch (Exception e) {
-            // response will be null
-            if (log.isLoggable(System.Logger.Level.ERROR)) {
-                log.log(System.Logger.Level.ERROR, connectionId + " - UDP connection failed", e);
-                errorSubject.onNext(new RError(true, false, false, command));
+                var opt = responseParser.handle(command, response);
+                opt.map(r -> new CommandResponse(command, r))
+                        .ifPresent(responseSubject::onNext);
+            } catch (Exception e) {
+                // response will be null
+                if (log.isLoggable(System.Logger.Level.ERROR)) {
+                    log.log(System.Logger.Level.ERROR, connectionId + " - UDP connection failed", e);
+                    errorSubject.onNext(new RError(true, false, false, command));
+                }
             }
         }
 
