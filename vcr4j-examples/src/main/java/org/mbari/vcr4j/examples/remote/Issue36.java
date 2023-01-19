@@ -17,6 +17,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/*
+mvn exec:java -Dexec.mainClass=org.mbari.vcr4j.examples.remote.Issue36 -Dexec.args="8800 /Users/brian/Desktop/VARS_Test/V4003_20170301T210458.233Z_t4s4_1280_tc03560915_h264.mp4 /Users/brian/Desktop/VARS_Test/D1305_20201030T174418Z_h264.mp4 /Users/brian/Desktop/VARS_Test/D1305_20201030T175912Z_prores.mov" -pl vcr4j-examples
+ */
 public class Issue36 {
     private static final Logger log = LoggerFactory.getLogger(Issue36.class);
 
