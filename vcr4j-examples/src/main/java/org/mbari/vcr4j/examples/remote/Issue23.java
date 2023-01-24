@@ -1,7 +1,7 @@
 package org.mbari.vcr4j.examples.remote;
 
 import org.mbari.vcr4j.remote.control.commands.OpenCmd;
-import org.mbari.vcr4j.remote.control.commands.RemoteCommands;
+import org.mbari.vcr4j.commands.RemoteCommands;
 
 public class Issue23 {
 

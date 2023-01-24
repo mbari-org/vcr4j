@@ -1,11 +1,10 @@
 package org.mbari.vcr4j.examples.sharktopoda;
 
 import org.docopt.Docopt;
+import org.mbari.vcr4j.commands.RemoteCommands;
 import org.mbari.vcr4j.commands.SeekElapsedTimeCmd;
-import org.mbari.vcr4j.commands.VideoCommands;
 import org.mbari.vcr4j.sharktopoda.SharktopodaVideoIO;
 import org.mbari.vcr4j.sharktopoda.commands.OpenCmd;
-import org.mbari.vcr4j.sharktopoda.commands.SharkCommands;
 
 import java.net.URL;
 import java.time.Duration;
@@ -34,10 +33,10 @@ public class FrameAdvanceTest {
         io.send(new SeekElapsedTimeCmd(Duration.ofSeconds(2)));
 
         for (int i = 0; i < 100; i++) {
-            io.send(SharkCommands.FRAMEADVANCE);
+            io.send(RemoteCommands.FRAMEADVANCE);
             Thread.sleep(200);
         }
 
-        io.send(SharkCommands.CLOSE);
+        io.send(RemoteCommands.CLOSE);
     }
 }

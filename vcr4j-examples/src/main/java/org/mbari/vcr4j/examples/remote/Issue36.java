@@ -4,7 +4,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 import org.docopt.Docopt;
 import org.mbari.vcr4j.remote.control.RemoteControl;
 import org.mbari.vcr4j.remote.control.commands.OpenCmd;
-import org.mbari.vcr4j.remote.control.commands.RemoteCommands;
+import org.mbari.vcr4j.commands.RemoteCommands;
 import org.mbari.vcr4j.remote.control.commands.localization.AddLocalizationsCmd;
 
 import org.slf4j.Logger;

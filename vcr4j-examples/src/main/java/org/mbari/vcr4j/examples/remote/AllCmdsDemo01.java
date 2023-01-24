@@ -1,6 +1,7 @@
 package org.mbari.vcr4j.examples.remote;
 
 import org.docopt.Docopt;
+import org.mbari.vcr4j.commands.RemoteCommands;
 import org.mbari.vcr4j.commands.SeekElapsedTimeCmd;
 import org.mbari.vcr4j.commands.ShuttleCmd;
 import org.mbari.vcr4j.commands.VideoCommands;
@@ -10,7 +11,6 @@ import org.mbari.vcr4j.remote.control.commands.*;
 import java.io.File;
 import java.net.URL;
 import java.time.Duration;
-import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;

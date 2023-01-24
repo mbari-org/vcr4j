@@ -1,13 +1,11 @@
 package org.mbari.vcr4j.examples.remote;
 
 import org.docopt.Docopt;
-import org.mbari.vcr4j.VideoCommand;
 import org.mbari.vcr4j.commands.SeekElapsedTimeCmd;
 import org.mbari.vcr4j.commands.VideoCommands;
 import org.mbari.vcr4j.remote.control.RemoteControl;
 import org.mbari.vcr4j.remote.control.commands.FrameCaptureCmd;
 import org.mbari.vcr4j.remote.control.commands.OpenCmd;
-import org.mbari.vcr4j.remote.control.commands.RemoteCommands;
 
 import java.io.File;
 import java.net.URL;

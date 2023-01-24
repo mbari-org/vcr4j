@@ -3,13 +3,13 @@ package org.mbari.vcr4j.examples.sharktopoda;
 import org.docopt.Docopt;
 import org.mbari.vcr4j.VideoIO;
 import org.mbari.vcr4j.VideoState;
+import org.mbari.vcr4j.commands.RemoteCommands;
 import org.mbari.vcr4j.commands.VideoCommands;
 import org.mbari.vcr4j.decorators.*;
 import org.mbari.vcr4j.sharktopoda.SharktopodaError;
 import org.mbari.vcr4j.sharktopoda.SharktopodaState;
 import org.mbari.vcr4j.sharktopoda.SharktopodaVideoIO;
 import org.mbari.vcr4j.sharktopoda.commands.OpenCmd;
-import org.mbari.vcr4j.sharktopoda.commands.SharkCommands;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +51,7 @@ public class VARSDemo02 {
 
         // --- Execute Play and just see what the traffic does.
         io.send(new OpenCmd(url));
-        io.send(SharkCommands.SHOW);
+        io.send(RemoteCommands.SHOW);
         io.send(VideoCommands.PLAY);
 
         Thread.sleep(2000);
@@ -79,7 +79,7 @@ public class VARSDemo02 {
                 .filter(VideoState::isStopped)
                 .take(1)
                 .forEach(state -> {
-                    io.send(SharkCommands.CLOSE);
+                    io.send(RemoteCommands.CLOSE);
                     io.close();
                 });
 

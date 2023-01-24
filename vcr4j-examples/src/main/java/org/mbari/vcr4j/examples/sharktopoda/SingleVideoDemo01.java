@@ -3,6 +3,7 @@ package org.mbari.vcr4j.examples.sharktopoda;
 import org.docopt.Docopt;
 import org.mbari.vcr4j.VideoCommand;
 import org.mbari.vcr4j.VideoIO;
+import org.mbari.vcr4j.commands.RemoteCommands;
 import org.mbari.vcr4j.commands.SeekElapsedTimeCmd;
 import org.mbari.vcr4j.commands.ShuttleCmd;
 import org.mbari.vcr4j.commands.VideoCommands;
@@ -10,7 +11,6 @@ import org.mbari.vcr4j.sharktopoda.SharktopodaError;
 import org.mbari.vcr4j.sharktopoda.SharktopodaState;
 import org.mbari.vcr4j.sharktopoda.SharktopodaVideoIO;
 import org.mbari.vcr4j.sharktopoda.commands.OpenCmd;
-import org.mbari.vcr4j.sharktopoda.commands.SharkCommands;
 
 import java.net.URL;
 import java.time.Duration;
@@ -43,9 +43,9 @@ public class SingleVideoDemo01 {
 
         List<VideoCommand> cmds = Arrays.asList(new OpenCmd(url),
                 VideoCommands.PLAY,
-                SharkCommands.SHOW,
-                SharkCommands.REQUEST_VIDEO_INFO,
-                SharkCommands.REQUEST_ALL_VIDEO_INFOS,
+                RemoteCommands.SHOW,
+                RemoteCommands.REQUEST_VIDEO_INFO,
+                RemoteCommands.REQUEST_ALL_VIDEO_INFOS,
                 VideoCommands.REQUEST_ELAPSED_TIME,
                 VideoCommands.REQUEST_INDEX,
                 VideoCommands.REQUEST_STATUS,
@@ -55,7 +55,7 @@ public class SingleVideoDemo01 {
                 new ShuttleCmd(0.1),
                 new ShuttleCmd(-0.1),
                 VideoCommands.PAUSE,
-                SharkCommands.CLOSE,
+                RemoteCommands.CLOSE,
                 VideoCommands.REQUEST_INDEX);
 
         for (VideoCommand cmd : cmds) {

@@ -1,17 +1,13 @@
 package org.mbari.vcr4j.examples.sharktopoda;
 
 import org.docopt.Docopt;
-import org.mbari.vcr4j.VideoCommand;
-import org.mbari.vcr4j.VideoIO;
+import org.mbari.vcr4j.commands.RemoteCommands;
 import org.mbari.vcr4j.commands.SeekElapsedTimeCmd;
 import org.mbari.vcr4j.commands.VideoCommands;
-import org.mbari.vcr4j.sharktopoda.SharktopodaError;
 import org.mbari.vcr4j.sharktopoda.SharktopodaState;
 import org.mbari.vcr4j.sharktopoda.SharktopodaVideoIO;
-import org.mbari.vcr4j.sharktopoda.commands.ConnectCmd;
 import org.mbari.vcr4j.sharktopoda.commands.FramecaptureCmd;
 import org.mbari.vcr4j.sharktopoda.commands.OpenCmd;
-import org.mbari.vcr4j.sharktopoda.commands.SharkCommands;
 import org.mbari.vcr4j.sharktopoda.decorators.FramecaptureDecorator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,7 +81,7 @@ public class FramecaptureTest {
             Thread.sleep(1000);
             io.send(new FramecaptureCmd(UUID.randomUUID(), new File(file, "trashme-play-" + i + ".png")));
         }
-        io.send(SharkCommands.CLOSE);
+        io.send(RemoteCommands.CLOSE);
 
     }
 

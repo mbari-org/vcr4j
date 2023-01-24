@@ -1,11 +1,11 @@
 package org.mbari.vcr4j.examples.sharktopoda;
 
 import org.docopt.Docopt;
+import org.mbari.vcr4j.commands.RemoteCommands;
 import org.mbari.vcr4j.commands.ShuttleCmd;
 import org.mbari.vcr4j.commands.VideoCommands;
 import org.mbari.vcr4j.sharktopoda.SharktopodaVideoIO;
 import org.mbari.vcr4j.sharktopoda.commands.OpenCmd;
-import org.mbari.vcr4j.sharktopoda.commands.SharkCommands;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,21 +63,21 @@ public class MultiOpenDemo01 {
 
                     io.getVideoInfoSubject().forEach(vi -> System.out.println(vi));
                     io.send(new OpenCmd(url));
-                    io.send(SharkCommands.REQUEST_VIDEO_INFO);
+                    io.send(RemoteCommands.REQUEST_VIDEO_INFO);
                     Thread.sleep(interval + 2000);
                     io.send(VideoCommands.PLAY);
                     Thread.sleep(interval);
                     for (int i = 1; i < 6; i++) {
                         double rate = 1 - (1D / ((Integer) i).doubleValue());
                         System.out.println("----" + rate);
-                        io.send(SharkCommands.SHOW);
+                        io.send(RemoteCommands.SHOW);
                         io.send(new ShuttleCmd(rate));
                         Thread.sleep(interval);
                     }
                     Thread.sleep(interval);
                     io.send(VideoCommands.STOP);
                     Thread.sleep(interval);
-                    io.send(SharkCommands.CLOSE);
+                    io.send(RemoteCommands.CLOSE);
                 }
                 catch (Exception e) {
                     log.error("Thread died", e);

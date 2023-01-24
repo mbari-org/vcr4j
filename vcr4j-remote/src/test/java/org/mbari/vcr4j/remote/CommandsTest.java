@@ -5,6 +5,7 @@ import org.junit.BeforeClass;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
+import org.mbari.vcr4j.commands.RemoteCommands;
 import org.mbari.vcr4j.commands.SeekElapsedTimeCmd;
 import org.mbari.vcr4j.commands.ShuttleCmd;
 import org.mbari.vcr4j.commands.VideoCommands;

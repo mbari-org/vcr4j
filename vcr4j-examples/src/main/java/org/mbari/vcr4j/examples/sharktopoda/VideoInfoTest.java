@@ -1,12 +1,12 @@
 package org.mbari.vcr4j.examples.sharktopoda;
 
 import org.docopt.Docopt;
+import org.mbari.vcr4j.commands.RemoteCommands;
 import org.mbari.vcr4j.commands.SeekElapsedTimeCmd;
 import org.mbari.vcr4j.commands.ShuttleCmd;
 import org.mbari.vcr4j.commands.VideoCommands;
 import org.mbari.vcr4j.sharktopoda.SharktopodaVideoIO;
 import org.mbari.vcr4j.sharktopoda.commands.OpenCmd;
-import org.mbari.vcr4j.sharktopoda.commands.SharkCommands;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,18 +63,18 @@ public class VideoInfoTest {
 
                     io.getVideoInfoSubject().forEach(vi -> System.out.println(vi));
                     io.send(new OpenCmd(url));
-                    io.send(SharkCommands.REQUEST_VIDEO_INFO);
+                    io.send(RemoteCommands.REQUEST_VIDEO_INFO);
                     io.send(VideoCommands.PLAY);
                     Thread.sleep(3000);
                     io.send(new SeekElapsedTimeCmd(Duration.ofMillis(0)));
-                    io.send(SharkCommands.SHOW);
+                    io.send(RemoteCommands.SHOW);
                     Thread.sleep(3000);
-                    io.send(SharkCommands.SHOW);
+                    io.send(RemoteCommands.SHOW);
                     Thread.sleep(3000);
                     io.send(new ShuttleCmd(-0.1));
-                    io.send(SharkCommands.SHOW);
+                    io.send(RemoteCommands.SHOW);
                     Thread.sleep(4000);
-                    io.send(SharkCommands.CLOSE);
+                    io.send(RemoteCommands.CLOSE);
                 }
                 catch (Exception e) {
                     log.error("Thread died", e);

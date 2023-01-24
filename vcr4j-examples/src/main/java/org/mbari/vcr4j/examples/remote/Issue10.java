@@ -1,12 +1,7 @@
 package org.mbari.vcr4j.examples.remote;
 
-import org.mbari.vcr4j.commands.VideoCommands;
 import org.mbari.vcr4j.remote.control.commands.FrameAdvanceCmd;
 import org.mbari.vcr4j.remote.control.commands.OpenCmd;
-import org.mbari.vcr4j.remote.control.commands.RemoteCommands;
-
-import java.util.List;
-import java.util.UUID;
 
 public class Issue10 {
 

@@ -5,13 +5,13 @@ import io.reactivex.rxjava3.core.Observer;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.subjects.PublishSubject;
 import io.reactivex.rxjava3.subjects.Subject;
+import org.mbari.vcr4j.commands.RemoteCommands;
 import org.mbari.vcr4j.decorators.Decorator;
 import org.mbari.vcr4j.sharktopoda.Constants;
 import org.mbari.vcr4j.sharktopoda.SharktopodaError;
 import org.mbari.vcr4j.sharktopoda.SharktopodaVideoIO;
 import org.mbari.vcr4j.sharktopoda.commands.ConnectCmd;
 import org.mbari.vcr4j.sharktopoda.commands.FramecaptureCmd;
-import org.mbari.vcr4j.sharktopoda.commands.SharkCommands;
 import org.mbari.vcr4j.sharktopoda.model.request.Connect;
 import org.mbari.vcr4j.sharktopoda.model.request.Framecapture;
 import org.mbari.vcr4j.sharktopoda.model.response.FramecaptureResponse;
@@ -121,7 +121,7 @@ public class FramecaptureDecorator implements Decorator {
                 .forEach(this::doConnect);
 
         io.getCommandSubject()
-                .filter(cmd -> cmd == SharkCommands.CLOSE)
+                .filter(cmd -> cmd == RemoteCommands.CLOSE)
                 .forEach(cmd -> ok = false);
 
         io.send(new ConnectCmd(port));

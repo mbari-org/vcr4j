@@ -3,6 +3,7 @@ package org.mbari.vcr4j.examples.sharktopoda;
 import org.docopt.Docopt;
 import org.mbari.vcr4j.VideoIO;
 import org.mbari.vcr4j.VideoState;
+import org.mbari.vcr4j.commands.RemoteCommands;
 import org.mbari.vcr4j.commands.VideoCommands;
 import org.mbari.vcr4j.decorators.Decorator;
 import org.mbari.vcr4j.decorators.LoggingDecorator;
@@ -11,7 +12,6 @@ import org.mbari.vcr4j.sharktopoda.SharktopodaError;
 import org.mbari.vcr4j.sharktopoda.SharktopodaState;
 import org.mbari.vcr4j.sharktopoda.SharktopodaVideoIO;
 import org.mbari.vcr4j.sharktopoda.commands.OpenCmd;
-import org.mbari.vcr4j.sharktopoda.commands.SharkCommands;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,7 +71,7 @@ public class VARSDemo01 {
                 .filter(VideoState::isStopped)
                 .take(1)
                 .forEach(state -> {
-                    io.send(SharkCommands.CLOSE);
+                    io.send(RemoteCommands.CLOSE);
                     io.close();
                 });
 

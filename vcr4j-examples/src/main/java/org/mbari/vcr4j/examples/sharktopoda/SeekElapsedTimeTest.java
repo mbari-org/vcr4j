@@ -2,13 +2,13 @@ package org.mbari.vcr4j.examples.sharktopoda;
 
 import org.docopt.Docopt;
 import org.mbari.vcr4j.VideoIO;
+import org.mbari.vcr4j.commands.RemoteCommands;
 import org.mbari.vcr4j.commands.SeekElapsedTimeCmd;
 import org.mbari.vcr4j.commands.VideoCommands;
 import org.mbari.vcr4j.sharktopoda.SharktopodaError;
 import org.mbari.vcr4j.sharktopoda.SharktopodaState;
 import org.mbari.vcr4j.sharktopoda.SharktopodaVideoIO;
 import org.mbari.vcr4j.sharktopoda.commands.OpenCmd;
-import org.mbari.vcr4j.sharktopoda.commands.SharkCommands;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +51,7 @@ public class SeekElapsedTimeTest {
         Thread.sleep(1000);
         io.send(new SeekElapsedTimeCmd(Duration.ofSeconds(5)));
         io.send(VideoCommands.STOP);
-        io.send(SharkCommands.CLOSE);
+        io.send(RemoteCommands.CLOSE);
 
     }
 }

@@ -1,13 +1,13 @@
 package org.mbari.vcr4j.sharktopoda.client.udp;
 
 import org.junit.Test;
+import org.mbari.vcr4j.commands.RemoteCommands;
 import org.mbari.vcr4j.commands.SeekElapsedTimeCmd;
 import org.mbari.vcr4j.commands.VideoCommands;
 import org.mbari.vcr4j.sharktopoda.SharktopodaVideoIO;
 import org.mbari.vcr4j.sharktopoda.commands.ConnectCmd;
 import org.mbari.vcr4j.sharktopoda.commands.FramecaptureCmd;
 import org.mbari.vcr4j.sharktopoda.commands.OpenCmd;
-import org.mbari.vcr4j.sharktopoda.commands.SharkCommands;
 import org.mbari.vcr4j.sharktopoda.client.ClientController;
 import org.mbari.vcr4j.sharktopoda.decorators.FramecaptureDecorator;
 
@@ -30,16 +30,16 @@ public class IOTest {
         IO io = new IO(clientController, port);
         SharktopodaVideoIO videoIO = new SharktopodaVideoIO(uuid, "localhost", port);
         videoIO.send(new OpenCmd(new URL("http://www.nowhere.org/movie.mp4")));
-        videoIO.send(SharkCommands.SHOW);
-        videoIO.send(SharkCommands.REQUEST_ALL_VIDEO_INFOS);
+        videoIO.send(RemoteCommands.SHOW);
+        videoIO.send(RemoteCommands.REQUEST_ALL_VIDEO_INFOS);
         videoIO.send(VideoCommands.PLAY);
         videoIO.send(VideoCommands.PAUSE);
         videoIO.send(VideoCommands.REQUEST_TIMESTAMP);
         videoIO.send(VideoCommands.REQUEST_ELAPSED_TIME);
         videoIO.send(new SeekElapsedTimeCmd(Duration.ofSeconds(10)));
-        videoIO.send(SharkCommands.FRAMEADVANCE);
-        videoIO.send(SharkCommands.REQUEST_VIDEO_INFO);
-        videoIO.send(SharkCommands.CLOSE);
+        videoIO.send(RemoteCommands.FRAMEADVANCE);
+        videoIO.send(RemoteCommands.REQUEST_VIDEO_INFO);
+        videoIO.send(RemoteCommands.CLOSE);
         videoIO.close();
         io.close();
     }
@@ -58,7 +58,7 @@ public class IOTest {
         videoIO.send(new OpenCmd(new URL("http://www.nowhere.org/movie.mp4")));
         videoIO.send(new ConnectCmd(framecapturePort));
         videoIO.send(new FramecaptureCmd(UUID.randomUUID(), new File("/Foo")));
-        videoIO.send(SharkCommands.CLOSE);
+        videoIO.send(RemoteCommands.CLOSE);
         videoIO.close();
         io.close();
     }
@@ -70,7 +70,7 @@ public class IOTest {
         UUID uuid = UUID.randomUUID();
         IO io = new IO(clientController, port);
         SharktopodaVideoIO videoIO = new SharktopodaVideoIO(uuid, "localhost", port);
-        videoIO.send(SharkCommands.REQUEST_VIDEO_INFO);
+        videoIO.send(RemoteCommands.REQUEST_VIDEO_INFO);
         videoIO.close();
         io.close();
     }

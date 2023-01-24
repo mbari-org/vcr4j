@@ -3,9 +3,9 @@ package org.mbari.vcr4j.sharktopoda;
 import io.reactivex.rxjava3.subjects.Subject;
 import org.mbari.vcr4j.VideoCommand;
 import org.mbari.vcr4j.VideoIndex;
+import org.mbari.vcr4j.commands.RemoteCommands;
 import org.mbari.vcr4j.commands.VideoCommands;
 import org.mbari.vcr4j.sharktopoda.commands.OpenCmd;
-import org.mbari.vcr4j.sharktopoda.commands.SharkCommands;
 import org.mbari.vcr4j.sharktopoda.model.VideoInformation;
 import org.mbari.vcr4j.sharktopoda.model.response.OpenResponse;
 import org.mbari.vcr4j.sharktopoda.model.response.PlayResponse;
@@ -60,8 +60,8 @@ public class SharktopodaResponseParser {
             else if (command.equals(VideoCommands.REQUEST_STATUS)) handleRequestStatus(msg);
             else if (command.equals(VideoCommands.REQUEST_INDEX)) handleRequestIndex(msg);
             else if (command.equals(VideoCommands.REQUEST_ELAPSED_TIME)) handleRequestIndex(msg);
-            else if (command.equals(SharkCommands.REQUEST_VIDEO_INFO)) handleRequestVideoInfo(msg);
-            else if (command.equals(SharkCommands.REQUEST_ALL_VIDEO_INFOS)) handleRequestAllVideoInfos(msg);
+            else if (command.equals(RemoteCommands.REQUEST_VIDEO_INFO)) handleRequestVideoInfo(msg);
+            else if (command.equals(RemoteCommands.REQUEST_ALL_VIDEO_INFOS)) handleRequestAllVideoInfos(msg);
         }
         catch (Exception e) {
             SharktopodaError error = new SharktopodaError(false, true, false, Optional.of(command));

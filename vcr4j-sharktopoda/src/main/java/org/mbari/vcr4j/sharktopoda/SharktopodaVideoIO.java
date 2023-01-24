@@ -6,11 +6,11 @@ import io.reactivex.rxjava3.subjects.Subject;
 import org.mbari.vcr4j.VideoCommand;
 import org.mbari.vcr4j.VideoIO;
 import org.mbari.vcr4j.VideoIndex;
+import org.mbari.vcr4j.commands.RemoteCommands;
 import org.mbari.vcr4j.commands.SeekElapsedTimeCmd;
 import org.mbari.vcr4j.commands.ShuttleCmd;
 import org.mbari.vcr4j.commands.VideoCommands;
 import org.mbari.vcr4j.sharktopoda.commands.OpenCmd;
-import org.mbari.vcr4j.sharktopoda.commands.SharkCommands;
 import org.mbari.vcr4j.sharktopoda.model.VideoInformation;
 import org.mbari.vcr4j.sharktopoda.model.request.*;
 
@@ -71,16 +71,16 @@ public class SharktopodaVideoIO implements VideoIO<SharktopodaState, Sharktopoda
         commandSubject.ofType(OpenCmd.class)
                 .forEach(this::doOpen);
 
-        commandSubject.filter(cmd -> cmd.equals(SharkCommands.SHOW))
+        commandSubject.filter(cmd -> cmd.equals(RemoteCommands.SHOW))
                 .forEach(cmd -> doShow());
 
-        commandSubject.filter(cmd -> cmd.equals(SharkCommands.CLOSE))
+        commandSubject.filter(cmd -> cmd.equals(RemoteCommands.CLOSE))
                 .forEach(cmd -> doClose());
 
-        commandSubject.filter(cmd -> cmd.equals(SharkCommands.REQUEST_ALL_VIDEO_INFOS))
+        commandSubject.filter(cmd -> cmd.equals(RemoteCommands.REQUEST_ALL_VIDEO_INFOS))
                 .forEach(cmd -> doRequestAllVideoInfos());
 
-        commandSubject.filter(cmd -> cmd.equals(SharkCommands.REQUEST_VIDEO_INFO))
+        commandSubject.filter(cmd -> cmd.equals(RemoteCommands.REQUEST_VIDEO_INFO))
                 .forEach(cmd -> doRequestVideoInfo());
 
         commandSubject.filter(cmd -> cmd.equals(VideoCommands.PLAY))
@@ -105,14 +105,16 @@ public class SharktopodaVideoIO implements VideoIO<SharktopodaState, Sharktopoda
                     || cmd.equals(VideoCommands.REQUEST_INDEX))
                 .forEach(this::doRequestIndex);
 
-        commandSubject.filter(cmd -> cmd.equals(SharkCommands.REQUEST_VIDEO_INFO))
+        commandSubject.filter(cmd -> cmd.equals(RemoteCommands.REQUEST_VIDEO_INFO))
                 .forEach(cmd -> doRequestVideoInfo());
 
         commandSubject.ofType(SeekElapsedTimeCmd.class)
                 .forEach(this::doSeekElapsedTime);
 
-        commandSubject.filter(cmd -> cmd.equals(SharkCommands.FRAMEADVANCE))
+        commandSubject.filter(cmd -> cmd.equals(RemoteCommands.FRAMEADVANCE))
                 .forEach(cmd -> doFrameAdvance());
+
+
 
     }
 
@@ -253,13 +255,13 @@ public class SharktopodaVideoIO implements VideoIO<SharktopodaState, Sharktopoda
     private void doShow() {
         Show obj = new Show(uuid);
         DatagramPacket packet = asPacket(obj);
-        sendCommand(packet, SharkCommands.SHOW);
+        sendCommand(packet, RemoteCommands.SHOW);
     }
 
     private void doClose() {
         Close obj = new Close(uuid);
         DatagramPacket packet = asPacket(obj);
-        sendCommand(packet, SharkCommands.CLOSE);
+        sendCommand(packet, RemoteCommands.CLOSE);
     }
 
     private void doPlay() {
@@ -295,13 +297,13 @@ public class SharktopodaVideoIO implements VideoIO<SharktopodaState, Sharktopoda
     private void doRequestVideoInfo() {
         RequestVideoInfo obj = new RequestVideoInfo(uuid);
         DatagramPacket packet = asPacket(obj);
-        sendCommandAndListenForResponse(packet, 2048, SharkCommands.REQUEST_VIDEO_INFO);
+        sendCommandAndListenForResponse(packet, 2048, RemoteCommands.REQUEST_VIDEO_INFO);
     }
 
     private void doRequestAllVideoInfos() {
         RequestAllVideoInfos obj = new RequestAllVideoInfos();
         DatagramPacket packet = asPacket(obj);
-        sendCommandAndListenForResponse(packet, 4096, SharkCommands.REQUEST_ALL_VIDEO_INFOS);
+        sendCommandAndListenForResponse(packet, 4096, RemoteCommands.REQUEST_ALL_VIDEO_INFOS);
     }
 
     private void doSeekElapsedTime(SeekElapsedTimeCmd command) {
@@ -313,6 +315,6 @@ public class SharktopodaVideoIO implements VideoIO<SharktopodaState, Sharktopoda
     private void doFrameAdvance() {
         FrameAdvance obj = new FrameAdvance(uuid);
         DatagramPacket packet = asPacket(obj);
-        sendCommand(packet, SharkCommands.FRAMEADVANCE);
+        sendCommand(packet, RemoteCommands.FRAMEADVANCE);
     }
 }

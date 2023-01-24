@@ -5,9 +5,8 @@ import org.mbari.vcr4j.commands.VideoCommands;
 import org.mbari.vcr4j.remote.control.RVideoIO;
 import org.mbari.vcr4j.remote.control.commands.FrameCaptureCmd;
 import org.mbari.vcr4j.remote.control.commands.OpenCmd;
-import org.mbari.vcr4j.remote.control.commands.RemoteCommands;
+import org.mbari.vcr4j.commands.RemoteCommands;
 import org.mbari.vcr4j.remote.control.commands.VideoInfo;
-import org.mbari.vcr4j.remote.control.commands.localization.AddLocalizationsCmd;
 
 import java.nio.file.Paths;
 import java.time.Duration;

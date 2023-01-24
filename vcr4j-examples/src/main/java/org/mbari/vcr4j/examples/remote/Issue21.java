@@ -1,16 +1,13 @@
 package org.mbari.vcr4j.examples.remote;
 
 import org.mbari.vcr4j.commands.SeekElapsedTimeCmd;
-import org.mbari.vcr4j.commands.VideoCommands;
 import org.mbari.vcr4j.remote.control.commands.FrameCaptureCmd;
 import org.mbari.vcr4j.remote.control.commands.OpenCmd;
-import org.mbari.vcr4j.remote.control.commands.RemoteCommands;
-import org.mbari.vcr4j.remote.control.commands.localization.AddLocalizationsCmd;
+import org.mbari.vcr4j.commands.RemoteCommands;
 
 
 import java.nio.file.Paths;
 import java.time.Duration;
-import java.time.Instant;
 import java.util.Random;
 import java.util.UUID;
 

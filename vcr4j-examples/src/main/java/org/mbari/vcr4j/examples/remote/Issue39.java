@@ -1,8 +1,9 @@
 package org.mbari.vcr4j.examples.remote;
 
 import org.mbari.vcr4j.remote.control.commands.OpenCmd;
-import org.mbari.vcr4j.remote.control.commands.RemoteCommands;
+import org.mbari.vcr4j.commands.RemoteCommands;
 
+// https://github.com/mbari-org/vars-feedback/issues/39
 public class Issue39 {
 
     public static void main(String[] args) throws Exception {
