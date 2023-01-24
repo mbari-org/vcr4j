@@ -135,6 +135,10 @@ public class RVideoIO implements VideoIO<RState, RError> {
                 .forEach(sizedRequest -> doCommand(sizedRequest.cmd, sizedRequest.size));
         disposables.add(a);
 
+        a = commandSubject.ofType(FrameAdvanceCmd.class)
+                .forEach(c -> doCommand(c, 1024));
+        disposables.add(a);
+
         a = commandSubject.ofType(ShuttleCmd.class)
                 .map(c -> new PlayCmd(uuid, c.getValue() * MAX_SHUTTLE_RATE))
                 .forEach(this::doCommand);
@@ -304,7 +308,7 @@ public class RVideoIO implements VideoIO<RState, RError> {
 
             socket.send(packet);
 
-            if (log.isDebugEnabled()) {
+            if (log.isDebugEnabled()) { // && command.getName().contains("localization")) {
                 log.debug(connectionId + " - Sending command >>> " + new String(packet.getData()));
             }
 
@@ -313,7 +317,7 @@ public class RVideoIO implements VideoIO<RState, RError> {
             int numBytes = incomingPacket.getLength();
             var response = new String(incomingBytes, 0, numBytes, StandardCharsets.UTF_8);
 
-            if (log.isDebugEnabled()) {
+            if (log.isDebugEnabled()) { // && command.getName().contains("localization")) {
                 log.debug(connectionId + " - Received response <<< " + response);
             }
 

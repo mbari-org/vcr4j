@@ -19,6 +19,10 @@ public class FrameAdvanceCmd extends RCommand<FrameAdvanceCmd.Request, FrameAdva
         this(new Request(uuid));
     }
 
+    public FrameAdvanceCmd(UUID uuid, boolean forward) {
+        this(new Request(uuid, forward));
+    }
+
     public static class Request extends RRequest {
 
         private Integer direction;

@@ -41,14 +41,23 @@ public class FrameCaptureDemo01 {
 //        var png = File.createTempFile("trashme", ".png");
 //        png.deleteOnExit();
         var png = new File("trashme.png");
+        var png2 = new File("trashme2.png");
         videoIo.send(new OpenCmd(uuid, url));
+        videoIo.send(VideoCommands.PLAY);
         Thread.sleep(500);
         videoIo.send(new SeekElapsedTimeCmd(Duration.ofMillis(10000)));
-//        videoIo.send(VideoCommands.PLAY);
-//        videoIo.send(VideoCommands.PAUSE);
+        videoIo.send(VideoCommands.REQUEST_INDEX);
+        videoIo.send(VideoCommands.PLAY);
+        Thread.sleep(1000);
+        videoIo.send(VideoCommands.REQUEST_INDEX);
         videoIo.send(new FrameCaptureCmd(uuid, UUID.randomUUID(), png.getAbsolutePath()));
-        Thread.sleep(5000);
-        videoIo.send(RemoteCommands.CLOSE);
+        Thread.sleep(1000);
+        videoIo.send(new SeekElapsedTimeCmd(Duration.ofMillis(400000)));
+        videoIo.send(VideoCommands.REQUEST_INDEX);
+        videoIo.send(VideoCommands.PLAY);
+        videoIo.send(new FrameCaptureCmd(uuid, UUID.randomUUID(), png2.getAbsolutePath()));
+        Thread.sleep(1000);
+//        videoIo.send(RemoteCommands.CLOSE);
         io.close();
 
         System.exit(0);
