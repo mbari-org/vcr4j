@@ -32,7 +32,7 @@ public class FrameCaptureDemo01 {
                 .port(5000)
                 .remotePort(port)
                 .remoteHost("localhost")
-                .whenFrameCaptureIsDone(cmd -> System.out.println(cmd))
+                .whenFrameCaptureIsDone(cmd -> System.out.println("DONE: " + cmd))
                 .build()
                 .get();
 
