@@ -25,6 +25,8 @@ vcr4j-remote is available from [Maven central](https://mvnrepository.com/artifac
 
 ### Example code
 
+Full example apps are available in [vcr4j-examples](https://github.com/mbari-org/vcr4j/tree/master/vcr4j-examples/src/main/java/org/mbari/vcr4j/examples/remote).
+
 ```java
 import java.util.UUID
 import org.mbari.vcr4j.remote.control.RemoteControl
