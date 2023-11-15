@@ -1,5 +1,7 @@
 # vcr4j-remote
 
+[![javadoc](https://javadoc.io/badge2/org.mbari.vcr4j/vcr4j-remote/javadoc.svg)](https://javadoc.io/doc/org.mbari.vcr4j/vcr4j-remote)
+
 A VCR4J module for interacting with the [Sharktopoda](https://github.com/mbari-org/Sharktopoda) video player.
 
 ## Usage

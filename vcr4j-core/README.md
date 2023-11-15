@@ -1,8 +1,10 @@
 # VCR4J-CORE
 
+[![javadoc](https://javadoc.io/badge2/org.mbari.vcr4j/vcr4j-core/javadoc.svg)](https://javadoc.io/doc/org.mbari.vcr4j/vcr4j-core)
+
 The design of the module is basically:
 
-```
+```text
 VideoController ---> VideoIO ---> Observable<VideoError>
                              |--> Observable<VideoIndex>
                              |--> Observable<VideoState>
