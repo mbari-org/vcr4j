@@ -4,6 +4,8 @@ A VCR4J module for interacting with the [Sharktopoda](https://github.com/mbari-o
 
 ## Usage
 
+### Add to a project
+
 vcr4j-remote is available from [Maven central](https://mvnrepository.com/artifact/org.mbari.vcr4j/vcr4j-remote). To add it to a project:
 
 ```xml
@@ -18,6 +20,8 @@ vcr4j-remote is available from [Maven central](https://mvnrepository.com/artifac
     <version>${vcr4j.version}</version>
 </dependency>
 ```
+
+### Example code
 
 ```java
 import java.util.UUID
