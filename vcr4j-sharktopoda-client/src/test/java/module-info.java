@@ -6,7 +6,7 @@ open module vcr4j.sharktopoda.client {
     requires io.reactivex.rxjava3;
     requires com.google.gson;
     requires org.slf4j;
-    requires jeromq;
+//    requires jeromq;
     requires javafx.base;
     requires vcr4j.core;
     requires java.prefs;

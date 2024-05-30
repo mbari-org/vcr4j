@@ -2,8 +2,8 @@ package org.mbari.vcr4j.examples.remote;
 
 import org.docopt.Docopt;
 import org.mbari.vcr4j.commands.VideoCommands;
-import org.mbari.vcr4j.examples.sharktopoda.MultiOpenDemo01;
-import org.mbari.vcr4j.examples.sharktopoda.VideoInfoTest;
+//import org.mbari.vcr4j.examples.sharktopoda.MultiOpenDemo01;
+//import org.mbari.vcr4j.examples.sharktopoda.VideoInfoTest;
 import org.mbari.vcr4j.remote.control.RVideoIO;
 import org.mbari.vcr4j.remote.control.commands.*;
 import org.slf4j.Logger;
@@ -20,9 +20,9 @@ public class MultiOpenDemo1 {
 
     public static void main(String[] args) {
 
-        Logger log = LoggerFactory.getLogger(VideoInfoTest.class);
+        Logger log = LoggerFactory.getLogger(MultiOpenDemo1.class);
 
-        String prog = MultiOpenDemo01.class.getName();
+        String prog = MultiOpenDemo1.class.getName();
         String doc = "Usage: " + prog + " <port> <url>...\n" +
                 "Options:\n" +
                 "  -h, --help";
