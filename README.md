@@ -90,3 +90,9 @@ io.close()
 
 - When testing on Mac OS X 10.11 using a GUC232A usb-to-serial device and prolific's drivers. THe port doesn't seem to close property with RXTX. I'm force to unplug and replug it in after each test to reset the port.
 - When testing on Mac OS X 10.11 using a GUC232A usb-to-serial device neither JSSC or Purejavacomm appear to work. PJC does work with the serial ports on the DeckLink cards though.
+
+To run a demo:
+
+```shell
+mvn exec:java -Dexec.mainClass=org.mbari.vcr4j.examples.remote.FrameCaptureDemo01 -Dexec.args="8800 https://m3.shore.mbari.org/videos/M3/mezzanine/Ventana/1997/04/1234/V1234_19970411T182522.964Z_t5s1_sd_tc02050400_h264.mp4" -pl vcr4j-examples
+```
