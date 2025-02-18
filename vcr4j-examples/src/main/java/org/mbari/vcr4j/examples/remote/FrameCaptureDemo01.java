@@ -19,10 +19,11 @@ import java.time.Duration;
 import java.util.Map;
 import java.util.UUID;
 
-// mvn install -DskipTests -Dgpg.skip
-cd vcr4j
-// mvn exec:java -Dexec.mainClass=org.mbari.vcr4j.examples.remote.FrameCaptureDemo01 -Dexec.args="8800 file:/Users/brian/Downloads/V4003_20170301T210458.233Z_t4s4_1280_tc03560915_h264.mp4" -pl vcr4j-examples
- */
+/* 
+    mvn install -DskipTests -Dgpg.skip
+    cd vcr4j
+    mvn exec:java -Dexec.mainClass=org.mbari.vcr4j.examples.remote.FrameCaptureDemo01 -Dexec.args="8800 file:/Users/brian/Downloads/V4003_20170301T210458.233Z_t4s4_1280_tc03560915_h264.mp4" -pl vcr4j-examples
+*/
 public class FrameCaptureDemo01 {
     public static void main(String[] args) throws Exception {
         String prog = FrameCaptureDemo01.class.getName();
@@ -49,9 +50,8 @@ public class FrameCaptureDemo01 {
 //        var png = File.createTempFile("trashme", ".png");
 //        png.deleteOnExit();
         var rnd = UUID.randomUUID().toString();
-        var png1 = new File("trashme-1-" + rnd + ".png");
-        var png2 = new File("trashme-2-" + rnd + ".png");
-        Files.deleteIfExists(png2);
+        var png1 = Paths.get("trashme-1-" + rnd + ".png").normalize().toAbsolutePath();
+        var png2 = Paths.get("trashme-2-" + rnd + ".png").normalize().toAbsolutePath();
         videoIo.send(new OpenCmd(uuid, url));
         Thread.sleep(1000);
         videoIo.send(VideoCommands.PLAY);
@@ -61,29 +61,29 @@ public class FrameCaptureDemo01 {
         videoIo.send(VideoCommands.PLAY);
         Thread.sleep(1000);
         videoIo.send(VideoCommands.REQUEST_INDEX);
-        videoIo.send(new FrameCaptureCmd(uuid, UUID.randomUUID(), png.normalize().toAbsolutePath().toString()));
+        videoIo.send(new FrameCaptureCmd(uuid, UUID.randomUUID(), png1.toString()));
         Thread.sleep(1000);
         videoIo.send(new SeekElapsedTimeCmd(Duration.ofMillis(400000)));
         videoIo.send(VideoCommands.REQUEST_INDEX);
         videoIo.send(VideoCommands.PLAY);
-        videoIo.send(new FrameCaptureCmd(uuid, UUID.randomUUID(), png2.normalize().toAbsolutePath().toString()));
+        videoIo.send(new FrameCaptureCmd(uuid, UUID.randomUUID(), png2.toString()));
         Thread.sleep(1000);
         videoIo.send(RemoteCommands.CLOSE);
         io.close();
         System.out.println("Verifying frame captures");
-        if (png1.exists()) {
-            System.out.println("Frame capture saved to " + png1.getAbsolutePath());
-            png1.delete();
+        if (Files.exists(png1)) {
+            System.out.println("Frame capture saved to " + png1);
+            Files.deleteIfExists(png1);
         }
         else {
-            System.out.println("Frame capture FAILED for " + png1.getAbsolutePath());
+            System.out.println("Frame capture FAILED for " + png1);
         }
-        if (png2.exists()) {
-            System.out.println("Frame capture saved to " + png2.getAbsolutePath());
-            png2.delete();
+        if (Files.exists(png2)) {
+            System.out.println("Frame capture saved to " + png2);
+            Files.deleteIfExists(png2);
         }
         else {
-            System.out.println("Frame capture FAILED for " + png2.getAbsolutePath());
+            System.out.println("Frame capture FAILED for " + png2);
         }
 
         System.exit(0);
