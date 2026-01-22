@@ -14,6 +14,10 @@
   <description>Java API for communicating with video devices, both real and virtual.</description>
 
   <url>https://github.com/mbari-org/vcr4j</url>
+  <inceptionYear>2008</inceptionYear>
+  <organization>
+    <name>Monterey Bay Aquarium Research Institute</name>
+  </organization>
 
   <licenses>
     <license>
@@ -44,7 +48,7 @@
     <jserialcomm.version>2.11.0</jserialcomm.version>
     <jssc.version>2.8.0</jssc.version>
     <junit.version>4.13.2</junit.version>
-    <logback.version>1.5.12</logback.version>
+    <logback.version>1.5.17</logback.version>
     <purejavacomm.version>1.0.2.RELEASE</purejavacomm.version>
     <rx.version>3.1.8</rx.version>
     <slf4j.version>2.0.16</slf4j.version>
@@ -164,6 +168,32 @@
             <goals>
               <goal>sign</goal>
             </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <version>2.7.1</version>
+        <configuration>
+          <verbose>false</verbose>
+          <addSvnKeyWords>false</addSvnKeyWords>
+          <licenseName>apache_v2</licenseName>
+        </configuration>
+        <executions>
+          <execution>
+            <id>first</id>
+            <goals>
+              <goal>update-file-header</goal>
+            </goals>
+            <phase>process-sources</phase>
+            <configuration>
+              <roots>
+                <root>src/main/java</root>
+                <root>src/test</root>
+              </roots>
+            </configuration>
           </execution>
         </executions>
       </plugin>
