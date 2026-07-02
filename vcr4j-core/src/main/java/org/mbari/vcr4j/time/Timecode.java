@@ -144,12 +144,17 @@ public class Timecode {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Timecode timecode = (Timecode) o;
-        return Double.compare(timecode.frameRate, frameRate) == 0 && Double.compare(timecode.frames, frames) == 0 && Objects.equals(stringRepresentation, timecode.stringRepresentation);
+        // Double.compare treats NaN == NaN, which is the correct semantics here:
+        // two Timecodes both lacking frame/rate data are considered equal if their strings match.
+        return Double.compare(timecode.frameRate, frameRate) == 0
+                && Double.compare(timecode.frames, frames) == 0
+                && Objects.equals(stringRepresentation, timecode.stringRepresentation);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(frameRate, frames, stringRepresentation);
+        // Use Double.hashCode() explicitly so NaN produces a consistent, defined hash value.
+        return Objects.hash(Double.hashCode(frameRate), Double.hashCode(frames), stringRepresentation);
     }
 
 }
