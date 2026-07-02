@@ -84,7 +84,7 @@ public class RVideoIO implements VideoIO<RState, RError> {
 
     private final RResponseParser responseParser;
 
-    private List<Disposable> disposables = new ArrayList<>();
+    private final List<Disposable> disposables = new ArrayList<>();
 
     private final String connectionId;
 
@@ -345,10 +345,10 @@ public class RVideoIO implements VideoIO<RState, RError> {
                 opt.map(r -> new CommandResponse(command, r))
                         .ifPresent(responseSubject::onNext);
             } catch (Exception e) {
+                errorSubject.onNext(new RError(true, false, false, command));
                 // response will be null
                 if (log.isLoggable(System.Logger.Level.ERROR)) {
                     log.log(System.Logger.Level.ERROR, connectionId + " - UDP connection failed", e);
-                    errorSubject.onNext(new RError(true, false, false, command));
                 }
             }
         }
@@ -356,7 +356,7 @@ public class RVideoIO implements VideoIO<RState, RError> {
     }
 
     public DatagramPacket asPacket(RCommand<?, ?> cmd) {
-        byte[] b = RVideoIO.GSON.toJson(cmd.getValue()).getBytes();
+        byte[] b = RVideoIO.GSON.toJson(cmd.getValue()).getBytes(StandardCharsets.UTF_8);
         return new DatagramPacket(b, b.length, inetAddress, port);
     }
 

@@ -38,7 +38,7 @@ import java.nio.file.Paths;
  */
 public class RxPlayerRequestHandler extends RxRequestHandler {
 
-    private static final System.Logger log = System.getLogger(RxControlRequestHandler.class.getName());
+    private static final System.Logger log = System.getLogger(RxPlayerRequestHandler.class.getName());
 
     private final RVideoIOLifeCycle lifeCycle;
 
@@ -71,7 +71,7 @@ public class RxPlayerRequestHandler extends RxRequestHandler {
 //        frameCaptureFn.accept(new FrameCaptureCmd(request));
         var path = Paths.get(request.getImageLocation());
         var response = new FrameCaptureCmd.Response(RResponse.OK);
-        if (!Files.isWritable(path)) {
+        if (!Files.isWritable(path.getParent())) {
             log.log(System.Logger.Level.WARNING, path + " is not writable. Unable to write frame-grab to that location.");
             response = new FrameCaptureCmd.Response(RResponse.FAILED);
         }

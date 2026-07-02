@@ -34,7 +34,9 @@ public class Converters {
             if (timecode.isComplete()) {
                 final double estimatedFrameRate = Math.round(timecode.getFrameRate());
                 final double estimatedFrames = Math.round(timecode.getFrames());
-                final boolean rounded = (estimatedFrameRate % 1) + (estimatedFrames % 1) != 0;
+                // final boolean rounded = (estimatedFrameRate % 1) + (estimatedFrames % 1) != 0;
+                final boolean rounded = timecode.getFrameRate() != estimatedFrameRate                                                                          
+                 || timecode.getFrames() != estimatedFrames;
                 mt = new MediaTime((long) estimatedFrames, (int) estimatedFrameRate, rounded);
             }
         }

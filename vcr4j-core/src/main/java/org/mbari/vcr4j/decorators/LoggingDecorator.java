@@ -111,7 +111,7 @@ public class LoggingDecorator<S extends VideoState, E extends VideoError> implem
         }
     };
 
-    protected final Observer<VideoCommand> commandSubscriber = new Observer<VideoCommand>() {
+    protected final Observer<VideoCommand<?>> commandSubscriber = new Observer<VideoCommand<?>>() {
         @Override
         public void onComplete() {
             log.log(System.Logger.Level.DEBUG, "State observable is closed");
@@ -123,7 +123,7 @@ public class LoggingDecorator<S extends VideoState, E extends VideoError> implem
         }
 
         @Override
-        public void onNext(VideoCommand command) {
+        public void onNext(VideoCommand<?> command) {
             log.log(System.Logger.Level.DEBUG, () -> "Sending: " + new VideoCommandAsString(command).toString());
         }
 

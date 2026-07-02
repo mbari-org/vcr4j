@@ -89,7 +89,7 @@ public class VideoController<S extends VideoState, E extends VideoError> {
         io.send(new SeekTimecodeCmd(timecode));
     }
 
-    public <A extends VideoCommand> void send(A command) {
+    public <A extends VideoCommand<?>> void send(A command) {
         io.send(command);
     }
     

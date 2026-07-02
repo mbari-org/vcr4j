@@ -46,13 +46,6 @@ public class HMSF {
     private final int frame;
     private String stringRepresentation;
 
-    private static final NumberFormat FORMAT = new DecimalFormat() {
-        {
-            setMaximumFractionDigits(0);
-            setMinimumIntegerDigits(2);
-            setMaximumIntegerDigits(2);
-        }
-    };
 
     private static final Pattern REGEX = Pattern.compile("^\\d{2}:\\d{2}:\\d{2}:\\d{2}");
 
@@ -127,10 +120,7 @@ public class HMSF {
     @Override
     public String toString() {
         if (stringRepresentation == null) {
-            stringRepresentation =  FORMAT.format(hour) + ':' +
-                    FORMAT.format(minute) + ':' +
-                    FORMAT.format(second) + ':' +
-                    FORMAT.format(frame);
+            stringRepresentation = String.format("%02d:%02d:%02d:%02d", hour, minute, second, frame);
         }
         return stringRepresentation;
     }

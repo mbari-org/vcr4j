@@ -142,8 +142,13 @@ public class PlayerIO {
 
     public void close() {
         ok = false;
-        server.close();
-        serverExecutor.shutdown();
+        // server may be null if init failed
+        if (server != null && !server.isClosed()) { 
+            server.close();
+        }
+        if (serverExecutor != null && !serverExecutor.isShutdown()) {
+            serverExecutor.shutdownNow();
+        }
     }
 
     public RequestHandler getRequestHandler() {

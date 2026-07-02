@@ -115,10 +115,10 @@ public class RState implements VideoState {
         else if (rate == 0.0) {
             return State.PAUSED;
         }
-        else if (rate > 1.0) {
+        else if (rate > 0.0) {
             return State.SHUTTLE_FORWARD;
         }
-        else if (rate < 1.0) {
+        else if (rate < 0.0) {
             return State.SHUTTLE_REVERSE;
         }
         else {

@@ -48,7 +48,7 @@ import org.mbari.vcr4j.commands.VideoCommands;
  */
 public class StatusDecorator<S extends VideoState, E extends VideoError> implements Decorator {
 
-    private final Observer<VideoCommand> commandSubscriber;
+    private final Observer<VideoCommand<?>> commandSubscriber;
 
     private Disposable disposable;
 
@@ -61,7 +61,7 @@ public class StatusDecorator<S extends VideoState, E extends VideoError> impleme
             public void onError(Throwable throwable) { }
 
             @Override
-            public void onNext(VideoCommand cmd) {
+            public void onNext(VideoCommand<?> cmd) {
                 if (cmd.equals(VideoCommands.FAST_FORWARD)
                         || cmd.equals(VideoCommands.PLAY)
                         || cmd.equals(VideoCommands.REWIND)

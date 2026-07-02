@@ -1,5 +1,7 @@
 package org.mbari.vcr4j.time;
 
+import java.util.Objects;
+
 /*-
  * #%L
  * vcr4j-core
@@ -137,6 +139,18 @@ public class Timecode {
         return new Timecode(0, FrameRates.NTSC);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Timecode timecode = (Timecode) o;
+        return Double.compare(timecode.frameRate, frameRate) == 0 && Double.compare(timecode.frames, frames) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(frameRate, frames);
+    }
 
 }
 

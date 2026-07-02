@@ -41,7 +41,7 @@ public class Pair<A,B> implements Tuple {
     @Override public int size() { return 2; }
 
     @Override public Object getValueAt(final int i) {
-        if (0 > i && i >= size()) { throw new IllegalArgumentException("Index out of bounds, " + getClass().getSimpleName() + " has " + size() + " elements"); }
+        if (i < 0 || i >= size()) { throw new IllegalArgumentException("Index out of bounds, " + getClass().getSimpleName() + " has " + size() + " elements"); }
         switch(i) {
             case 0  -> { return this.a;    }
             case 1  -> { return this.b;    }
@@ -50,7 +50,7 @@ public class Pair<A,B> implements Tuple {
     }
 
     @Override public Class getTypeAt(final int i) {
-        if (0 > i && i >= size()) { throw new IllegalArgumentException("Index out of bounds, " + getClass().getSimpleName() + " has " + size() + " elements"); }
+        if (i < 0 || i >= size()) { throw new IllegalArgumentException("Index out of bounds, " + getClass().getSimpleName() + " has " + size() + " elements"); }
         switch(i) {
             case 0  -> { return this.a.getClass(); }
             case 1  -> { return this.b.getClass(); }

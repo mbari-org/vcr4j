@@ -36,6 +36,11 @@ public class NoopCmd extends RCommand<NoopCmd.Request, NoopCmd.Response> {
         return Response.class;
     }
 
+    @Override
+    public String getName() {
+        return "noop";
+    }
+
     public static class Request extends RRequest {
         public Request(String command, UUID uuid) {
             super(command, uuid);

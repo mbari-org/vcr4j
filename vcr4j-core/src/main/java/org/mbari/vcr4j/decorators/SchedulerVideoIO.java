@@ -51,7 +51,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class SchedulerVideoIO<S extends VideoState, E extends VideoError> implements VideoIO<S, E>, Decorator {
 
-    private final VideoIO io;
+    private final VideoIO<S, E> io;
 
     private final Observable<E> errorObservable;
     private final Observable<S> stateObservable;
@@ -173,6 +173,7 @@ public class SchedulerVideoIO<S extends VideoState, E extends VideoError> implem
 
         void kill() {
             isRunning.set(false);
+            thread.interrupt();
         }
 
         void send(VideoCommand videoCommand) {

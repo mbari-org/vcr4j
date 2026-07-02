@@ -38,7 +38,7 @@ public class VideoIndex {
 
     public VideoIndex(Optional<Instant> timestamp, Optional<Duration> elapsedTime, Optional<Timecode> timecode) {
         Preconditions.checkArgument(timestamp != null && elapsedTime != null && timecode != null,
-            "VideoIndex does not except null arguments");
+            "VideoIndex does not accept null arguments");
         this.timestamp   = timestamp;
         this.elapsedTime = elapsedTime;
         this.timecode    = timecode;
@@ -83,10 +83,14 @@ public class VideoIndex {
 
         VideoIndex that = (VideoIndex) o;
 
-        String tcThis = timecode.map(Timecode::toString).orElse(Timecode.EMPTY_TIMECODE_STRING);
-        String tcThat = that.getTimecode().map(Timecode::toString).orElse(Timecode.EMPTY_TIMECODE_STRING);
+        // String tcThis = timecode.map(Timecode::toString).orElse(Timecode.EMPTY_TIMECODE_STRING);
+        // String tcThat = that.getTimecode().map(Timecode::toString).orElse(Timecode.EMPTY_TIMECODE_STRING);
 
-        if (!tcThis.equals(tcThat)) {
+        // if (!tcThis.equals(tcThat)) {
+        //     return false;
+        // }
+
+        if (!timecode.equals(that.getTimecode())) {
             return false;
         }
 

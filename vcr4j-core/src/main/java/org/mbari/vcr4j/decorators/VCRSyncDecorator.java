@@ -111,6 +111,8 @@ public class VCRSyncDecorator<S extends VideoState, E extends VideoError> implem
     public void unsubscribe() {
         timer.purge();
         timer.cancel();
-        disposable.dispose();
+        if (disposable != null) {
+            disposable.dispose();
+        }
     }
 }

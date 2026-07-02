@@ -97,6 +97,8 @@ public class VideoSyncDecorator<S extends VideoState, E extends VideoError> impl
     @Override
     public void unsubscribe() {
         timer.cancel();
-        disposable.dispose();
+        if (disposable != null) {
+            disposable.dispose();
+        }
     }
 }

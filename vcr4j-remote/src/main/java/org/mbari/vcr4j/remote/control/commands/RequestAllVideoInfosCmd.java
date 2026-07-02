@@ -61,10 +61,14 @@ public class RequestAllVideoInfosCmd
 
         public Response(List<VideoInfo> videos) {
             super(COMMAND, null);
-            this.videos = videos.stream()
-                    .map(VideoInfoBean::from)
-                    .toList();
-
+            if (videos == null) {
+                this.videos = List.of();
+            }
+            else {
+                this.videos = videos.stream()
+                        .map(VideoInfoBean::from)
+                        .toList();
+            }
         }
 
         public List<VideoInfoBean> getVideos() {

@@ -27,5 +27,5 @@ package org.mbari.vcr4j.time;
  * @since 2015-09-24T14:42:00
  */
 public class FrameRates {
-    public static double NTSC = 29.97;
+    public static final double NTSC = 29.97;
 }
