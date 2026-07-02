@@ -144,12 +144,12 @@ public class Timecode {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Timecode timecode = (Timecode) o;
-        return Double.compare(timecode.frameRate, frameRate) == 0 && Double.compare(timecode.frames, frames) == 0;
+        return Double.compare(timecode.frameRate, frameRate) == 0 && Double.compare(timecode.frames, frames) == 0 && Objects.equals(stringRepresentation, timecode.stringRepresentation);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(frameRate, frames);
+        return Objects.hash(frameRate, frames, stringRepresentation);
     }
 
 }
