@@ -266,7 +266,7 @@ public class RVideoIO implements VideoIO<RState, RError> {
     }
 
     @Override
-    public void close() {
+public synchronized void close() {
         if (closed) {
             return;
         }
