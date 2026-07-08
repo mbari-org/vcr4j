@@ -66,6 +66,8 @@ public class RVideoIO implements VideoIO<RState, RError> {
 
     public static final double MAX_SHUTTLE_RATE = 8.0;
     public static final double DEFAULT_SHUTTLE_RATE = 3.0;
+    public static final int MAX_TIMEOUT_MILLIS = 20000;
+    public static final int DEFAULT_TIMEOUT_MILLIS = 1000;
 
     private final int port;
     private final InetAddress inetAddress;
@@ -295,7 +297,7 @@ public synchronized void close() {
                 .subscribe(cmd -> latch.countDown());
         try {
             commandSubject.onNext(sentinel);
-            if (!latch.await(5, TimeUnit.SECONDS)) {
+            if (!latch.await(MAX_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)) {
                 log.log(System.Logger.Level.WARNING,
                         connectionId + " - Timed out waiting for queued commands to be sent before closing");
             }
@@ -348,7 +350,7 @@ public synchronized void close() {
         if (!closed) {
             try (var socket = new DatagramSocket()) {
                 // try {
-                int timeout = (command instanceof OpenCmd) ? 20000 : 1000;
+                int timeout = (command instanceof OpenCmd) ? MAX_TIMEOUT_MILLIS : DEFAULT_TIMEOUT_MILLIS;
                 socket.setSoTimeout(timeout);
 
                 var incomingBytes = new byte[sizeBytes];
