@@ -92,7 +92,7 @@ public class RVideoIO implements VideoIO<RState, RError> {
 
     private final String connectionId;
 
-    private boolean closed = false;
+    private volatile boolean closed = false;
 
     public RVideoIO(UUID uuid, String host, int port) throws UnknownHostException, SocketException {
 //        Preconditions.checkArgument(uuid != null, "UUID is required");
@@ -268,18 +268,27 @@ public class RVideoIO implements VideoIO<RState, RError> {
     }
 
     @Override
-public synchronized void close() {
+    public void close() {
         if (closed) {
             return;
         }
+        // Flush queued commands BEFORE taking the lock. The queued commands are
+        // dispatched on the emitter thread via sendCommand(), which is
+        // synchronized(this); holding the lock here would deadlock that dispatch and
+        // the queued CloseCmd would never be sent.
         drainPendingCommands();
-        disposables.forEach(Disposable::dispose);
-        commandSubject.onComplete();
-        indexSubject.onComplete();
-        errorSubject.onComplete();
-        stateSubject.onComplete();
-        videoInfoSubject.onComplete();
-        closed = true;
+        synchronized (this) {
+            if (closed) {
+                return;
+            }
+            disposables.forEach(Disposable::dispose);
+            commandSubject.onComplete();
+            indexSubject.onComplete();
+            errorSubject.onComplete();
+            stateSubject.onComplete();
+            videoInfoSubject.onComplete();
+            closed = true;
+        }
     }
 
     /**
