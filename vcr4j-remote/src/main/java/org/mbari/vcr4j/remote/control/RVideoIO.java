@@ -42,6 +42,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 /**
  * A {@link VideoIO} for the UPD remote control. This class manages the outbound UDP commands from
@@ -265,12 +267,10 @@ public class RVideoIO implements VideoIO<RState, RError> {
 
     @Override
     public void close() {
-        // FIX https://github.com/dingosky/Sharktopoda/issues/4
-//        if (socket != null && (!socket.isClosed() || socket.isConnected())) {
-        //     log.atInfo().log("Disconnecting from " + connectionId );
-        //     socket.close();
-        // }
-        // socket = null;
+        if (closed) {
+            return;
+        }
+        drainPendingCommands();
         disposables.forEach(Disposable::dispose);
         commandSubject.onComplete();
         indexSubject.onComplete();
@@ -278,6 +278,34 @@ public class RVideoIO implements VideoIO<RState, RError> {
         stateSubject.onComplete();
         videoInfoSubject.onComplete();
         closed = true;
+    }
+
+    /**
+     * The command subject is serialized: send() from one thread while another thread is
+     * mid-emission (blocked in sendCommand waiting for the video player's UDP response)
+     * only queues the command and returns. Wait for queued commands to be dispatched
+     * before disposing the subscribers that transmit them, otherwise commands sent just
+     * before close() — typically the CloseCmd telling the player to close the video —
+     * are silently dropped.
+     */
+    private void drainPendingCommands() {
+        var sentinel = new NoopCmd();
+        var latch = new CountDownLatch(1);
+        var disposable = commandSubject.filter(cmd -> cmd == sentinel)
+                .subscribe(cmd -> latch.countDown());
+        try {
+            commandSubject.onNext(sentinel);
+            if (!latch.await(5, TimeUnit.SECONDS)) {
+                log.log(System.Logger.Level.WARNING,
+                        connectionId + " - Timed out waiting for queued commands to be sent before closing");
+            }
+        }
+        catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        finally {
+            disposable.dispose();
+        }
     }
 
     public boolean isClosed() {
