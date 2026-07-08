@@ -87,7 +87,7 @@ public class RVideoIOCloseTest {
             var inFlight = new Thread(() -> io.send(new FrameAdvanceCmd(uuid)));
             inFlight.setDaemon(true);
             inFlight.start();
-            Thread.sleep(150);
+            Thread.sleep(500);
 
             io.send(new CloseCmd(uuid)); // queued behind the in-flight frame advance
             io.close();                  // must not drop the queued CloseCmd
