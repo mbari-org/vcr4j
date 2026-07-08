@@ -64,6 +64,8 @@ public class RVideoIO implements VideoIO<RState, RError> {
 
     public static final double MAX_SHUTTLE_RATE = 8.0;
     public static final double DEFAULT_SHUTTLE_RATE = 3.0;
+    public static final int MAX_TIMEOUT_MILLIS = 20000;
+    public static final int DEFAULT_TIMEOUT_MILLIS = 1000;
 
     private final int port;
     private final InetAddress inetAddress;
@@ -320,7 +322,7 @@ public class RVideoIO implements VideoIO<RState, RError> {
         if (!closed) {
             try (var socket = new DatagramSocket()) {
                 // try {
-                int timeout = (command instanceof OpenCmd) ? 20000 : 1000;
+                int timeout = (command instanceof OpenCmd) ? MAX_TIMEOUT_MILLIS : DEFAULT_TIMEOUT_MILLIS;
                 socket.setSoTimeout(timeout);
 
                 var incomingBytes = new byte[sizeBytes];
