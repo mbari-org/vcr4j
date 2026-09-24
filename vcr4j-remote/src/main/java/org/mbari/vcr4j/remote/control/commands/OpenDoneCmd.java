@@ -29,6 +29,7 @@ public class OpenDoneCmd {
     public static class Request extends RRequest {
 
         private String status;
+        private String cause;
 
         public Request(UUID uuid, String status) {
             super(COMMAND, uuid);
@@ -37,6 +38,10 @@ public class OpenDoneCmd {
 
         public String getStatus() {
             return status;
+        }
+
+        public String getCause() {
+            return cause;
         }
 
         public boolean isOk() {

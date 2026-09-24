@@ -25,6 +25,7 @@ import org.mbari.vcr4j.decorators.StatusDecorator;
 import org.mbari.vcr4j.decorators.VideoSyncDecorator;
 import org.mbari.vcr4j.remote.control.commands.ConnectCmd;
 import org.mbari.vcr4j.remote.control.commands.FrameCaptureDoneCmd;
+import org.mbari.vcr4j.remote.control.commands.OpenDoneCmd;
 import org.mbari.vcr4j.remote.player.PlayerIO;
 import org.mbari.vcr4j.remote.player.RxControlRequestHandler;
 import org.mbari.vcr4j.util.Preconditions;
@@ -98,6 +99,7 @@ public class RemoteControl implements Closeable {
         private int port = 8899;
         private String selfHost;
         private Consumer<FrameCaptureDoneCmd> frameCaptureDoneFn = (f) -> {};
+        private Consumer<OpenDoneCmd.Request> openDoneFn = (r) -> {};
 
         private boolean withMonitoring = false;
         private boolean withLogging = false;
@@ -150,6 +152,11 @@ public class RemoteControl implements Closeable {
             return this;
         }
 
+        public Builder whenOpenIsDone(Consumer<OpenDoneCmd.Request> fn) {
+            openDoneFn = fn;
+            return this;
+        }
+
 
         public Optional<RemoteControl> build() {
 
@@ -159,7 +166,7 @@ public class RemoteControl implements Closeable {
 
             try {
                 var videoIo = new RVideoIO(uuid, remoteHost, remotePort);
-                var player = new RxControlRequestHandler(frameCaptureDoneFn);
+                var player = new RxControlRequestHandler(frameCaptureDoneFn, openDoneFn);
                 var playerIo = new PlayerIO(port, player);
 
                 var remoteControl = new RemoteControl(videoIo, playerIo, frameCaptureDoneFn);
