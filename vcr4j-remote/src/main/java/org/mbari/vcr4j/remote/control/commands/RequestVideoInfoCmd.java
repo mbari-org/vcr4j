@@ -1,24 +1,19 @@
-package org.mbari.vcr4j.remote.control.commands;
-
-/*-
- * #%L
- * vcr4j-remote
- * %%
- * Copyright (C) 2008 - 2026 Monterey Bay Aquarium Research Institute
- * %%
+/*
+ * Copyright © 2008 MBARI (brian@mbari.org)
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * #L%
  */
+package org.mbari.vcr4j.remote.control.commands;
 
 import java.net.URL;
 import java.util.UUID;
@@ -58,7 +53,7 @@ public class RequestVideoInfoCmd extends RCommand<RequestVideoInfoCmd.Request, R
         private Boolean isKey;
 
         public Response(UUID uuid, URL url, Long durationMillis, Double frameRate) {
-            super(COMMAND, null);
+            super(COMMAND, RResponse.OK);
             this.uuid = uuid;
             this.url = url;
             this.durationMillis = durationMillis;
@@ -97,7 +92,10 @@ public class RequestVideoInfoCmd extends RCommand<RequestVideoInfoCmd.Request, R
 
         @Override
         public boolean success() {
-            return getUuid() != null && durationMillis != null && frameRate != null;
+            return isOk()
+                    && getUuid() != null
+                    && durationMillis != null
+                    && frameRate != null;
         }
     }
 }

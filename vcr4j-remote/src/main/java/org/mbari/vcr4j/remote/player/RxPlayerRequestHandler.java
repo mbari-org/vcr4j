@@ -1,24 +1,19 @@
-package org.mbari.vcr4j.remote.player;
-
-/*-
- * #%L
- * vcr4j-remote
- * %%
- * Copyright (C) 2008 - 2026 Monterey Bay Aquarium Research Institute
- * %%
+/*
+ * Copyright © 2008 MBARI (brian@mbari.org)
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * #L%
  */
+package org.mbari.vcr4j.remote.player;
 
 import org.mbari.vcr4j.remote.control.RVideoIO;
 import org.mbari.vcr4j.remote.control.commands.ConnectCmd;
@@ -68,11 +63,12 @@ public class RxPlayerRequestHandler extends RxRequestHandler {
 
     @Override
     public FrameCaptureCmd.Response handleFrameCaptureRequest(FrameCaptureCmd.Request request) {
-//        frameCaptureFn.accept(new FrameCaptureCmd(request));
-        var path = Paths.get(request.getImageLocation());
+        // getParent() is null for a bare filename; toAbsolutePath() resolves against the JVM
+        // working directory so the writability check has a real directory to test.
+        var path = Paths.get(request.getImageLocation()).toAbsolutePath();
         var response = new FrameCaptureCmd.Response(RResponse.OK);
         if (!Files.isWritable(path.getParent())) {
-            log.log(System.Logger.Level.WARNING, path + " is not writable. Unable to write frame-grab to that location.");
+            log.log(System.Logger.Level.WARNING, path.getParent() + " is not writable. Unable to write frame-grab to " + path);
             response = new FrameCaptureCmd.Response(RResponse.FAILED);
         }
         else if (Files.exists(path)) {
@@ -88,7 +84,19 @@ public class RxPlayerRequestHandler extends RxRequestHandler {
                         var msg = RVideoIO.GSON.toJson(resp);
                         log.log(System.Logger.Level.DEBUG, "Framecapture is done. Sending: \n" + msg);
                     }
-                    lifeCycle.get().ifPresent(io -> io.send(resp));
+                    var io = lifeCycle.get();
+                    if (io.isPresent()) {
+                        io.get().send(resp);
+                    }
+                    else {
+                        // No connection when the async capture finished — the controller
+                        // that requested this frame will never receive the done cmd. Callers
+                        // blocking on the done callback will hang; surface it in the log.
+                        log.log(System.Logger.Level.WARNING,
+                                "No active connection to send FrameCaptureDoneCmd for uuid="
+                                        + request.getUuid() + ", imageReferenceUuid="
+                                        + request.getImageReferenceUuid() + " — dropping response");
+                    }
                     return null;
                 });
 

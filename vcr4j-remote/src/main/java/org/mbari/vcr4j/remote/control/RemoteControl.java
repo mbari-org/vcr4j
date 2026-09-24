@@ -1,25 +1,21 @@
-package org.mbari.vcr4j.remote.control;
-
-/*-
- * #%L
- * vcr4j-remote
- * %%
- * Copyright (C) 2008 - 2026 Monterey Bay Aquarium Research Institute
- * %%
+/*
+ * Copyright © 2008 MBARI (brian@mbari.org)
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * #L%
  */
+package org.mbari.vcr4j.remote.control;
 
+import org.mbari.vcr4j.decorators.Decorator;
 import org.mbari.vcr4j.decorators.LoggingDecorator;
 import org.mbari.vcr4j.decorators.StatusDecorator;
 import org.mbari.vcr4j.decorators.VideoSyncDecorator;
@@ -34,6 +30,8 @@ import org.mbari.vcr4j.util.Preconditions;
 import java.io.Closeable;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -49,11 +47,17 @@ public class RemoteControl implements Closeable {
 
     private final PlayerIO playerIO;
 
+    // Held so close() can call unsubscribe(); otherwise decorators wired up in the builder
+    // would be unreachable and their subscriptions/timers could only be torn down by
+    // completing the underlying subjects via videoIO.close().
+    private final List<Decorator> decorators;
+
     private RemoteControl(RVideoIO videoIO,
                          PlayerIO playerIO,
-                         Consumer<FrameCaptureDoneCmd> frameCaptureDoneFn) {
+                         List<Decorator> decorators) {
         this.videoIO = videoIO;
         this.playerIO = playerIO;
+        this.decorators = List.copyOf(decorators);
     }
 
     public RVideoIO getVideoIO() {
@@ -70,6 +74,7 @@ public class RemoteControl implements Closeable {
 
     @Override
     public void close() {
+        decorators.forEach(Decorator::unsubscribe);
         videoIO.close();
         playerIO.close();
         getRequestHandler().close();
@@ -169,17 +174,18 @@ public class RemoteControl implements Closeable {
                 var player = new RxControlRequestHandler(frameCaptureDoneFn, openDoneFn);
                 var playerIo = new PlayerIO(port, player);
 
-                var remoteControl = new RemoteControl(videoIo, playerIo, frameCaptureDoneFn);
-
+                var decorators = new ArrayList<Decorator>();
                 if (withMonitoring) {
-                    new VideoSyncDecorator<>(videoIo);
+                    decorators.add(new VideoSyncDecorator<>(videoIo));
                 }
                 if (withLogging) {
-                    new LoggingDecorator<>(videoIo);
+                    decorators.add(new LoggingDecorator<>(videoIo));
                 }
                 if (withStatus) {
-                    new StatusDecorator<>(videoIo);
+                    decorators.add(new StatusDecorator<>(videoIo));
                 }
+
+                var remoteControl = new RemoteControl(videoIo, playerIo, decorators);
 
                 videoIo.send(new ConnectCmd(port, selfHost, uuid));
                 return Optional.of(remoteControl);

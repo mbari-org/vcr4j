@@ -1,24 +1,19 @@
-package org.mbari.vcr4j.remote.control;
-
-/*-
- * #%L
- * vcr4j-remote
- * %%
- * Copyright (C) 2008 - 2026 Monterey Bay Aquarium Research Institute
- * %%
+/*
+ * Copyright © 2008 MBARI (brian@mbari.org)
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * #L%
  */
+package org.mbari.vcr4j.remote.control;
 
 import org.mbari.vcr4j.VideoState;
 
@@ -100,10 +95,13 @@ public class RState implements VideoState {
     }
 
     public static RState parse(String name) {
+        // Unrecognized names map to UNKNOWN_ERROR, not NOT_FOUND — "not found" is a real
+        // wire value meaning the video is not loaded (isConnected() = false), and we don't
+        // want to conflate a genuine not-found response with a garbled/unexpected one.
         var state = Arrays.stream(State.values())
                 .filter(s -> s.getName().equalsIgnoreCase(name))
                 .findFirst()
-                .orElse(State.NOT_FOUND);
+                .orElse(State.UNKNOWN_ERROR);
         return new RState(state);
     }
 

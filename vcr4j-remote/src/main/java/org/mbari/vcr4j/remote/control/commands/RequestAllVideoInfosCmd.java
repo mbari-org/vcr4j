@@ -1,28 +1,21 @@
-package org.mbari.vcr4j.remote.control.commands;
-
-/*-
- * #%L
- * vcr4j-remote
- * %%
- * Copyright (C) 2008 - 2026 Monterey Bay Aquarium Research Institute
- * %%
+/*
+ * Copyright © 2008 MBARI (brian@mbari.org)
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * #L%
  */
+package org.mbari.vcr4j.remote.control.commands;
 
-import java.net.URL;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Request information about all open videos
@@ -60,7 +53,7 @@ public class RequestAllVideoInfosCmd
         private List<VideoInfoBean> videos;
 
         public Response(List<VideoInfo> videos) {
-            super(COMMAND, null);
+            super(COMMAND, RResponse.OK);
             if (videos == null) {
                 this.videos = List.of();
             }
@@ -77,7 +70,12 @@ public class RequestAllVideoInfosCmd
 
         @Override
         public boolean success() {
-            return true;
+            // GSON bypasses the constructor's null-normalization, so a wire response that
+            // omits "videos" leaves this field null. Callers that treat success() as a
+            // green light to call getVideos().stream() would NPE — guard here. Also gate
+            // on isOk() so a status:"failed" response that still carries a videos array
+            // isn't treated as success.
+            return isOk() && videos != null;
         }
     }
 }

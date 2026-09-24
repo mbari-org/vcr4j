@@ -1,24 +1,19 @@
-package org.mbari.vcr4j.remote.player;
-
-/*-
- * #%L
- * vcr4j-remote
- * %%
- * Copyright (C) 2008 - 2026 Monterey Bay Aquarium Research Institute
- * %%
+/*
+ * Copyright © 2008 MBARI (brian@mbari.org)
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * #L%
  */
+package org.mbari.vcr4j.remote.player;
 
 import com.google.gson.Gson;
 
@@ -29,8 +24,10 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -45,7 +42,7 @@ public class PlayerIO {
 
     private final int port;
     private final RequestHandler requestHandler;
-    private DatagramSocket server;
+    private volatile DatagramSocket server;
     private final ExecutorService serverExecutor = Executors.newSingleThreadExecutor();
     private volatile boolean ok = true;
 
@@ -79,7 +76,7 @@ public class PlayerIO {
 
     private void respond(RResponse response, InetAddress address, int port) throws IOException {
         var msg = gson.toJson(response);
-        var bytes = msg.getBytes();
+        var bytes = msg.getBytes(StandardCharsets.UTF_8);
         var responsePacket = new DatagramPacket(bytes, bytes.length, address, port);
         if (log.isLoggable(System.Logger.Level.DEBUG)) {
             log.log(System.Logger.Level.DEBUG,connectionId + " - Responding >>> " + msg);
@@ -122,7 +119,7 @@ public class PlayerIO {
                 }
                 try {
                     server.receive(packet);
-                    String msg = new String(packet.getData(), 0, packet.getLength());
+                    String msg = new String(packet.getData(), 0, packet.getLength(), StandardCharsets.UTF_8);
                     log.log(System.Logger.Level.DEBUG, connectionId + " - Received command <<< " + msg);
                     var simpleRequest = RVideoIO.GSON.fromJson(msg, SimpleRequest.class);
                     simpleRequest.setRaw(msg);
@@ -142,12 +139,23 @@ public class PlayerIO {
 
     public void close() {
         ok = false;
-        // server may be null if init failed
-        if (server != null && !server.isClosed()) { 
+        if (server != null && !server.isClosed()) {
             server.close();
         }
-        if (serverExecutor != null && !serverExecutor.isShutdown()) {
+        if (!serverExecutor.isShutdown()) {
             serverExecutor.shutdownNow();
+            // Wait for the server loop to actually exit before returning. Callers (e.g.
+            // VideoControl.close, RemoteControl.close) then close the request handler,
+            // and if the loop is still running it can dispatch to a handler mid-close.
+            try {
+                if (!serverExecutor.awaitTermination(2, TimeUnit.SECONDS)) {
+                    log.log(System.Logger.Level.WARNING,
+                            connectionId + " - Server executor did not terminate within 2s of shutdownNow()");
+                }
+            }
+            catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
         }
     }
 

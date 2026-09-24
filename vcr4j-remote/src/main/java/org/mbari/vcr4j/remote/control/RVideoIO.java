@@ -1,24 +1,19 @@
-package org.mbari.vcr4j.remote.control;
-
-/*-
- * #%L
- * vcr4j-remote
- * %%
- * Copyright (C) 2008 - 2026 Monterey Bay Aquarium Research Institute
- * %%
+/*
+ * Copyright © 2008 MBARI (brian@mbari.org)
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * #L%
  */
+package org.mbari.vcr4j.remote.control;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -348,7 +343,7 @@ public class RVideoIO implements VideoIO<RState, RError> {
         return videoInfoSubject;
     }
 
-    public Observable<CommandResponse> getResponseSubject() {
+    public Observable<CommandResponse> getResponseObservable() {
         return responseSubject;
     }
 
@@ -368,7 +363,7 @@ public class RVideoIO implements VideoIO<RState, RError> {
                 socket.send(packet);
 
                 if (log.isLoggable(System.Logger.Level.DEBUG)) { // && command.getName().contains("localization")) {
-                    log.log(System.Logger.Level.DEBUG, connectionId + " - Sending command >>> " + new String(packet.getData()));
+                    log.log(System.Logger.Level.DEBUG, connectionId + " - Sending command >>> " + new String(packet.getData(), StandardCharsets.UTF_8));
                 }
 
                 socket.receive(incomingPacket);    // blocks until returned on timeout
@@ -385,7 +380,6 @@ public class RVideoIO implements VideoIO<RState, RError> {
                         .ifPresent(responseSubject::onNext);
             } catch (Exception e) {
                 errorSubject.onNext(new RError(true, false, false, command));
-                // response will be null
                 if (log.isLoggable(System.Logger.Level.ERROR)) {
                     log.log(System.Logger.Level.ERROR, connectionId + " - UDP connection failed", e);
                 }

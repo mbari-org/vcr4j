@@ -1,4 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright © 2008 MBARI (brian@mbari.org)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -45,13 +62,13 @@
     <gson.version>2.14.0</gson.version>
     <javafx.version>22</javafx.version>
     <jeromq.version>0.5.4</jeromq.version>
-    <jserialcomm.version>2.11.0</jserialcomm.version>
+    <jserialcomm.version>2.11.4</jserialcomm.version>
     <jssc.version>2.8.0</jssc.version>
     <junit.version>4.13.2</junit.version>
-    <logback.version>1.5.37</logback.version>
+    <logback.version>1.6.4</logback.version>
     <purejavacomm.version>1.0.2.RELEASE</purejavacomm.version>
     <rx.version>3.1.12</rx.version>
-    <slf4j.version>2.0.18</slf4j.version>
+    <slf4j.version>2.0.19</slf4j.version>
   </properties>
 
   <dependencies>
@@ -173,27 +190,41 @@
       </plugin>
 
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
+        <groupId>com.mycila</groupId>
         <artifactId>license-maven-plugin</artifactId>
-        <version>2.7.1</version>
+        <version>5.1.0</version>
         <configuration>
-          <verbose>false</verbose>
-          <addSvnKeyWords>false</addSvnKeyWords>
-          <licenseName>apache_v2</licenseName>
+          <properties>
+            <owner>MBARI</owner>
+            <email>brian@mbari.org</email>
+          </properties>
+          <licenseSets>
+            <licenseSet>
+              <header>com/mycila/maven/plugin/license/templates/APACHE-2.txt</header>
+              <excludes>
+                <exclude>**/README*</exclude>
+                <exclude>src/test/resources/**</exclude>
+                <exclude>src/main/resources/**</exclude>
+                <exclude>**/*.json</exclude>
+              </excludes>
+            </licenseSet>
+          </licenseSets>
         </configuration>
+        <dependencies>
+          <!-- Optional: automatically derive copyright years from Git history -->
+          <dependency>
+            <groupId>com.mycila</groupId>
+            <artifactId>license-maven-plugin-git</artifactId>
+            <version>5.1.0</version>
+          </dependency>
+        </dependencies>
         <executions>
           <execution>
-            <id>first</id>
+            <id>check-license</id>
+            <phase>verify</phase>
             <goals>
-              <goal>update-file-header</goal>
+              <goal>check</goal>
             </goals>
-            <phase>process-sources</phase>
-            <configuration>
-              <roots>
-                <root>src/main/java</root>
-                <root>src/test</root>
-              </roots>
-            </configuration>
           </execution>
         </executions>
       </plugin>
