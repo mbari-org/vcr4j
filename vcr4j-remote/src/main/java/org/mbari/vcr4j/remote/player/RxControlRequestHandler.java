@@ -24,6 +24,7 @@ package org.mbari.vcr4j.remote.player;
 import org.mbari.vcr4j.remote.control.commands.ConnectCmd;
 import org.mbari.vcr4j.remote.control.commands.FrameCaptureCmd;
 import org.mbari.vcr4j.remote.control.commands.FrameCaptureDoneCmd;
+import org.mbari.vcr4j.remote.control.commands.OpenDoneCmd;
 import org.mbari.vcr4j.remote.control.commands.RResponse;
 
 import java.util.function.Consumer;
@@ -39,17 +40,46 @@ public class RxControlRequestHandler extends RxRequestHandler {
     private static final System.Logger log = System.getLogger(RxControlRequestHandler.class.getName());
 
     private final Consumer<FrameCaptureDoneCmd> frameCaptureDoneFn;
+    private final Consumer<OpenDoneCmd.Request> openDoneFn;
 
     /**
+     * 'open done' ignored to preserve original API surface.
      *
      * @param frameCaptureDoneFn A function to do any post processing needed when
-     *                           are frame capture is completed. Ideally this
+     *                           our frame capture is completed. Ideally this
      *                           should handle things in a seperate thread so
      *                           as not to block the response.
      */
     public RxControlRequestHandler(Consumer<FrameCaptureDoneCmd> frameCaptureDoneFn) {
+        this(frameCaptureDoneFn, request -> {});
+    }
+
+    /**
+     * Added to support 'open done'. Implementation semantics preserve original API surface.
+     *
+     * @param frameCaptureDoneFn A function to do any post processing needed when
+     *                           our frame capture is completed. Ideally this
+     *                           should handle things in a seperate thread so
+     *                           as not to block the response.
+     * @param openDoneFn A function called when the video player reports that
+     *                   an open command has completed, successfully or not.
+     */
+    public RxControlRequestHandler(Consumer<FrameCaptureDoneCmd> frameCaptureDoneFn,
+                                   Consumer<OpenDoneCmd.Request> openDoneFn) {
         super(new NoopVideoController());
         this.frameCaptureDoneFn = frameCaptureDoneFn;
+        this.openDoneFn = openDoneFn;
+    }
+
+
+    @Override
+    public OpenDoneCmd.Response handleOpenDone(OpenDoneCmd.Request request) {
+        try {
+            openDoneFn.accept(request);
+        } catch (Exception e) {
+            log.log(System.Logger.Level.WARNING, "Exception while handling 'open done' notification", e);
+        }
+        return new OpenDoneCmd.Response();
     }
 
 
