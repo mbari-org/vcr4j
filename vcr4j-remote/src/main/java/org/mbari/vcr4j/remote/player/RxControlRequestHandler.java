@@ -74,7 +74,11 @@ public class RxControlRequestHandler extends RxRequestHandler {
 
     @Override
     public OpenDoneCmd.Response handleOpenDone(OpenDoneCmd.Request request) {
-        openDoneFn.accept(request);
+        try {
+            openDoneFn.accept(request);
+        } catch (Exception e) {
+            log.log(System.Logger.Level.WARNING, "Exception while handling 'open done' notification", e);
+        }
         return new OpenDoneCmd.Response();
     }
 
