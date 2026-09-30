@@ -56,6 +56,10 @@ public class UpdateLocalizationsCmd extends LocalizationsPayloadCmd<Localization
             super(COMMAND, status);
         }
 
+        public Response(String status, String cause) {
+            super(COMMAND, status, cause);
+        }
+
         @Override
         public boolean success() {
             return isOk();

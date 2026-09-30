@@ -56,6 +56,19 @@ public interface VideoController {
     boolean show(UUID videoUuid);
 
     /**
+     * Used to decide whether localization commands for a video can be accepted.
+     * Implementations should return true for any video that is open <i>or still
+     * loading</i>, since localization commands for a loading video are expected to
+     * be queued rather than rejected.
+     * @param videoUuid The UUID of the video
+     * @return true if the video is known to this player. The default is true, so
+     *  existing implementations continue to accept all localization commands.
+     */
+    default boolean hasVideo(UUID videoUuid) {
+        return true;
+    }
+
+    /**
      *
      * @return Returns a Video object representing the currently focused video/window.
      *  The optional is empty if no window is currently opened.

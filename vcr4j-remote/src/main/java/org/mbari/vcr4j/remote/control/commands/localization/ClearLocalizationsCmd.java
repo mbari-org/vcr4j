@@ -44,6 +44,10 @@ public class ClearLocalizationsCmd extends LocalizationsCmd<ClearLocalizationsCm
             super(COMMAND, status);
         }
 
+        public Response(String status, String cause) {
+            super(COMMAND, status, cause);
+        }
+
         @Override
         public boolean success() {
             return isOk();
