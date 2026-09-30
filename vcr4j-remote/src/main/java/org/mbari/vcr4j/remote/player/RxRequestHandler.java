@@ -29,11 +29,15 @@ import java.time.Duration;
 /**
  * This takes all the localization cmd/requests and dumps them into an
  * observable so the implementation can do whatever it needs to do to manage the
- * localizations. As implemented all localization requests response with an OK.
+ * localizations. Localization requests are answered with OK, unless {@link VideoController#hasVideo(java.util.UUID)}
+ * is false for the target video, in which case they fail and are not emitted.
  * @author Brian Schlining
  * @since 2022-08-08
  */
 public abstract class RxRequestHandler implements RequestHandler, Closeable {
+
+    /** Cause reported when a localization command targets an unknown video. */
+    public static final String NO_VIDEO_FOR_UUID = "No video for uuid";
 
     private final Subject<LocalizationsCmd<?, ?>> localizationsCmdSubject;
     private final VideoController videoController;
@@ -150,30 +154,45 @@ public abstract class RxRequestHandler implements RequestHandler, Closeable {
 
     @Override
     public AddLocalizationsCmd.Response handleAddLocalizationsRequest(AddLocalizationsCmd.Request request) {
+        if (!videoController.hasVideo(request.getUuid())) {
+            return new AddLocalizationsCmd.Response(RResponse.FAILED, NO_VIDEO_FOR_UUID);
+        }
         localizationsCmdSubject.onNext(new AddLocalizationsCmd(request));
         return new AddLocalizationsCmd.Response(RResponse.OK);
     }
 
     @Override
     public RemoveLocalizationsCmd.Response handleRemoveLocalizationsRequest(RemoveLocalizationsCmd.Request request) {
+        if (!videoController.hasVideo(request.getUuid())) {
+            return new RemoveLocalizationsCmd.Response(RResponse.FAILED, NO_VIDEO_FOR_UUID);
+        }
         localizationsCmdSubject.onNext(new RemoveLocalizationsCmd(request));
         return new RemoveLocalizationsCmd.Response(RResponse.OK);
     }
 
     @Override
     public UpdateLocalizationsCmd.Response handleUpdateLocalizationsRequest(UpdateLocalizationsCmd.Request request) {
+        if (!videoController.hasVideo(request.getUuid())) {
+            return new UpdateLocalizationsCmd.Response(RResponse.FAILED, NO_VIDEO_FOR_UUID);
+        }
         localizationsCmdSubject.onNext(new UpdateLocalizationsCmd(request));
         return new UpdateLocalizationsCmd.Response(RResponse.OK);
     }
 
     @Override
     public ClearLocalizationsCmd.Response handleClearLocalizationsRequest(ClearLocalizationsCmd.Request request) {
+        if (!videoController.hasVideo(request.getUuid())) {
+            return new ClearLocalizationsCmd.Response(RResponse.FAILED, NO_VIDEO_FOR_UUID);
+        }
         localizationsCmdSubject.onNext(new ClearLocalizationsCmd(request));
         return new ClearLocalizationsCmd.Response(RResponse.OK);
     }
 
     @Override
     public SelectLocalizationsCmd.Response handleSelectLocalizationsRequest(SelectLocalizationsCmd.Request request) {
+        if (!videoController.hasVideo(request.getUuid())) {
+            return new SelectLocalizationsCmd.Response(RResponse.FAILED, NO_VIDEO_FOR_UUID);
+        }
         localizationsCmdSubject.onNext(new SelectLocalizationsCmd(request));
         return new SelectLocalizationsCmd.Response(RResponse.OK);
     }

@@ -58,6 +58,10 @@ public class RemoveLocalizationsCmd extends LocalizationsPayloadCmd<UUID, Remove
             super(COMMAND, status);
         }
 
+        public Response(String status, String cause) {
+            super(COMMAND, status, cause);
+        }
+
         @Override
         public boolean success() {
             return isOk();
