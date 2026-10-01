@@ -144,9 +144,8 @@ public class RResponseParserTest {
         assertFalse(err.isConnectionError());
         assertFalse(err.isParseError());
         assertTrue(err.hasError());
-        // Dispatch still happens for parsed responses regardless of success — state
-        // subject sees "playing" as reported on the wire.
-        stateObs.assertValueCount(1);
+        // A failed response must not be reported as a state
+        stateObs.assertValueCount(0);
     }
 
     @Test

@@ -62,6 +62,10 @@ public class PlayCmd extends RCommand<PlayCmd.Request, PlayCmd.Response> {
             super(COMMAND, status);
         }
 
+        public Response(String status, String cause) {
+            super(COMMAND, status, cause);
+        }
+
         @Override
         public boolean success() {
             return isOk();

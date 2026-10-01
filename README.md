@@ -85,6 +85,40 @@ io.close()
 
 ```
 
+## Testing
+
+`mvn test` runs the unit tests for every module. These need no hardware or external services.
+
+### vcr4j-remote integration tests
+
+`vcr4j-remote` implements the client side of the Sharktopoda [UDP Remote Protocol](https://github.com/mbari-org/Sharktopoda/blob/main/Requirements/UDP_Remote_Protocol.md). `SharktopodaIT` checks it against a live, spec-compliant video player. It is **not** part of `mvn test`, because it needs a running player and it opens windows in it.
+
+**Setup**
+
+1. Start Sharktopoda 2 on the machine you are testing from and note the UDP port set under its Preferences (we use `8800`). Frame capture writes images to the local temp directory, so the player needs to be able to write to this machine's disk.
+2. Have a video the player can open. A local file is fine, and a short one is quicker. Any length works: the tests seek to about 5 seconds in, or the midpoint of a shorter video.
+3. Close any videos you already have open in the player, or the test `requestInformationFailsWhenNothingIsOpen` is skipped.
+
+**Run**
+
+```shell
+mvn -pl vcr4j-remote -am test -Dtest=SharktopodaIT -Dsharktopoda.video=/path/to/video.mp4
+```
+
+| Setting | Environment variable | Default | Description |
+|---|---|---|---|
+| `sharktopoda.video` | `SHARKTOPODA_VIDEO` | none | URL or file path of the video to open |
+| `sharktopoda.port` | `SHARKTOPODA_PORT` | `8800` | The player's UDP port |
+| `sharktopoda.host` | `SHARKTOPODA_HOST` | `localhost` | The player's host |
+
+A system property (`-D...`) takes precedence over the environment variable.
+
+- If the player doesn't answer a ping, every test is skipped, so the run does not fail when Sharktopoda isn't running.
+- If no video is set, only the tests that don't need one run. The rest are skipped.
+- The tests clean up after themselves. They close the videos they open and delete the images they capture.
+- Seek, play and frame advance are acknowledged by the player before they take effect, so the tests poll (up to 5 seconds) instead of reading back immediately. Code that uses `RemoteControl` should do the same.
+
+The tests that don't need a player, such as `SpecComplianceTest`, run with `mvn test`. They talk to a `VideoControl` in the same JVM, so they check that the player side of this library follows the spec too.
 
 ## Notes
 

@@ -50,12 +50,21 @@ public class FrameAdvanceCmd extends RCommand<FrameAdvanceCmd.Request, FrameAdva
             super(COMMAND, uuid);
             direction = forward ? 1 : -1;
         }
+
+        /** @return 1 to advance, -1 to go back one frame. Null (absent) is treated as 1 */
+        public Integer getDirection() {
+            return direction;
+        }
     }
 
     // Ack
     public static class Response extends RResponse {
         public Response(String status) {
             super(COMMAND, status);
+        }
+
+        public Response(String status, String cause) {
+            super(COMMAND, status, cause);
         }
 
         @Override

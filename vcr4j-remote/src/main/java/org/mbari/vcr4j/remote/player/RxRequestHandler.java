@@ -37,7 +37,7 @@ import java.time.Duration;
 public abstract class RxRequestHandler implements RequestHandler, Closeable {
 
     /** Cause reported when a localization command targets an unknown video. */
-    public static final String NO_VIDEO_FOR_UUID = "No video for uuid";
+    public static final String NO_VIDEO_FOR_UUID = VideoResult.NO_VIDEO_FOR_UUID;
 
     private final Subject<LocalizationsCmd<?, ?>> localizationsCmdSubject;
     private final VideoController videoController;
@@ -60,9 +60,12 @@ public abstract class RxRequestHandler implements RequestHandler, Closeable {
 
     @Override
     public OpenCmd.Response handleOpen(OpenCmd.Request request) {
-        var ok = videoController.open(request.getUuid(), request.getUrl());
-        var s = ok ? RResponse.OK : RResponse.FAILED;
-        return new OpenCmd.Response(s);
+        if (request.getUrl() == null) {
+            throw new IllegalArgumentException("A url is required to open a video");
+        }
+        var result = videoController.openVideo(request.getUuid(), request.getUrl());
+        return result.ok() ? new OpenCmd.Response(RResponse.OK)
+                : new OpenCmd.Response(RResponse.FAILED, result.cause());
     }
 
     @Override
@@ -72,23 +75,24 @@ public abstract class RxRequestHandler implements RequestHandler, Closeable {
 
     @Override
     public CloseCmd.Response handleClose(CloseCmd.Request request) {
-        var ok = videoController.close(request.getUuid());
-        var s = ok ? RResponse.OK : RResponse.FAILED;
-        return new CloseCmd.Response(s);
+        // Close is idempotent: if the video is already closed that's the state the caller wanted
+        videoController.close(request.getUuid());
+        return new CloseCmd.Response(RResponse.OK);
     }
 
     @Override
     public ShowCmd.Response handleShow(ShowCmd.Request request) {
-        var ok = videoController.show(request.getUuid());
-        var s = ok ? RResponse.OK : RResponse.FAILED;
-        return new ShowCmd.Response(s);
+        var result = videoController.showVideo(request.getUuid());
+        return result.ok() ? new ShowCmd.Response(RResponse.OK)
+                : new ShowCmd.Response(RResponse.FAILED, result.cause());
     }
 
     @Override
     public RequestVideoInfoCmd.Response handleRequestVideoInfo(RequestVideoInfoCmd.Request request) {
         var videoInfo = videoController.requestVideoInfo();
         return videoInfo
-                .map(vi -> new RequestVideoInfoCmd.Response(vi.getUuid(), vi.getUrl(), vi.getDurationMillis(), vi.getFrameRate()))
+                .map(vi -> new RequestVideoInfoCmd.Response(vi.getUuid(), vi.getUrl(),
+                        vi.getDurationMillis(), vi.getFrameRate(), vi.isKey()))
                 .orElse(new RequestVideoInfoCmd.Response());
     }
 
@@ -106,16 +110,16 @@ public abstract class RxRequestHandler implements RequestHandler, Closeable {
     @Override
     public PlayCmd.Response handlePlay(PlayCmd.Request request) {
         var rate = request.getRate() == null ? 1.0 : request.getRate();
-        var ok = videoController.play(request.getUuid(), rate);
-        var s = ok ? RResponse.OK : RResponse.FAILED;
-        return new PlayCmd.Response(s);
+        var result = videoController.playVideo(request.getUuid(), rate);
+        return result.ok() ? new PlayCmd.Response(RResponse.OK)
+                : new PlayCmd.Response(RResponse.FAILED, result.cause());
     }
 
     @Override
     public PauseCmd.Response handlePause(PauseCmd.Request request) {
-        var ok = videoController.pause(request.getUuid());
-        var s = ok ? RResponse.OK : RResponse.FAILED;
-        return new PauseCmd.Response(s);
+        var result = videoController.pauseVideo(request.getUuid());
+        return result.ok() ? new PauseCmd.Response(RResponse.OK)
+                : new PauseCmd.Response(RResponse.FAILED, result.cause());
     }
 
     @Override
@@ -129,23 +133,31 @@ public abstract class RxRequestHandler implements RequestHandler, Closeable {
     @Override
     public RequestPlayerStateCmd.Response handleStatus(RequestPlayerStateCmd.Request request) {
         var opt = videoController.requestRate(request.getUuid());
+        var elapsedTimeMillis = videoController.requestElapsedTime(request.getUuid())
+                .map(Duration::toMillis)
+                .orElse(null);
         return opt
-                .map(r -> new RequestPlayerStateCmd.Response(RState.fromRate(r).getName(), r))
-                .orElse(new RequestPlayerStateCmd.Response(RState.State.NOT_FOUND.getName()));
+                .map(r -> new RequestPlayerStateCmd.Response(RState.fromRate(r).getName(), r, elapsedTimeMillis))
+                .orElse(RequestPlayerStateCmd.Response.failed(NO_VIDEO_FOR_UUID));
     }
 
     @Override
     public RSeekElapsedTimeCmd.Response handleSeek(RSeekElapsedTimeCmd.Request request) {
-        var ok = videoController.seekElapsedTime(request.getUuid(), Duration.ofMillis(request.getElapsedTimeMillis()));
-        var s = ok ? RResponse.OK : RResponse.FAILED;
-        return new RSeekElapsedTimeCmd.Response(s);
+        if (request.getElapsedTimeMillis() == null) {
+            throw new IllegalArgumentException("elapsedTimeMillis is required to seek");
+        }
+        var result = videoController.seekVideo(request.getUuid(), Duration.ofMillis(request.getElapsedTimeMillis()));
+        return result.ok() ? new RSeekElapsedTimeCmd.Response(RResponse.OK)
+                : new RSeekElapsedTimeCmd.Response(RResponse.FAILED, result.cause());
     }
 
     @Override
     public FrameAdvanceCmd.Response handleFrameAdvance(FrameAdvanceCmd.Request request) {
-        var ok = videoController.frameAdvance(request.getUuid());
-        var s = ok ? RResponse.OK : RResponse.FAILED;
-        return new FrameAdvanceCmd.Response(s);
+        // direction: positive (1) is forward, negative (-1) is back. Absent is treated as forward.
+        var direction = request.getDirection();
+        var result = videoController.advanceFrame(request.getUuid(), direction == null || direction >= 0);
+        return result.ok() ? new FrameAdvanceCmd.Response(RResponse.OK)
+                : new FrameAdvanceCmd.Response(RResponse.FAILED, result.cause());
     }
 
     public Observable<LocalizationsCmd<?, ?>> getLocalizationsCmdObservable() {
@@ -154,6 +166,9 @@ public abstract class RxRequestHandler implements RequestHandler, Closeable {
 
     @Override
     public AddLocalizationsCmd.Response handleAddLocalizationsRequest(AddLocalizationsCmd.Request request) {
+        if (request.getLocalizations() == null) {
+            throw new IllegalArgumentException("localizations is required");
+        }
         if (!videoController.hasVideo(request.getUuid())) {
             return new AddLocalizationsCmd.Response(RResponse.FAILED, NO_VIDEO_FOR_UUID);
         }
@@ -163,6 +178,9 @@ public abstract class RxRequestHandler implements RequestHandler, Closeable {
 
     @Override
     public RemoveLocalizationsCmd.Response handleRemoveLocalizationsRequest(RemoveLocalizationsCmd.Request request) {
+        if (request.getLocalizations() == null) {
+            throw new IllegalArgumentException("localizations is required");
+        }
         if (!videoController.hasVideo(request.getUuid())) {
             return new RemoveLocalizationsCmd.Response(RResponse.FAILED, NO_VIDEO_FOR_UUID);
         }
@@ -172,6 +190,9 @@ public abstract class RxRequestHandler implements RequestHandler, Closeable {
 
     @Override
     public UpdateLocalizationsCmd.Response handleUpdateLocalizationsRequest(UpdateLocalizationsCmd.Request request) {
+        if (request.getLocalizations() == null) {
+            throw new IllegalArgumentException("localizations is required");
+        }
         if (!videoController.hasVideo(request.getUuid())) {
             return new UpdateLocalizationsCmd.Response(RResponse.FAILED, NO_VIDEO_FOR_UUID);
         }
@@ -190,6 +211,9 @@ public abstract class RxRequestHandler implements RequestHandler, Closeable {
 
     @Override
     public SelectLocalizationsCmd.Response handleSelectLocalizationsRequest(SelectLocalizationsCmd.Request request) {
+        if (request.getLocalizations() == null) {
+            throw new IllegalArgumentException("localizations is required");
+        }
         if (!videoController.hasVideo(request.getUuid())) {
             return new SelectLocalizationsCmd.Response(RResponse.FAILED, NO_VIDEO_FOR_UUID);
         }

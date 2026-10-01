@@ -33,7 +33,10 @@ public class Localization {
     private Integer width;
     private Integer height;
 
-    private String color = "#DDDDDD"; // hex string like "#FFDDCC"
+    /** The protocol's maximum length for a concept */
+    public static final int MAX_CONCEPT_LENGTH = 256;
+
+    private String color; // optional hex string like "#FFDDCC". If null, the player uses its default
 
     public Localization(UUID uuid,
                         String concept,
@@ -44,6 +47,7 @@ public class Localization {
                         Integer width,
                         Integer height,
                         String color) {
+        checkConcept(concept);
         this.uuid = uuid;
         this.concept = concept;
         this.elapsedTimeMillis = elapsedTimeMillis;
@@ -71,7 +75,15 @@ public class Localization {
     }
 
     public void setConcept(String concept) {
+        checkConcept(concept);
         this.concept = concept;
+    }
+
+    private static void checkConcept(String concept) {
+        if (concept != null && concept.length() > MAX_CONCEPT_LENGTH) {
+            throw new IllegalArgumentException("A concept can be at most " + MAX_CONCEPT_LENGTH +
+                    " characters long. Found " + concept.length());
+        }
     }
 
     public Long getElapsedTimeMillis() {

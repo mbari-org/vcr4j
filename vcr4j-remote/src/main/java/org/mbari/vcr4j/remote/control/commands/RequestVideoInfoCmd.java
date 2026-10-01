@@ -52,16 +52,25 @@ public class RequestVideoInfoCmd extends RCommand<RequestVideoInfoCmd.Request, R
         private Double frameRate;
         private Boolean isKey;
 
-        public Response(UUID uuid, URL url, Long durationMillis, Double frameRate) {
+        public Response(UUID uuid, URL url, Long durationMillis, Double frameRate, Boolean isKey) {
             super(COMMAND, RResponse.OK);
             this.uuid = uuid;
             this.url = url;
             this.durationMillis = durationMillis;
             this.frameRate = frameRate;
+            this.isKey = isKey;
+        }
+
+        public Response(UUID uuid, URL url, Long durationMillis, Double frameRate) {
+            this(uuid, url, durationMillis, frameRate, null);
         }
 
         public Response() {
-            super(COMMAND, RResponse.FAILED);
+            this("No open videos");
+        }
+
+        public Response(String cause) {
+            super(COMMAND, RResponse.FAILED, cause);
         }
 
 

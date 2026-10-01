@@ -35,9 +35,20 @@ public interface VideoController {
     /**
      * Opens a video and focuses its window/stage. If the video with that UUID
      * already exists then just focus its window/stage.
+     *
+     * <p><b>This method must block until the video is actually open and ready to play</b>
+     * (or has failed to open). Its return is what triggers the <code>open done</code> message to
+     * the remote app, so returning early, e.g. while the media is still loading, would tell the
+     * remote app that the video is ready when it is not. The remote app has already received
+     * an <code>ok</code> response to its <code>open</code> request by the time this is called,
+     * and this is always called off the UDP receive thread, so it is safe to block here.
+     * Do not do the work on the UI thread and return before it finishes; wait for it.
+     * (If you must load asynchronously, wait on the load, for example with a
+     * {@link CompletableFuture#get(long, java.util.concurrent.TimeUnit)} with a timeout, before returning.)
+     *
      * @param videoUuid Key to associate with video
      * @param url The URL (either http or file) of the video to be opened.
-     * @return true if successful, false if unable to open the video
+     * @return true if the video is open and ready to play, false if unable to open the video
      */
     boolean open(UUID videoUuid, URL url);
 
@@ -148,5 +159,72 @@ public interface VideoController {
     CompletableFuture<FrameCapture> framecapture(UUID videoUuid,
                                                  UUID imageReferenceUuid,
                                                  Path saveLocation);
+
+
+    // ---- Result-returning variants -------------------------------------------------
+    // The methods below report *why* an operation failed, so the cause can be passed on
+    // to the remote app. The defaults delegate to the boolean methods above, so existing
+    // implementations keep working. Override these to report precise causes (see the
+    // constants in VideoResult).
+
+    private VideoResult resultFor(UUID videoUuid, boolean ok, String genericCause) {
+        return VideoResult.of(ok, hasVideo(videoUuid) ? genericCause : VideoResult.NO_VIDEO_FOR_UUID);
+    }
+
+    /**
+     * Like {@link #open(UUID, URL)}, but reports the cause of a failure. As with
+     * {@link #open(UUID, URL)}, <b>this must not return until the video is open and ready to play
+     * (or has failed)</b>, because <code>open done</code> is sent to the remote app as soon as
+     * it returns.
+     */
+    default VideoResult openVideo(UUID videoUuid, URL url) {
+        return VideoResult.of(open(videoUuid, url), "Unable to open video");
+    }
+
+    /**
+     * Like {@link #show(UUID)}, but reports the cause of a failure.
+     */
+    default VideoResult showVideo(UUID videoUuid) {
+        return resultFor(videoUuid, show(videoUuid), "Unable to show video");
+    }
+
+    /**
+     * Like {@link #play(UUID, double)}, but reports the cause of a failure.
+     */
+    default VideoResult playVideo(UUID videoUuid, double rate) {
+        return resultFor(videoUuid, play(videoUuid, rate), "Unable to play video");
+    }
+
+    /**
+     * Like {@link #pause(UUID)}, but reports the cause of a failure.
+     */
+    default VideoResult pauseVideo(UUID videoUuid) {
+        return resultFor(videoUuid, pause(videoUuid), "Unable to pause video");
+    }
+
+    /**
+     * Like {@link #seekElapsedTime(UUID, Duration)}, but reports the cause of a failure.
+     * Implementations should use {@link VideoResult#SEEK_BEFORE_START} or
+     * {@link VideoResult#SEEK_PAST_END} when the time is out of range.
+     */
+    default VideoResult seekVideo(UUID videoUuid, Duration elapsedTime) {
+        return resultFor(videoUuid, seekElapsedTime(videoUuid, elapsedTime), "Unable to seek video");
+    }
+
+    /**
+     * Advance or regress a single frame.
+     * @param videoUuid The video
+     * @param forward true to advance, false to go back one frame
+     * @return The default implementation delegates to {@link #frameAdvance(UUID)} for
+     *  forward and fails with {@link VideoResult#CANNOT_ADVANCE} for reverse. Override to
+     *  support stepping backwards.
+     */
+    default VideoResult advanceFrame(UUID videoUuid, boolean forward) {
+        if (!forward) {
+            return VideoResult.failed(hasVideo(videoUuid) ? VideoResult.CANNOT_ADVANCE
+                    : VideoResult.NO_VIDEO_FOR_UUID);
+        }
+        return resultFor(videoUuid, frameAdvance(videoUuid), VideoResult.CANNOT_ADVANCE);
+    }
 
 }

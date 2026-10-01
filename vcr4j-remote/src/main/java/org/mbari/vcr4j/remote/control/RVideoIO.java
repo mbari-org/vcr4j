@@ -53,14 +53,19 @@ public class RVideoIO implements VideoIO<RState, RError> {
 
     private record SizedRequest(RCommand<?, ?> cmd, int size) {}
 
-    public static final Gson GSON = new GsonBuilder().setPrettyPrinting()
+    // The protocol recommends minified messages; do not enable pretty printing.
+    public static final Gson GSON = new GsonBuilder()
             .setDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
             .create();
+
+    /** Maximum size, in bytes, of a message accepted by the video player. */
+    public static final int MAX_MESSAGE_BYTES = 4096;
 
     private static final System.Logger log = System.getLogger(RVideoIO.class.getName());
 
     public static final double MAX_SHUTTLE_RATE = 8.0;
     public static final double DEFAULT_SHUTTLE_RATE = 3.0;
+    /** Upper bound on how long close() waits for queued commands to be sent. */
     public static final int MAX_TIMEOUT_MILLIS = 20000;
     public static final int DEFAULT_TIMEOUT_MILLIS = 1000;
 
@@ -172,6 +177,10 @@ public class RVideoIO implements VideoIO<RState, RError> {
         disposables.add(a);
 
         a = commandSubject.ofType(FrameCaptureDoneCmd.class)
+                .forEach(this::doCommand);
+        disposables.add(a);
+
+        a = commandSubject.ofType(OpenDoneCmd.class)
                 .forEach(this::doCommand);
         disposables.add(a);
 
@@ -354,8 +363,9 @@ public class RVideoIO implements VideoIO<RState, RError> {
         if (!closed) {
             try (var socket = new DatagramSocket()) {
                 // try {
-                int timeout = (command instanceof OpenCmd) ? MAX_TIMEOUT_MILLIS : DEFAULT_TIMEOUT_MILLIS;
-                socket.setSoTimeout(timeout);
+                // 'open' is acknowledged immediately; the player reports the outcome later via
+                // 'open done', so it needs no longer timeout than any other command.
+                socket.setSoTimeout(DEFAULT_TIMEOUT_MILLIS);
 
                 var incomingBytes = new byte[sizeBytes];
                 var incomingPacket = new DatagramPacket(incomingBytes, incomingBytes.length);
@@ -390,6 +400,10 @@ public class RVideoIO implements VideoIO<RState, RError> {
 
     public DatagramPacket asPacket(RCommand<?, ?> cmd) {
         byte[] b = RVideoIO.GSON.toJson(cmd.getValue()).getBytes(StandardCharsets.UTF_8);
+        if (b.length > MAX_MESSAGE_BYTES) {
+            log.log(System.Logger.Level.WARNING, connectionId + " - '" + cmd.getName() + "' message is " +
+                    b.length + " bytes, which exceeds the " + MAX_MESSAGE_BYTES + " byte protocol limit");
+        }
         return new DatagramPacket(b, b.length, inetAddress, port);
     }
 

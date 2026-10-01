@@ -38,11 +38,16 @@ public class FrameCaptureDoneCmd extends RCommand<FrameCaptureDoneCmd.Request, F
     }
 
     public static FrameCaptureDoneCmd fail(FrameCapture fc) {
-        return new FrameCaptureDoneCmd(fc.getUuid(),
+        return fail(fc, null);
+    }
+
+    public static FrameCaptureDoneCmd fail(FrameCapture fc, String cause) {
+        return new FrameCaptureDoneCmd(new Request(fc.getUuid(),
                 fc.getImageReferenceUuid(),
                 fc.getImageLocation(),
                 fc.getElapsedTimeMillis(),
-                RResponse.FAILED);
+                RResponse.FAILED,
+                cause));
     }
 
     public static FrameCaptureDoneCmd success(FrameCapture fc) {
@@ -66,16 +71,32 @@ public class FrameCaptureDoneCmd extends RCommand<FrameCaptureDoneCmd.Request, F
 
         private String status;
 
+        private String cause; // only present when status is "failed"
+
         public Request(UUID uuid,
                        UUID imageReferenceUuid,
                        String imageLocation,
                        Long elapsedTimeMillis,
-                       String status) {
+                       String status,
+                       String cause) {
             super(COMMAND, uuid);
             this.imageReferenceUuid = imageReferenceUuid;
             this.imageLocation = imageLocation;
             this.elapsedTimeMillis = elapsedTimeMillis;
             this.status = status;
+            this.cause = cause;
+        }
+
+        public Request(UUID uuid,
+                       UUID imageReferenceUuid,
+                       String imageLocation,
+                       Long elapsedTimeMillis,
+                       String status) {
+            this(uuid, imageReferenceUuid, imageLocation, elapsedTimeMillis, status, null);
+        }
+
+        public String getCause() {
+            return cause;
         }
 
         public String getImageLocation() {

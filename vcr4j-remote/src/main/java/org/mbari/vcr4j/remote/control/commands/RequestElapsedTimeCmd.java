@@ -53,7 +53,11 @@ public class RequestElapsedTimeCmd
         }
 
         public Response() {
-            super(COMMAND, RResponse.FAILED);
+            this("No video for uuid");
+        }
+
+        public Response(String cause) {
+            super(COMMAND, RResponse.FAILED, cause);
         }
 
         public Long getElapsedTimeMillis() {

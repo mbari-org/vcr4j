@@ -16,6 +16,8 @@
 package org.mbari.vcr4j.remote.player;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonParser;
 
 import org.mbari.vcr4j.remote.control.RVideoIO;
 import org.mbari.vcr4j.remote.control.commands.*;
@@ -108,6 +110,26 @@ public class PlayerIO {
     }
 
 
+    /**
+     * Best effort to find the command in a message that could not be parsed.
+     * @return The command, or null if it can't be determined
+     */
+    private static String findCommand(String msg) {
+        try {
+            var json = JsonParser.parseString(msg);
+            if (json.isJsonObject()) {
+                var command = json.getAsJsonObject().get("command");
+                if (command != null && command.isJsonPrimitive() && command.getAsJsonPrimitive().isString()) {
+                    return command.getAsString();
+                }
+            }
+        }
+        catch (Exception e) {
+            // fall through
+        }
+        return null;
+    }
+
     private Runnable buildServerRunnable()  {
         return () -> {
             byte[] buffer = new byte[4096];
@@ -117,16 +139,42 @@ public class PlayerIO {
                     ok = false;
                     continue;
                 }
+                String msg;
                 try {
+                    // The length of a reused packet shrinks to the size of the last message
+                    // received. Reset it, or larger messages would be silently truncated.
+                    packet.setLength(buffer.length);
                     server.receive(packet);
-                    String msg = new String(packet.getData(), 0, packet.getLength(), StandardCharsets.UTF_8);
+                    msg = new String(packet.getData(), 0, packet.getLength(), StandardCharsets.UTF_8);
                     log.log(System.Logger.Level.DEBUG, connectionId + " - Received command <<< " + msg);
-                    var simpleRequest = RVideoIO.GSON.fromJson(msg, SimpleRequest.class);
-                    simpleRequest.setRaw(msg);
-                    handleRequest(simpleRequest, packet.getAddress(), packet.getPort());
                 }
                 catch (Exception e) {
                     log.log(System.Logger.Level.DEBUG, connectionId + " - Error while reading UDP datagram", e);
+                    continue;
+                }
+
+                var address = packet.getAddress();
+                var senderPort = packet.getPort();
+                try {
+                    var simpleRequest = RVideoIO.GSON.fromJson(msg, SimpleRequest.class);
+                    if (simpleRequest == null) {
+                        simpleRequest = new SimpleRequest(null);
+                    }
+                    simpleRequest.setRaw(msg);
+                    handleRequest(simpleRequest, address, senderPort);
+                }
+                catch (JsonParseException e) {
+                    // Not JSON, or the structure is wrong. The protocol requires a reply.
+                    log.log(System.Logger.Level.DEBUG, connectionId + " - Invalid message: " + msg, e);
+                    try {
+                        respond(RequestHandler.invalidMessage(findCommand(msg)), address, senderPort);
+                    }
+                    catch (Exception e2) {
+                        log.log(System.Logger.Level.ERROR, connectionId + " - Unable to respond to invalid message", e2);
+                    }
+                }
+                catch (Exception e) {
+                    log.log(System.Logger.Level.DEBUG, connectionId + " - Error while handling UDP datagram", e);
                 }
             }
             if (server != null && !server.isClosed()) {
