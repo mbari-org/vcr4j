@@ -15,19 +15,24 @@
  */
 package org.mbari.vcr4j.remote.player;
 
+import org.mbari.vcr4j.commands.RemoteCommands;
 import org.mbari.vcr4j.remote.control.RVideoIO;
 import org.mbari.vcr4j.remote.control.commands.ConnectCmd;
 import org.mbari.vcr4j.remote.control.commands.FrameCaptureCmd;
 import org.mbari.vcr4j.remote.control.commands.FrameCaptureDoneCmd;
 import org.mbari.vcr4j.remote.control.commands.OpenCmd;
 import org.mbari.vcr4j.remote.control.commands.OpenDoneCmd;
+import org.mbari.vcr4j.remote.control.commands.localization.LocalizationsCmd;
 import org.mbari.vcr4j.remote.control.commands.RResponse;
 
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -51,6 +56,20 @@ public class RxPlayerRequestHandler extends RxRequestHandler {
         t.setDaemon(true);
         return t;
     });
+
+    // Pings after a connect, so that a slow remote never delays the UDP receive thread
+    private final ExecutorService pingExecutor = Executors.newSingleThreadExecutor(r -> {
+        var t = new Thread(r, "vcr4j-ping-remote");
+        t.setDaemon(true);
+        return t;
+    });
+
+    // Videos that have been accepted for opening but are not open yet, with the number of opens pending
+    // for each. Localization commands for these are accepted and queued behind the open.
+    private final Map<UUID, Integer> pendingOpens = new ConcurrentHashMap<>();
+
+    // Localization commands waiting behind an open. While any are, later ones queue too, to keep their order.
+    private final AtomicInteger deferredDispatches = new AtomicInteger();
 
     /**
      *
@@ -87,6 +106,7 @@ public class RxPlayerRequestHandler extends RxRequestHandler {
         // and 'open done' is sent to the connected remote app when that's finished.
         // VideoController.openVideo is required to block until the video is open and ready to
         // play (or has failed), so 'open done' is never sent before the video is usable.
+        pendingOpens.merge(uuid, 1, Integer::sum);
         try {
             openExecutor.submit(() -> {
                 VideoResult result;
@@ -97,10 +117,14 @@ public class RxPlayerRequestHandler extends RxRequestHandler {
                     log.log(System.Logger.Level.WARNING, "Failed to open " + url, e);
                     result = VideoResult.failed("Unable to open video");
                 }
+                finally {
+                    pendingOpens.compute(uuid, (k, n) -> n == null || n <= 1 ? null : n - 1);
+                }
                 sendOpenDone(uuid, result);
             });
         }
         catch (RejectedExecutionException e) {
+            pendingOpens.compute(uuid, (k, n) -> n == null || n <= 1 ? null : n - 1);
             return new OpenCmd.Response(RResponse.FAILED, "Unable to open video");
         }
         return new OpenCmd.Response(RResponse.OK);
@@ -120,7 +144,55 @@ public class RxPlayerRequestHandler extends RxRequestHandler {
     }
 
     @Override
+    protected boolean isVideoKnown(UUID videoUuid) {
+        return pendingOpens.containsKey(videoUuid) || super.isVideoKnown(videoUuid);
+    }
+
+    /**
+     * A video that is still opening can't take localizations yet, so those commands wait for the open
+     * to finish. The open executor runs one task at a time in arrival order, so queueing them on it
+     * delivers them after the open and in the order they were received.
+     */
+    @Override
+    protected void dispatch(UUID videoUuid, LocalizationsCmd<?, ?> cmd) {
+        if (pendingOpens.containsKey(videoUuid) || deferredDispatches.get() > 0) {
+            deferredDispatches.incrementAndGet();
+            try {
+                openExecutor.submit(() -> {
+                    try {
+                        super.dispatch(videoUuid, cmd);
+                    }
+                    finally {
+                        deferredDispatches.decrementAndGet();
+                    }
+                });
+                return;
+            }
+            catch (RejectedExecutionException e) {
+                deferredDispatches.decrementAndGet();
+            }
+        }
+        super.dispatch(videoUuid, cmd);
+    }
+
+    /**
+     * A connect without a host means the remote app is at the address the request came from.
+     */
+    @Override
+    public RResponse composeResponse(SimpleRequest simpleRequest) {
+        var sender = simpleRequest.getSender();
+        if (sender != null && ConnectCmd.COMMAND.equals(simpleRequest.getCommand())) {
+            return handle(simpleRequest, ConnectCmd.Request.class, request -> {
+                var host = request.getHost() == null ? sender.getHostAddress() : request.getHost();
+                return handleConnect(new ConnectCmd.Request(request.getPort(), host, request.getUuid()));
+            });
+        }
+        return super.composeResponse(simpleRequest);
+    }
+
+    @Override
     public void close() {
+        pingExecutor.shutdownNow();
         openExecutor.shutdown();
         super.close();
     }
@@ -192,6 +264,16 @@ public class RxPlayerRequestHandler extends RxRequestHandler {
     public ConnectCmd.Response handleConnect(ConnectCmd.Request request) {
         var opt = lifeCycle.connect(request.getUuid(), request.getHost(), request.getPort());
         var status = opt.map(io -> RResponse.OK).orElse(RResponse.FAILED);
+        // The protocol has the player check that the remote is reachable. There is no one to tell
+        // about a failure other than the log, so the ping is only informational.
+        opt.ifPresent(io -> {
+            try {
+                pingExecutor.submit(() -> io.send(RemoteCommands.PING));
+            }
+            catch (RejectedExecutionException e) {
+                log.log(System.Logger.Level.DEBUG, "Not pinging the remote: the handler is closed");
+            }
+        });
         return new ConnectCmd.Response(status);
     }
 }

@@ -27,6 +27,8 @@ public class SimpleRequest {
 
     private String raw;
 
+    private transient java.net.InetAddress sender;
+
     public SimpleRequest(String command, String raw) {
         this.command = command;
         this.raw = raw;
@@ -46,6 +48,15 @@ public class SimpleRequest {
 
     public void setRaw(String raw) {
         this.raw = raw;
+    }
+
+    /** @return The address the datagram came from, or null if unknown. */
+    public java.net.InetAddress getSender() {
+        return sender;
+    }
+
+    public void setSender(java.net.InetAddress sender) {
+        this.sender = sender;
     }
 
 

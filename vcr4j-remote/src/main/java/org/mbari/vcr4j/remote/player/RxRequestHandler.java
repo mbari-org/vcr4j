@@ -160,6 +160,19 @@ public abstract class RxRequestHandler implements RequestHandler, Closeable {
                 : new FrameAdvanceCmd.Response(RResponse.FAILED, result.cause());
     }
 
+    /**
+     * @return True if localization commands for this video are accepted. Subclasses can widen this
+     *  to videos that are about to exist.
+     */
+    protected boolean isVideoKnown(java.util.UUID videoUuid) {
+        return videoController.hasVideo(videoUuid);
+    }
+
+    /** Hands a localization command to subscribers. Subclasses can defer it, but must keep order. */
+    protected void dispatch(java.util.UUID videoUuid, LocalizationsCmd<?, ?> cmd) {
+        localizationsCmdSubject.onNext(cmd);
+    }
+
     public Observable<LocalizationsCmd<?, ?>> getLocalizationsCmdObservable() {
         return localizationsCmdSubject;
     }
@@ -169,10 +182,10 @@ public abstract class RxRequestHandler implements RequestHandler, Closeable {
         if (request.getLocalizations() == null) {
             throw new IllegalArgumentException("localizations is required");
         }
-        if (!videoController.hasVideo(request.getUuid())) {
+        if (!isVideoKnown(request.getUuid())) {
             return new AddLocalizationsCmd.Response(RResponse.FAILED, NO_VIDEO_FOR_UUID);
         }
-        localizationsCmdSubject.onNext(new AddLocalizationsCmd(request));
+        dispatch(request.getUuid(), new AddLocalizationsCmd(request));
         return new AddLocalizationsCmd.Response(RResponse.OK);
     }
 
@@ -181,10 +194,10 @@ public abstract class RxRequestHandler implements RequestHandler, Closeable {
         if (request.getLocalizations() == null) {
             throw new IllegalArgumentException("localizations is required");
         }
-        if (!videoController.hasVideo(request.getUuid())) {
+        if (!isVideoKnown(request.getUuid())) {
             return new RemoveLocalizationsCmd.Response(RResponse.FAILED, NO_VIDEO_FOR_UUID);
         }
-        localizationsCmdSubject.onNext(new RemoveLocalizationsCmd(request));
+        dispatch(request.getUuid(), new RemoveLocalizationsCmd(request));
         return new RemoveLocalizationsCmd.Response(RResponse.OK);
     }
 
@@ -193,19 +206,19 @@ public abstract class RxRequestHandler implements RequestHandler, Closeable {
         if (request.getLocalizations() == null) {
             throw new IllegalArgumentException("localizations is required");
         }
-        if (!videoController.hasVideo(request.getUuid())) {
+        if (!isVideoKnown(request.getUuid())) {
             return new UpdateLocalizationsCmd.Response(RResponse.FAILED, NO_VIDEO_FOR_UUID);
         }
-        localizationsCmdSubject.onNext(new UpdateLocalizationsCmd(request));
+        dispatch(request.getUuid(), new UpdateLocalizationsCmd(request));
         return new UpdateLocalizationsCmd.Response(RResponse.OK);
     }
 
     @Override
     public ClearLocalizationsCmd.Response handleClearLocalizationsRequest(ClearLocalizationsCmd.Request request) {
-        if (!videoController.hasVideo(request.getUuid())) {
+        if (!isVideoKnown(request.getUuid())) {
             return new ClearLocalizationsCmd.Response(RResponse.FAILED, NO_VIDEO_FOR_UUID);
         }
-        localizationsCmdSubject.onNext(new ClearLocalizationsCmd(request));
+        dispatch(request.getUuid(), new ClearLocalizationsCmd(request));
         return new ClearLocalizationsCmd.Response(RResponse.OK);
     }
 
@@ -214,10 +227,10 @@ public abstract class RxRequestHandler implements RequestHandler, Closeable {
         if (request.getLocalizations() == null) {
             throw new IllegalArgumentException("localizations is required");
         }
-        if (!videoController.hasVideo(request.getUuid())) {
+        if (!isVideoKnown(request.getUuid())) {
             return new SelectLocalizationsCmd.Response(RResponse.FAILED, NO_VIDEO_FOR_UUID);
         }
-        localizationsCmdSubject.onNext(new SelectLocalizationsCmd(request));
+        dispatch(request.getUuid(), new SelectLocalizationsCmd(request));
         return new SelectLocalizationsCmd.Response(RResponse.OK);
     }
 }

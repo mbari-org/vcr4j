@@ -161,6 +161,7 @@ public class PlayerIO {
                         simpleRequest = new SimpleRequest(null);
                     }
                     simpleRequest.setRaw(msg);
+                    simpleRequest.setSender(address);
                     handleRequest(simpleRequest, address, senderPort);
                 }
                 catch (JsonParseException e) {

@@ -393,6 +393,15 @@ public class SpecComplianceTest {
         remote.setSoTimeout(3000);
         var r = request("{\"command\":\"connect\",\"port\":" + remote.getLocalPort() + "}");
         assertEquals("ok", r.get("status").getAsString());
+
+        // The player pings a newly connected remote to check that it can be reached
+        var buf = new byte[1024];
+        var ping = new DatagramPacket(buf, buf.length);
+        remote.receive(ping);
+        var pingJson = JsonParser.parseString(new String(buf, 0, ping.getLength(), StandardCharsets.UTF_8)).getAsJsonObject();
+        assertEquals("ping", pingJson.get("command").getAsString());
+        var reply = "{\"response\":\"ping\",\"status\":\"ok\"}".getBytes(StandardCharsets.UTF_8);
+        remote.send(new DatagramPacket(reply, reply.length, ping.getAddress(), ping.getPort()));
         return remote;
     }
 
