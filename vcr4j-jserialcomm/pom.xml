@@ -22,7 +22,7 @@
     <parent>
         <artifactId>vcr4j</artifactId>
         <groupId>org.mbari.vcr4j</groupId>
-        <version>5.3.8</version>
+        <version>5.4.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
