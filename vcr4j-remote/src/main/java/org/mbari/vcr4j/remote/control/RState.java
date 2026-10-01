@@ -30,6 +30,12 @@ public class RState implements VideoState {
         PLAYING("playing"),
         SHUTTLE_FORWARD("shuttling forward"),
         SHUTTLE_REVERSE("shuttling reverse"),
+        /**
+         * @deprecated The protocol no longer reports this state. A request for the state of a
+         *  video that is not open now fails with the cause "No video for uuid". It is retained
+         *  so responses from players that implement the older protocol still parse.
+         */
+        @Deprecated
         NOT_FOUND("not found"),
         UNKNOWN_ERROR("error");
 

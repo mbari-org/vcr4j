@@ -68,6 +68,10 @@ public class FrameCaptureCmd extends RCommand<FrameCaptureCmd.Request, FrameCapt
             super(COMMAND, status);
         }
 
+        public Response(String status, String cause) {
+            super(COMMAND, status, cause);
+        }
+
         @Override
         public boolean success() {
             return isOk();

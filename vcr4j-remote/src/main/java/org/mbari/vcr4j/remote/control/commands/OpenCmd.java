@@ -52,6 +52,10 @@ public class OpenCmd extends RCommand<OpenCmd.Request, OpenCmd.Response> {
             super(COMMAND, status);
         }
 
+        public Response(String status, String cause) {
+            super(COMMAND, status, cause);
+        }
+
         @Override
         public boolean success() {
             return isOk();

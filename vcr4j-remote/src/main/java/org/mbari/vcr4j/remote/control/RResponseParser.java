@@ -64,8 +64,10 @@ public class RResponseParser {
         try {
             var response = RVideoIO.GSON.fromJson(msg, command.responseType());
             if (!response.success()) {
-                var e = new RError(false, false, true, command,
-                        "The command was unsuccessful", null);
+                var message = response.getCause() == null
+                        ? "The command was unsuccessful"
+                        : "The command was unsuccessful: " + response.getCause();
+                var e = new RError(false, false, true, command, message, null);
                 errorSubject.onNext(e);
             }
             return Optional.of(response);
@@ -87,7 +89,10 @@ public class RResponseParser {
         var opt = parse(command, msg);
         opt.ifPresent(response -> {
             if (response instanceof RequestPlayerStateCmd.Response r) {
-                stateSubject.onNext(r.state());
+                // A failed response has no state; don't report it as an (unknown) state
+                if (r.isOk()) {
+                    stateSubject.onNext(r.state());
+                }
             }
             else if (response instanceof RequestElapsedTimeCmd.Response r) {
                 r.getVideoIndex().ifPresent(indexSubject::onNext);

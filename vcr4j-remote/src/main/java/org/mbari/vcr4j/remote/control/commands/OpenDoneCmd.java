@@ -17,9 +17,26 @@ package org.mbari.vcr4j.remote.control.commands;
 
 import java.util.UUID;
 
-public class OpenDoneCmd {
+/**
+ * Sent by the video player to the remote control, after the player has responded to an
+ * {@link OpenCmd}, to report whether the video was actually opened.
+ */
+public class OpenDoneCmd extends RCommand<OpenDoneCmd.Request, OpenDoneCmd.Response> {
 
     public static final String COMMAND = "open done";
+
+    public OpenDoneCmd(Request value) {
+        super(value);
+    }
+
+    public OpenDoneCmd(UUID uuid, String status, String cause) {
+        this(new Request(uuid, status, cause));
+    }
+
+    @Override
+    public Class<Response> responseType() {
+        return Response.class;
+    }
 
     public static class Request extends RRequest {
 
@@ -27,8 +44,13 @@ public class OpenDoneCmd {
         private String cause;
 
         public Request(UUID uuid, String status) {
+            this(uuid, status, null);
+        }
+
+        public Request(UUID uuid, String status, String cause) {
             super(COMMAND, uuid);
             this.status = status;
+            this.cause = cause;
         }
 
         public String getStatus() {

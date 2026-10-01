@@ -19,6 +19,9 @@ import org.mbari.vcr4j.remote.control.RVideoIO;
 import org.mbari.vcr4j.remote.control.commands.*;
 import org.mbari.vcr4j.remote.control.commands.localization.*;
 
+import com.google.gson.JsonParseException;
+
+import java.net.MalformedURLException;
 import java.util.function.Function;
 
 /**
@@ -34,15 +37,48 @@ public interface RequestHandler {
                                            Class<A> clazz,
                                            Function<A, B> fn) {
         var request = RVideoIO.GSON.fromJson(simpleRequest.getRaw(), clazz);
+        if (request == null || (request.getUuid() == null && requiresUuid(simpleRequest.getCommand()))) {
+            throw new IllegalArgumentException("A video uuid is required for the '" +
+                    simpleRequest.getCommand() + "' command");
+        }
         return fn.apply(request);
     }
 
+    private static boolean requiresUuid(String command) {
+        return switch (command) {
+            case ConnectCmd.COMMAND, PingCmd.COMMAND, RequestVideoInfoCmd.COMMAND,
+                    RequestAllVideoInfosCmd.COMMAND -> false;
+            default -> true;
+        };
+    }
+
+    /**
+     * An open request is validated synchronously: a url that can't be parsed fails with
+     * "Malformed URL" rather than "Invalid message".
+     */
+    private OpenCmd.Response handleOpenMessage(SimpleRequest simpleRequest) {
+        try {
+            return handle(simpleRequest, OpenCmd.Request.class, this::handleOpen);
+        }
+        catch (JsonParseException e) {
+            for (Throwable t = e; t != null; t = t.getCause()) {
+                if (t instanceof MalformedURLException) {
+                    return new OpenCmd.Response(RResponse.FAILED, VideoResult.MALFORMED_URL);
+                }
+            }
+            throw e;
+        }
+    }
+
     default RResponse composeResponse(SimpleRequest simpleRequest) {
+        if (simpleRequest.getCommand() == null) {
+            return handleError(simpleRequest, new IllegalArgumentException("No command"));
+        }
         return switch (simpleRequest.getCommand()) {
             case CloseCmd.COMMAND -> handle(simpleRequest, CloseCmd.Request.class, this::handleClose);
             case ConnectCmd.COMMAND -> handle(simpleRequest, ConnectCmd.Request.class, this::handleConnect);
             case FrameAdvanceCmd.COMMAND -> handle(simpleRequest, FrameAdvanceCmd.Request.class, this::handleFrameAdvance);
-            case OpenCmd.COMMAND -> handle(simpleRequest, OpenCmd.Request.class, this::handleOpen);
+            case OpenCmd.COMMAND -> handleOpenMessage(simpleRequest);
             case OpenDoneCmd.COMMAND -> handle(simpleRequest, OpenDoneCmd.Request.class, this::handleOpenDone);
             case PauseCmd.COMMAND -> handle(simpleRequest, PauseCmd.Request.class, this::handlePause);
             case PlayCmd.COMMAND -> handle(simpleRequest, PlayCmd.Request.class, this::handlePlay);
@@ -60,7 +96,7 @@ public interface RequestHandler {
             case RemoveLocalizationsCmd.COMMAND -> handle(simpleRequest, RemoveLocalizationsCmd.Request.class, this::handleRemoveLocalizationsRequest);
             case UpdateLocalizationsCmd.COMMAND -> handle(simpleRequest, UpdateLocalizationsCmd.Request.class, this::handleUpdateLocalizationsRequest);
             case SelectLocalizationsCmd.COMMAND -> handle(simpleRequest, SelectLocalizationsCmd.Request.class, this::handleSelectLocalizationsRequest);
-            default -> handleError(simpleRequest);
+            default -> handleUnknownCommand(simpleRequest);
         };
     }
 
@@ -116,11 +152,39 @@ public interface RequestHandler {
 
     SelectLocalizationsCmd.Response handleSelectLocalizationsRequest(SelectLocalizationsCmd.Request request);
 
+    /**
+     * Used when a message can't be parsed, or its structure is wrong (e.g. missing or mistyped
+     * fields). As per the protocol, the cause is always "Invalid message".
+     * @param request The request
+     * @param e The reason, which is not reported to the remote app
+     * @return A failed response
+     */
     default NoopCmd.Response handleError(SimpleRequest request, Exception e) {
-        return new NoopCmd.Response(request.getCommand(), "failed", e.getClass() + ": " + e.getMessage());
+        if (e instanceof JsonParseException
+                || e instanceof NullPointerException
+                || e instanceof IllegalArgumentException) {
+            return invalidMessage(request.getCommand());
+        }
+        return new NoopCmd.Response(request.getCommand(), RResponse.FAILED, e.getClass() + ": " + e.getMessage());
     }
 
     default NoopCmd.Response handleError(SimpleRequest request) {
-        return new NoopCmd.Response(request.getCommand(), "failed");
+        return handleUnknownCommand(request);
+    }
+
+    default NoopCmd.Response handleUnknownCommand(SimpleRequest request) {
+        if (request.getCommand() == null) {
+            return invalidMessage(null);
+        }
+        return new NoopCmd.Response("unknown", RResponse.FAILED, "unknown command: " + request.getCommand());
+    }
+
+    /**
+     * @param command The command of the invalid request. Null if it could not be determined
+     * @return The protocol's response to an invalid message
+     */
+    static NoopCmd.Response invalidMessage(String command) {
+        return new NoopCmd.Response(command == null ? "unknown" : command,
+                RResponse.FAILED, VideoResult.INVALID_MESSAGE);
     }
 }

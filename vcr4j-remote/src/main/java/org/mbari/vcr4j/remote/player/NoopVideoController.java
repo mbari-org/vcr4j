@@ -34,6 +34,10 @@ import java.util.concurrent.CompletableFuture;
  */
 public class NoopVideoController implements VideoController {
 
+    /**
+     * Nothing is ever opened, so this fails immediately. (Real implementations must block until
+     * the video is open and ready to play; see {@link VideoController#open(UUID, URL)}.)
+     */
     @Override
     public boolean open(UUID videoUuid, URL url) {
         return false;

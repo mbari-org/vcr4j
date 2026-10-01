@@ -48,19 +48,49 @@ public class RequestPlayerStateCmd extends RCommand<RequestPlayerStateCmd.Reques
 
         private Double rate;
 
-        // OK, this is a bit of a hack. GSOn assigns this value when parsing but we
-        // don't include it in the constructor to respect how VideoControl normally requests state
-        // via a call to requestRate ( a holdover from VCR support)
         private Long elapsedTimeMillis;
 
-        public Response(String status, Double rate) {
-            super(COMMAND, status);
-            this.state = status;
+        /**
+         * A successful response
+         * @param state The name of the state, see {@link RState.State#getName()}
+         * @param rate The playback rate
+         * @param elapsedTimeMillis The elapsed time of the displayed frame. May be null
+         */
+        public Response(String state, Double rate, Long elapsedTimeMillis) {
+            super(COMMAND, RResponse.OK);
+            this.state = state;
             this.rate = rate;
+            this.elapsedTimeMillis = elapsedTimeMillis;
         }
 
-        public Response(String status) {
-            this(status, null);
+        /**
+         * A successful response
+         * @param state The name of the state, see {@link RState.State#getName()}
+         * @param rate The playback rate
+         */
+        public Response(String state, Double rate) {
+            this(state, rate, null);
+        }
+
+        /**
+         * A successful response
+         * @param state The name of the state, see {@link RState.State#getName()}
+         */
+        public Response(String state) {
+            this(state, null, null);
+        }
+
+        /**
+         * A failed response
+         * @param cause Why the request failed
+         * @return A response with status "failed"
+         */
+        public static Response failed(String cause) {
+            return new Response(cause, true);
+        }
+
+        private Response(String cause, boolean failed) {
+            super(COMMAND, RResponse.FAILED, cause);
         }
 
         public String getState() {

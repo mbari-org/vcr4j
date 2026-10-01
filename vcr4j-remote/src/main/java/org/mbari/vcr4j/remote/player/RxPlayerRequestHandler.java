@@ -19,11 +19,19 @@ import org.mbari.vcr4j.remote.control.RVideoIO;
 import org.mbari.vcr4j.remote.control.commands.ConnectCmd;
 import org.mbari.vcr4j.remote.control.commands.FrameCaptureCmd;
 import org.mbari.vcr4j.remote.control.commands.FrameCaptureDoneCmd;
-
+import org.mbari.vcr4j.remote.control.commands.OpenCmd;
+import org.mbari.vcr4j.remote.control.commands.OpenDoneCmd;
 import org.mbari.vcr4j.remote.control.commands.RResponse;
 
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.UUID;
+import java.util.concurrent.CompletionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.RejectedExecutionException;
 
 /**
  * THis is an implementation for the video player. It is created by
@@ -36,6 +44,13 @@ public class RxPlayerRequestHandler extends RxRequestHandler {
     private static final System.Logger log = System.getLogger(RxPlayerRequestHandler.class.getName());
 
     private final RVideoIOLifeCycle lifeCycle;
+
+    // Videos are opened one at a time, in arrival order, off the UDP receive thread
+    private final ExecutorService openExecutor = Executors.newSingleThreadExecutor(r -> {
+        var t = new Thread(r, "vcr4j-open-video");
+        t.setDaemon(true);
+        return t;
+    });
 
     /**
      *
@@ -62,23 +77,86 @@ public class RxPlayerRequestHandler extends RxRequestHandler {
     }
 
     @Override
+    public OpenCmd.Response handleOpen(OpenCmd.Request request) {
+        if (request.getUrl() == null) {
+            throw new IllegalArgumentException("A url is required to open a video");
+        }
+        var uuid = request.getUuid();
+        var url = request.getUrl();
+        // The request is valid, so respond immediately. The video is opened in the background
+        // and 'open done' is sent to the connected remote app when that's finished.
+        // VideoController.openVideo is required to block until the video is open and ready to
+        // play (or has failed), so 'open done' is never sent before the video is usable.
+        try {
+            openExecutor.submit(() -> {
+                VideoResult result;
+                try {
+                    result = getVideoController().openVideo(uuid, url);
+                }
+                catch (Exception e) {
+                    log.log(System.Logger.Level.WARNING, "Failed to open " + url, e);
+                    result = VideoResult.failed("Unable to open video");
+                }
+                sendOpenDone(uuid, result);
+            });
+        }
+        catch (RejectedExecutionException e) {
+            return new OpenCmd.Response(RResponse.FAILED, "Unable to open video");
+        }
+        return new OpenCmd.Response(RResponse.OK);
+    }
+
+    private void sendOpenDone(UUID uuid, VideoResult result) {
+        var status = result.ok() ? RResponse.OK : RResponse.FAILED;
+        var done = new OpenDoneCmd(uuid, status, result.cause());
+        var io = lifeCycle.get();
+        if (io.isPresent()) {
+            io.get().send(done);
+        }
+        else {
+            log.log(System.Logger.Level.WARNING,
+                    "No active connection to send 'open done' for uuid=" + uuid + " - dropping message");
+        }
+    }
+
+    @Override
+    public void close() {
+        openExecutor.shutdown();
+        super.close();
+    }
+
+    @Override
     public FrameCaptureCmd.Response handleFrameCaptureRequest(FrameCaptureCmd.Request request) {
-        // getParent() is null for a bare filename; toAbsolutePath() resolves against the JVM
-        // working directory so the writability check has a real directory to test.
-        var path = Paths.get(request.getImageLocation()).toAbsolutePath();
-        var response = new FrameCaptureCmd.Response(RResponse.OK);
-        if (!Files.isWritable(path.getParent())) {
+        if (request.getImageLocation() == null || request.getImageReferenceUuid() == null) {
+            throw new IllegalArgumentException("imageLocation and imageReferenceUuid are required");
+        }
+        if (!getVideoController().hasVideo(request.getUuid())) {
+            return new FrameCaptureCmd.Response(RResponse.FAILED, VideoResult.NO_VIDEO_FOR_UUID);
+        }
+
+        Path path;
+        try {
+            // getParent() is null for a bare filename; toAbsolutePath() resolves against the JVM
+            // working directory so the writability check has a real directory to test.
+            path = Paths.get(request.getImageLocation()).toAbsolutePath();
+        }
+        catch (InvalidPathException e) {
+            return new FrameCaptureCmd.Response(RResponse.FAILED, "Malformed image location");
+        }
+
+        if (Files.exists(path)) {
+            return new FrameCaptureCmd.Response(RResponse.FAILED, VideoResult.IMAGE_EXISTS);
+        }
+        if (path.getParent() == null || !Files.isWritable(path.getParent())) {
             log.log(System.Logger.Level.WARNING, path.getParent() + " is not writable. Unable to write frame-grab to " + path);
-            response = new FrameCaptureCmd.Response(RResponse.FAILED);
+            return new FrameCaptureCmd.Response(RResponse.FAILED, VideoResult.IMAGE_NOT_WRITABLE);
         }
-        else if (Files.exists(path)) {
-            log.log(System.Logger.Level.WARNING, path + " already exist. Overwriting existing file");
-        }
+
         getVideoController()
                 .framecapture(request.getUuid(), request.getImageReferenceUuid(), path)
                 .handle((fc, ex) -> {
                     var resp = (fc == null || ex != null) ?
-                            FrameCaptureDoneCmd.fail(request) :
+                            FrameCaptureDoneCmd.fail(request, failureMessage(ex)) :
                             FrameCaptureDoneCmd.success(fc);
                     if (log.isLoggable(System.Logger.Level.DEBUG)) {
                         var msg = RVideoIO.GSON.toJson(resp);
@@ -99,8 +177,15 @@ public class RxPlayerRequestHandler extends RxRequestHandler {
                     }
                     return null;
                 });
+        return new FrameCaptureCmd.Response(RResponse.OK);
+    }
 
-        return response;
+    private static String failureMessage(Throwable ex) {
+        if (ex == null) {
+            return "Unable to capture frame";
+        }
+        var cause = ex instanceof CompletionException && ex.getCause() != null ? ex.getCause() : ex;
+        return cause.getMessage() == null ? cause.getClass().getSimpleName() : cause.getMessage();
     }
 
     @Override
