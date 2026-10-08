@@ -28,6 +28,7 @@ import org.mbari.vcr4j.util.Preconditions;
 
 
 import java.io.Closeable;
+import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -90,9 +91,16 @@ public class RemoteControl implements Closeable {
      *     .withLogging(true)               // Enable command logging. Default is false
      *     .withMonitoring(false)           // Enable timers to track status/timecode from video player. Default is false
      *     .withStatus(true)                // Send status command when a command is sent that can change state. Default is false
+     *     .selfHost("10.0.0.5")            // The host the video player sends its commands to. Default is resolved (see below)
      *     .whenFrameCaptureIsDone(cmd -> {}); // What to do when a frame grab has been taken
      *     .build()
      * </pre>
+     *
+     * <p>The video player sends its commands (e.g. {@code frame capture done}, {@code open done})
+     * back to the host given in the {@code connect} command. Unless set with
+     * {@link #selfHost(String)}, it is resolved when {@link #build()} is called using
+     * {@link #resolveSelfHost(String, int)}: the local address the OS would use to reach the
+     * video player. This is a loopback address when the video player is on the same machine.</p>
      */
     public static class Builder {
 
@@ -102,7 +110,7 @@ public class RemoteControl implements Closeable {
         private int remotePort = 8888;
         private String remoteHost = "localhost";
         private int port = 8899;
-        private String selfHost;
+        private String selfHost; // null means resolve it in build()
         private Consumer<FrameCaptureDoneCmd> frameCaptureDoneFn = (f) -> {};
         private Consumer<OpenDoneCmd.Request> openDoneFn = (r) -> {};
 
@@ -114,11 +122,6 @@ public class RemoteControl implements Closeable {
         public Builder(UUID uuid) {
             Preconditions.checkArgument(uuid != null, "UUID is required");
             this.uuid = uuid;
-            try {
-                this.selfHost = InetAddress.getLocalHost().getHostName();
-            } catch (UnknownHostException e) {
-                this.selfHost = "localhost";
-            }
         }
 
         public Builder remotePort(int port) {
@@ -133,6 +136,16 @@ public class RemoteControl implements Closeable {
 
         public Builder port(int port) {
             this.port = port;
+            return this;
+        }
+
+        /**
+         * @param host The host (name or address) of this machine that the video player should
+         *             send its commands to. Use this when the resolved default is not reachable
+         *             from the video player (e.g. NAT). {@code null} restores the default.
+         */
+        public Builder selfHost(String host) {
+            this.selfHost = host;
             return this;
         }
 
@@ -187,7 +200,10 @@ public class RemoteControl implements Closeable {
 
                 var remoteControl = new RemoteControl(videoIo, playerIo, decorators);
 
-                videoIo.send(new ConnectCmd(port, selfHost, uuid));
+                var host = selfHost == null ? resolveSelfHost(remoteHost, remotePort) : selfHost;
+                log.log(System.Logger.Level.DEBUG,
+                        () -> "Asking the video player to send its commands to " + host + ":" + port);
+                videoIo.send(new ConnectCmd(port, host, uuid));
                 return Optional.of(remoteControl);
             }
             catch (Exception e) {
@@ -195,6 +211,51 @@ public class RemoteControl implements Closeable {
                 return Optional.empty();
             }
 
+        }
+
+        /**
+         * Finds the address of this machine that the video player can send commands back to.
+         *
+         * <p>The machine's host name is not used first because it may resolve (via DNS) to an
+         * address that isn't currently this machine, e.g. a laptop's office address while it is
+         * on a home network or VPN. The video player's replies would then be lost.</p>
+         *
+         * <ol>
+         *   <li>If the video player is on this machine (loopback), use the same loopback address.</li>
+         *   <li>Otherwise use the local address the OS routes through to reach the video player.
+         *       Connecting a UDP socket sends no packets; it only selects the route.</li>
+         *   <li>Fall back to the host name, then {@code localhost}.</li>
+         * </ol>
+         *
+         * @param remoteHost The video player's host
+         * @param remotePort The video player's port
+         * @return A host name or address literal for the {@code connect} command
+         */
+        public static String resolveSelfHost(String remoteHost, int remotePort) {
+            try {
+                var remote = InetAddress.getByName(remoteHost);
+                if (remote.isLoopbackAddress()) {
+                    return remote.getHostAddress();
+                }
+                try (var socket = new DatagramSocket()) {
+                    socket.connect(remote, remotePort);
+                    var local = socket.getLocalAddress();
+                    if (local != null && !local.isAnyLocalAddress()) {
+                        return local.getHostAddress();
+                    }
+                }
+            }
+            catch (Exception e) {
+                log.log(System.Logger.Level.DEBUG,
+                        "Unable to find a route to " + remoteHost + ". Falling back to the host name", e);
+            }
+
+            try {
+                return InetAddress.getLocalHost().getHostName();
+            }
+            catch (UnknownHostException e) {
+                return "localhost";
+            }
         }
     }
 }
